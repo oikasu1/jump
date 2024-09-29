@@ -143,6 +143,7 @@ body {
     <div id="controls">
         <div class="control-group">
             <button id="leftBtn" class="control-btn">←</button>
+			<button id="jumpBtnLeft" class="control-btn">↑</button>
         </div>
         <div class="control-group">
             <button id="jumpBtn" class="control-btn">↑</button>
@@ -793,6 +794,7 @@ document.addEventListener('keyup', (e) => {
 const leftBtn = document.getElementById('leftBtn');
 const rightBtn = document.getElementById('rightBtn');
 const jumpBtn = document.getElementById('jumpBtn');
+const jumpBtnLeft = document.getElementById('jumpBtnLeft');
 
 leftBtn.addEventListener('touchstart', (e) => {
 	player.jumpCount = 0;
@@ -823,6 +825,10 @@ jumpBtn.addEventListener('touchstart', (e) => {
     jump();
 });
 
+jumpBtnLeft.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    jump();
+});
 function updateQuestionDisplay() {
     if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
         const questionLangIndex = headers.indexOf(questionSelect.value);
@@ -848,7 +854,7 @@ function playCurrentAudio() {
         }
 
 window.addEventListener('resize', () => {
-    //resizeCanvas();
+    resizeCanvas();
 	updateControlsPosition();
     updateWordLabels();
 });
