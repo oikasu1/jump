@@ -243,6 +243,7 @@ let playerStartX = 50;
 let playerStartY = 200;
 
 let playerColor = 'red';
+let livesCount = 5;
 
 const minWordDistance = 100; // 單詞之間的最小距離
 const safeZoneRadius = 100; // 主角初始位置周圍的安全區域半徑
@@ -355,13 +356,16 @@ startButton.addEventListener('click', () => {
         document.getElementById('gameContainer').style.display = 'block';
         canvas.style.display = 'block';
         controls.style.display = 'flex';
+        
+        // 重新初始化遊戲
         initGame();
         resizeCanvas();
-        gameLoop();
+        gameLoopId = requestAnimationFrame(gameLoop);
     } else {
         alert("沒有足夠的數據來開始遊戲，請選擇其他設置。");
     }
 });
+
 
 
 
@@ -631,28 +635,37 @@ function playErrorSound() {
 }
 
 
+
 function initGame() {
-	resizeCanvas();
+    resizeCanvas();
     player.x = playerStartX;
     player.y = playerStartY;
     player.yVelocity = 0;
     player.isJumping = false;
+    player.moveLeft = false;
+    player.moveRight = false;
+    player.lives = livesCount;
+    player.jumpCount = 0;
+    player.lastJumpTime = 0;
+
     currentQuestionIndex = 0;
     score = 0;
-	player.lives = 5;
     answeredQuestions = 0;
+    newPlatformCount = 0;
     totalQuestions = gameData.length;
+
     generatePlatforms();
     generateWords();
+
     if (gameData.length > 0) {
         updateQuestionDisplay();
         playCurrentAudio();
     } else {
         console.log("沒有可用的遊戲數據");
-        //questionDisplay.textContent = "請選擇有效的遊戲設置";
     }
-	updateWordLabels();
-	updateControlsPosition();
+
+    updateWordLabels();
+    updateControlsPosition();
 }
 
 function drawPlayer() {
@@ -857,6 +870,7 @@ function update() {
 	playerColor = newPlatformCount === 0 ? 'red' : 'orange';
 }
 
+let gameLoopId;
 function gameLoop() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     update();
@@ -865,7 +879,7 @@ function gameLoop() {
     drawPlayer();
     drawLives();
     updateWordLabels();
-    requestAnimationFrame(gameLoop);
+    gameLoopId = requestAnimationFrame(gameLoop);
 }
 
 document.addEventListener('keydown', (e) => {
@@ -958,10 +972,32 @@ function playCurrentAudio() {
 document.getElementById('closeButton').addEventListener('click', closeGame);
 
 function closeGame() {
-  document.getElementById('gameContainer').style.display = 'none';
-  document.getElementById('settingsPage').style.display = 'block';
+    document.getElementById('gameContainer').style.display = 'none';
+    document.getElementById('settingsPage').style.display = 'block';
+    
+    // 重置遊戲相關狀態
+    player.x = playerStartX;
+    player.y = playerStartY;
+    player.yVelocity = 0;
+    player.isJumping = false;
+    player.moveLeft = false;
+    player.moveRight = false;
+    player.lives = livesCount;
+    player.jumpCount = 0;
+    player.lastJumpTime = 0;
+    
+    currentQuestionIndex = 0;
+    score = 0;
+    answeredQuestions = 0;
+    newPlatformCount = 0;
+    
+    // 清空平台和單詞
+    platforms = [];
+    words = [];
+    
+    // 停止遊戲循環（如果有的話）
+    cancelAnimationFrame(gameLoopId);
 }
-
 
 window.addEventListener('resize', () => {
     resizeCanvas();
