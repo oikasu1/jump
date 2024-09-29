@@ -73,7 +73,7 @@ body {
 }
 #settingsPage label {
     display: inline-block;
-    width: 100px;
+    width: 50px;
 }
 #settingsPage select, #settingsPage button {
     width: 200px;
@@ -123,6 +123,36 @@ body {
         display: none;
     }
 }
+#closeButton {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 1000;
+    width: 30px;
+    height: 30px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    color: #888;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+#closeButton:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.1);
+}
+
+#closeButton:active {
+    transform: scale(0.95);
+}
 </style>
 </head>
 <body>
@@ -133,11 +163,11 @@ body {
         <select id="lessonSelect"></select>
     </div>
     <div>
-        <label for="questionSelect">題目語言：</label>
+        <label for="questionSelect">題目：</label>
         <select id="questionSelect"></select>
     </div>
     <div>
-        <label for="answerSelect">答案語言：</label>
+        <label for="answerSelect">答案：</label>
         <select id="answerSelect"></select>
     </div>
     <div>
@@ -152,7 +182,7 @@ body {
 </div>
 
 <div id="gameContainer" style="position: relative; display: none;">
-  <button id="closeButton" style="position: absolute; top: 10px; left: 10px; z-index: 10;">X</button>
+  <button id="closeButton">X</button>
   <div id="questionDisplay"></div>
 
 <canvas id="gameCanvas"></canvas>
@@ -212,6 +242,8 @@ let answeredQuestions = 0;
 let playerStartX = 50;
 let playerStartY = 200;
 
+let playerColor = 'red';
+
 const minWordDistance = 100; // 單詞之間的最小距離
 const safeZoneRadius = 100; // 主角初始位置周圍的安全區域半徑
 
@@ -222,7 +254,7 @@ const data = parsedData.slice(1);
 
 
 // 獲取所有分類
-const categories = [...new Set(data.map(row => row[0]))];
+const categories = ['全部', ...new Set(data.map(row => row[0]))];
 
 // 動態生成選項
 categories.forEach(category => {
@@ -306,7 +338,10 @@ startButton.addEventListener('click', () => {
     }
 
     // 過濾並隨機選擇題目
-    const filteredData = data.filter(row => row[0] === selectedCategory);
+    let filteredData = data;
+    if (selectedCategory !== '全部') {
+        filteredData = data.filter(row => row[0] === selectedCategory);
+    }
     gameData = [];
     while (gameData.length < count && filteredData.length > 0) {
         const index = Math.floor(Math.random() * filteredData.length);
@@ -317,7 +352,7 @@ startButton.addEventListener('click', () => {
         totalQuestions = gameData.length;
         // 開始遊戲
         settingsPage.style.display = 'none';
-		document.getElementById('gameContainer').style.display = 'block';
+        document.getElementById('gameContainer').style.display = 'block';
         canvas.style.display = 'block';
         controls.style.display = 'flex';
         initGame();
@@ -327,6 +362,7 @@ startButton.addEventListener('click', () => {
         alert("沒有足夠的數據來開始遊戲，請選擇其他設置。");
     }
 });
+
 
 
 function resizeCanvas() {
@@ -375,6 +411,7 @@ const player = {
     maxLives: 10,
   jumpStrength: 20,
   doubleJumpStrength: 15, // 二段跳高度
+  isVerticalJump: false,
   canDoubleJump: true,
   jumpCount: 0,
   lastJumpTime: 0,
@@ -388,72 +425,84 @@ const player = {
 
 let platforms = [];
 let words = [];
+let newPlatformCount = 0;
 
 
 
 function jump() {
-  const currentTime = Date.now();
-  
-  // 檢查是否為連續跳躍
-  if (currentTime - player.lastJumpTime <= player.maxJumpInterval) {
-    player.jumpCount++;
-  } else {
-    player.jumpCount = 1;
-  }
-  
-  player.lastJumpTime = currentTime;
-  
-  if (!player.isJumping) {
-    // 第一次跳躍
-    player.yVelocity = -player.jumpStrength;
-    player.isJumping = true;
-    player.canDoubleJump = true;
-  } else if (player.canDoubleJump) {
-    // 二段跳
-    player.yVelocity = -player.doubleJumpStrength;
-    player.canDoubleJump = false;
-  }
-  
-  console.log(`跳躍次數: ${player.jumpCount}`);
-  
-  // 檢查是否需要生成新平台
-  if (player.jumpCount >= 3 && newPlatformConut == 0) {
-    generateNewPlatform();
-    player.jumpCount = 0; // 重置跳躍計數	
-  }
-}
+    const currentTime = Date.now();
+    // 檢查是否為垂直跳躍（既不向左也不向右移動）
+    player.isVerticalJump = !player.moveLeft && !player.moveRight;
 
+    // 檢查是否為連續跳躍
+    if (currentTime - player.lastJumpTime <= player.maxJumpInterval) {
+        player.jumpCount++;
+    } else {
+        player.jumpCount = 1;
+    }
+    player.lastJumpTime = currentTime;
+
+    if (!player.isJumping) {
+        // 第一次跳躍
+        player.yVelocity = -player.jumpStrength;
+        player.isJumping = true;
+        player.canDoubleJump = true;
+    } else if (player.canDoubleJump) {
+        // 二段跳
+        player.yVelocity = -player.doubleJumpStrength;
+        player.canDoubleJump = false;
+    }
+
+    console.log(`跳躍次數: ${player.jumpCount}, 垂直跳躍: ${player.isVerticalJump}`);
+
+    // 檢查是否需要生成新平台（只在垂直跳躍時）
+    if (player.jumpCount >= 3 && newPlatformCount == 0 && player.isVerticalJump && player.lives > 1) {
+        generateNewPlatform();
+        player.jumpCount = 0; // 重置跳躍計數
+		playerColor = 'orange'; // 更新顏色
+    }
+}
 
 
 function generateNewPlatform() {
-  const platformWidth = 100;
-  const platformHeight = 20;
-  const newPlatform = {
-    x: player.x - platformWidth / 2 + player.width / 2,
-    y: player.y + 50, // 在玩家上方生成平台
-    width: platformWidth,
-    height: platformHeight,
-    isTemporary: true // 標記為臨時平台
-  };
-  newPlatformConut = 1;
-  
-  // 確保平台在畫布範圍內
-  newPlatform.x = Math.max(0, Math.min(newPlatform.x, canvasWidth - platformWidth));
-  newPlatform.y = Math.max(0, newPlatform.y) + 50;
-  
-  platforms.push(newPlatform);
-  console.log("新平台生成於", newPlatform);
-  
-  // 5秒後移除臨時平台
-  setTimeout(() => {
-    platforms = platforms.filter(p => p !== newPlatform);
-    console.log("臨時平台已移除");
-  }, 5000);
+    if (player.lives > 1) { 
+        const platformWidth = 100;
+        const platformHeight = 20;
+        const newPlatform = {
+            x: player.x - platformWidth / 2 + player.width / 2,
+            y: player.y + 50, // 在玩家上方生成平台
+            width: platformWidth,
+            height: platformHeight,
+            isTemporary: true // 標記為臨時平台
+        };
+        newPlatformCount = 1;
+        playerColor = 'orange'; 
 
-  setTimeout(() => {
-	newPlatformConut = 0;
-  }, 10000);
+        // 確保平台在畫布範圍內
+        newPlatform.x = Math.max(0, Math.min(newPlatform.x, canvasWidth - platformWidth));
+        newPlatform.y = Math.max(0, newPlatform.y) + 50;
+        platforms.push(newPlatform);
+        
+        // 扣除一个生命值
+        player.lives--;
+        console.log("新平台生成", newPlatform, "剩餘生命：", player.lives);
+
+        // 5秒後移除臨時平台
+        setTimeout(() => {
+            platforms = platforms.filter(p => p !== newPlatform);
+            console.log("臨時平台已移除");
+        }, 5000);
+
+        // 10秒後重置 newPlatformCount
+        setTimeout(() => {
+            newPlatformCount = 0;
+            playerColor = 'red';
+        }, 10000);
+    } else {
+        console.log("生命值不足，無法生成新平台");
+    }
 }
+
 
 
 function generatePlatforms() {
@@ -488,8 +537,9 @@ function generatePlatforms() {
 
 function generateWords() {
     words = [];
+    const questionLangIndex = headers.indexOf(questionSelect.value);
     const answerLangIndex = headers.indexOf(answerSelect.value);
-    if (answerLangIndex !== -1 && gameData.length > 0) {
+    if (questionLangIndex !== -1 && answerLangIndex !== -1 && gameData.length > 0) {
         gameData.forEach((item, index) => {
             let wordX, wordY;
             let attempts = 0;
@@ -510,17 +560,18 @@ function generateWords() {
 
             if (attempts < maxAttempts) {
                 const boxSize = 30;
-                words.push({
-                    x: wordX,
-                    y: wordY,
-                    text: item[answerLangIndex],
-                    width: boxSize,
-                    height: boxSize,
-                    collected: false,
-                    isCorrect: true,
-                    textOnRight: Math.random() < 0.5,
-                    id: `word-${index}`
-                });
+            words.push({
+                x: wordX,
+                y: wordY,
+                text: item[answerLangIndex],
+                question: item[questionLangIndex],
+                width: boxSize,
+                height: boxSize,
+                collected: false,
+                isCorrect: true,
+                textOnRight: Math.random() < 0.5,
+                id: `word-${index}`
+            });
             }
         });
     }
@@ -605,7 +656,7 @@ function initGame() {
 }
 
 function drawPlayer() {
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = playerColor;
     ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
@@ -803,6 +854,7 @@ function update() {
         console.log('遊戲結束，得分：' + score);
         initGame();
     }
+	playerColor = newPlatformCount === 0 ? 'red' : 'orange';
 }
 
 function gameLoop() {
@@ -820,9 +872,11 @@ document.addEventListener('keydown', (e) => {
     switch(e.key) {
         case 'ArrowLeft':
             player.moveLeft = true;
+            player.isVerticalJump = false;
             break;
         case 'ArrowRight':
             player.moveRight = true;
+            player.isVerticalJump = false;
             break;
         case 'ArrowUp':
         case ' ': // 空格鍵
@@ -839,10 +893,7 @@ document.addEventListener('keyup', (e) => {
         case 'ArrowRight':
             player.moveRight = false;
             break;
-
-
-
-}
+    }
 });
 
 const leftBtn = document.getElementById('leftBtn');
@@ -875,6 +926,7 @@ rightBtn.addEventListener('touchend', (e) => {
 
 jumpBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
+    player.isVerticalJump = !player.moveLeft && !player.moveRight;
     jump();
 });
 
