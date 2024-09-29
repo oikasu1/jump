@@ -57,10 +57,6 @@ body {
             #controls {
                 bottom: 50px; /* 調整為綠色地面的高度 */
             }
-
-            #questionDisplay {
-                bottom: 0px;
-            }
         }
 #settingsPage {
     background-color: white;
@@ -96,11 +92,17 @@ body {
 }
 #questionDisplay {
     position: absolute;
+    z-index: 10;
     bottom: 10px;
-	margin: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    text-align: center;
     font-size: 32px;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    padding: 0 10px;
+    box-sizing: border-box; /* 確保內邊距不會增加元素的總寬度 */
 }
     #wordLabels {
         position: fixed;
@@ -148,6 +150,11 @@ body {
     </div>
     <button id="startButton">開始</button>
 </div>
+
+<div id="gameContainer" style="position: relative; display: none;">
+  <button id="closeButton" style="position: absolute; top: 10px; left: 10px; z-index: 10;">X</button>
+  <div id="questionDisplay"></div>
+
 <canvas id="gameCanvas"></canvas>
 <div id="wordLabels"></div>
     <div id="controls">
@@ -160,7 +167,8 @@ body {
             <button id="rightBtn" class="control-btn">→</button>
         </div>
     </div>
-<div id="questionDisplay"></div>
+</div>
+
 
 <script>
 const myData = `
@@ -309,6 +317,7 @@ startButton.addEventListener('click', () => {
         totalQuestions = gameData.length;
         // 開始遊戲
         settingsPage.style.display = 'none';
+		document.getElementById('gameContainer').style.display = 'block';
         canvas.style.display = 'block';
         controls.style.display = 'flex';
         initGame();
@@ -362,9 +371,10 @@ const player = {
     isJumping: false,
     moveLeft: false,
     moveRight: false,
-
+    lives: 5,
+    maxLives: 10,
   jumpStrength: 20,
-  doubleJumpStrength: 15, // 與 jumpStrength 相同，使二段跳高度一致
+  doubleJumpStrength: 15, // 二段跳高度
   canDoubleJump: true,
   jumpCount: 0,
   lastJumpTime: 0,
@@ -578,6 +588,7 @@ function initGame() {
     player.isJumping = false;
     currentQuestionIndex = 0;
     score = 0;
+	player.lives = 5;
     answeredQuestions = 0;
     totalQuestions = gameData.length;
     generatePlatforms();
@@ -597,6 +608,28 @@ function drawPlayer() {
     ctx.fillStyle = 'red';
     ctx.fillRect(player.x, player.y, player.width, player.height);
 }
+
+function drawLives() {
+    const blockSize = 15;
+    const gap = 5;
+    ctx.fillStyle = 'red';
+    for (let i = 0; i < player.lives; i++) {
+        ctx.fillRect(10 + i * (blockSize + gap), 10, blockSize, blockSize);
+    }
+}
+function drawLives() {
+    const blockSize = 15;
+    const gap = 5;
+    ctx.fillStyle = 'red';
+    const rightMargin = 10;
+
+    for (let i = 0; i < player.lives; i++) {
+        const x = canvasWidth - rightMargin - (player.lives - i) * (blockSize + gap);
+        ctx.fillRect(x, 10, blockSize, blockSize);
+    }
+}
+
+
 
 function drawPlatforms() {
     ctx.fillStyle = 'green';
@@ -706,10 +739,12 @@ function update() {
                            player.x >= wordRight - 5 || 
                            playerRight <= word.x + 5) {
                     // 從底部或側面碰到單詞
+
                     if (word.isCorrect && currentQuestionIndex === words.indexOf(word)) {
                         word.collected = true;
                         score++;
                         answeredQuestions++;
+						player.lives = Math.min(player.lives + 1, player.maxLives); // 增加生命值,最多10個
                         if (answeredQuestions < totalQuestions) {
                             currentQuestionIndex++;
                             updateQuestionDisplay();
@@ -725,7 +760,16 @@ function update() {
                         player.x = playerStartX;
                         player.y = playerStartY;
                         player.yVelocity = 0;
-                        score = Math.max(0, score - 1);
+						player.lives--; // 減少生命值
+						//score = Math.max(0, score - 1);
+						if (player.lives <= 0) {
+							console.log('遊戲結束,得分：' + score + '/' + totalQuestions);
+							setTimeout(() => {
+								alert('遊戲結束！您的得分是：' + score + '/' + totalQuestions);
+								initGame();
+							}, 500);
+						}
+                        
                         playErrorSound();
                     }
                 }
@@ -767,10 +811,10 @@ function gameLoop() {
     drawPlatforms();
     drawWords();
     drawPlayer();
-    updateWordLabels(); // 每幀更新標籤位置
+    drawLives();
+    updateWordLabels();
     requestAnimationFrame(gameLoop);
 }
-
 
 document.addEventListener('keydown', (e) => {
     switch(e.key) {
@@ -858,6 +902,14 @@ function playCurrentAudio() {
             const bottomPadding = isLandscape ? '50px' : '10px';
             controls.style.bottom = bottomPadding;
         }
+
+document.getElementById('closeButton').addEventListener('click', closeGame);
+
+function closeGame() {
+  document.getElementById('gameContainer').style.display = 'none';
+  document.getElementById('settingsPage').style.display = 'block';
+}
+
 
 window.addEventListener('resize', () => {
     resizeCanvas();
