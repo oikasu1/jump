@@ -27,42 +27,32 @@ body {
             bottom: 10px;
             left: 10px;
             right: 10px;
-            display: none;
+            display: flex;
             justify-content: space-between;
             pointer-events: none;
         }
 
         .control-group {
             display: flex;
-            flex-direction: column;
             pointer-events: auto;
         }
 
         .control-btn {
             background-color: rgba(255, 255, 255, 0.5);
             border: none;
-            padding: 20px;
+            padding: 15px;
             border-radius: 50%;
             font-size: 24px;
-            margin: 5px;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0 5px;
         }
+
         #jumpBtn {
             margin-left: auto;
-        }
-        @media (max-width: 1024px) {
-            #controls {
-                display: flex;
-            }
         }
 
         @media (orientation: landscape) {
             #controls {
-                bottom: 50px;
+                bottom: 50px; /* 調整為綠色地面的高度 */
             }
         }
 #settingsPage {
@@ -99,10 +89,10 @@ body {
 }
 #questionDisplay {
     position: absolute;
-    top: 10px;
+    bottom: 10px;
 	margin: auto;
 
-    font-size: 24px;
+    font-size: 32px;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
@@ -153,14 +143,12 @@ body {
     <div id="controls">
         <div class="control-group">
             <button id="leftBtn" class="control-btn">←</button>
-            <button id="jumpBtnLeft" class="control-btn">↑</button>
         </div>
         <div class="control-group">
-            <button id="jumpBtnRight" class="control-btn">↑</button>
+            <button id="jumpBtn" class="control-btn">↑</button>
             <button id="rightBtn" class="control-btn">→</button>
         </div>
     </div>
-
 <div id="questionDisplay"></div>
 
 <script>
@@ -591,8 +579,7 @@ function initGame() {
         //questionDisplay.textContent = "請選擇有效的遊戲設置";
     }
 	updateWordLabels();
-            updateControlsPosition();
-            toggleControls();
+	updateControlsPosition();
 }
 
 function drawPlayer() {
@@ -839,7 +826,7 @@ jumpBtn.addEventListener('touchstart', (e) => {
 function updateQuestionDisplay() {
     if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
         const questionLangIndex = headers.indexOf(questionSelect.value);
-        questionDisplay.textContent = gameData[currentQuestionIndex][questionLangIndex];
+        questionDisplay.textContent = "🥷 " + gameData[currentQuestionIndex][questionLangIndex];
     } else {
         questionDisplay.textContent = "沒有更多問題";
     }
@@ -860,35 +847,13 @@ function playCurrentAudio() {
             controls.style.bottom = bottomPadding;
         }
 
-        function isMobileOrTablet() {
-            return window.innerWidth <= 1024;
-        }
-
-        function toggleControls() {
-            const controls = document.getElementById('controls');
-            controls.style.display = isMobileOrTablet() ? 'flex' : 'none';
-        }
-
-        document.getElementById('jumpBtnLeft').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            jump();
-        });
-
-        document.getElementById('jumpBtnRight').addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            jump();
-        });
-
 window.addEventListener('resize', () => {
+    //resizeCanvas();
 	updateControlsPosition();
-    resizeCanvas();	
-	toggleControls();
     updateWordLabels();
 });
-        window.addEventListener('orientationchange', () => {
-            updateControlsPosition();
-            toggleControls();
-        });
+
+window.addEventListener('orientationchange', updateControlsPosition);
 
 // 初始化遊戲設定頁面
 initGame();
