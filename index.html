@@ -286,20 +286,37 @@ startButton.addEventListener('click', () => {
     }
 });
 
+
 function resizeCanvas() {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    const isPortrait = windowHeight > windowWidth;
+
+    if (isPortrait) {
+        // 直式模式
+        canvasWidth = 400;
+        canvasHeight = 600;
+    } else {
+        // 橫式模式
+        canvasWidth = 800;
+        canvasHeight = 400;
+    }
+
     if (windowWidth / windowHeight < canvasWidth / canvasHeight) {
         scale = windowWidth / canvasWidth;
     } else {
         scale = windowHeight / canvasHeight;
     }
+
     canvas.width = Math.floor(canvasWidth * scale);
     canvas.height = Math.floor(canvasHeight * scale);
     ctx.scale(scale, scale);
-	updateWordLabels();
-}
 
+    // 重新生成平台和單詞
+    generatePlatforms();
+    generateWords();
+    updateWordLabels();
+}
 
 
 const player = {
@@ -395,12 +412,14 @@ function generateNewPlatform() {
   }, 10000);
 }
 
+
 function generatePlatforms() {
     platforms = [];
-    const minPlatformWidth = 100;
-    const maxPlatformWidth = 200;
-    const minGap = 50;
-    const maxGap = 100;
+    const isPortrait = canvasHeight > canvasWidth;
+    const minPlatformWidth = isPortrait ? 80 : 100;
+    const maxPlatformWidth = isPortrait ? 150 : 200;
+    const minGap = isPortrait ? 100 : 50;
+    const maxGap = isPortrait ? 150 : 100;
 
     // 添加底部平台
     platforms.push({ x: 0, y: canvasHeight - 50, width: canvasWidth, height: 50 });
@@ -415,6 +434,7 @@ function generatePlatforms() {
             width: platformWidth,
             height: 20
         });
+
         // 計算下一個平台的 Y 坐標
         currentY -= Math.random() * (maxGap - minGap) + minGap;
     }
@@ -422,11 +442,12 @@ function generatePlatforms() {
 
 
 
+
 function generateWords() {
-        words = [];
-        const answerLangIndex = headers.indexOf(answerSelect.value);
-        if (answerLangIndex !== -1 && gameData.length > 0) {
-            gameData.forEach((item, index) => {
+    words = [];
+    const answerLangIndex = headers.indexOf(answerSelect.value);
+    if (answerLangIndex !== -1 && gameData.length > 0) {
+        gameData.forEach((item, index) => {
             let wordX, wordY;
             let attempts = 0;
             const maxAttempts = 100;
@@ -443,24 +464,26 @@ function generateWords() {
                 (Math.abs(wordX - playerStartX) < safeZoneRadius && Math.abs(wordY - playerStartY) < safeZoneRadius) ||
                 words.some(w => Math.abs(w.x - wordX) < minWordDistance && Math.abs(w.y - wordY) < minWordDistance)
             );
+
             if (attempts < maxAttempts) {
-                    const boxSize = 30;
-                    words.push({
-                        x: wordX,
-                        y: wordY,
-                        text: item[answerLangIndex],
-                        width: boxSize,
-                        height: boxSize,
-                        collected: false,
-                        isCorrect: true,
-                        textOnRight: Math.random() < 0.5,
-                        id: `word-${index}` // 添加唯一 ID
-                    });
-                }
-            });
-        }
-        updateWordLabels();
+                const boxSize = 30;
+                words.push({
+                    x: wordX,
+                    y: wordY,
+                    text: item[answerLangIndex],
+                    width: boxSize,
+                    height: boxSize,
+                    collected: false,
+                    isCorrect: true,
+                    textOnRight: Math.random() < 0.5,
+                    id: `word-${index}`
+                });
+            }
+        });
+    }
+    updateWordLabels();
 }
+
 
 
 
@@ -515,6 +538,7 @@ function playErrorSound() {
 
 
 function initGame() {
+	resizeCanvas();
     player.x = playerStartX;
     player.y = playerStartY;
     player.yVelocity = 0;
