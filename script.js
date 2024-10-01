@@ -7,7 +7,7 @@ document.head.appendChild(link);
 
 
 let myTitle = document.title;
-let htmlSettingsPage = `   
+let htmlSettingsPage = `
 <div id="settingsPage">
     <h2>${myTitle}</h2>
     <div>
@@ -25,65 +25,66 @@ let htmlSettingsPage = `
     <div>
         <label for="countSelect">數量：</label>
         <select id="countSelect">
-		    <option disabled>每次題目數量</option>
+            <option disabled>每次題目數量</option>
             <option value="2">2</option>
             <option value="3">3</option>
             <option value="4" selected>4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
         </select>
     </div>
     <div>
         <label for="playbackTimesSelect">播音：</label>
         <select id="playbackTimesSelect">
-		    <option disabled>音檔播放次數</option>
+            <option disabled>音檔播放次數</option>
             <option value="1">1</option>
             <option value="2" selected>2</option>
             <option value="3">3</option>
-			<option value="4">4</option>
+            <option value="4">4</option>
         </select>
     </div>
 
-  <div>
-    <label for="difficultySelect">難度：</label>
-    <select id="difficultySelect">
-      <option value="0">預設</option>
-      <option value="1">嘗試</option>
-      <option value="2">挑戰</option>
-    </select>
-  </div>
+    <div>
+        <label for="difficultySelect">難度：</label>
+        <select id="difficultySelect">
+            <option value="0">預設</option>
+            <option value="1">嘗試</option>
+            <option value="2">挑戰</option>
+        </select>
+    </div>
 
     <button id="startButton">開始</button>
 </div>
 
 <div id="gameContainer" style="position: relative; display: none;">
-  <button id="closeButton">X</button>
-  <div id="questionDisplay"></div>
+    <button id="closeButton">X</button>
+    <div id="questionDisplay"></div>
 
-<canvas id="gameCanvas"></canvas>
-<div id="wordLabels"></div>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="wordLabels"></div>
+
     <div id="controls">
-        <div class="control-group">            
-			<button id="jumpBtn" class="control-btn">↑</button>
+        <div class="control-group">
+            <button id="jumpBtn" class="control-btn">↑</button>
         </div>
-        <div class="control-group">            
-			<button id="leftBtn" class="control-btn">←</button>
+        <div class="control-group">
+            <button id="leftBtn" class="control-btn">←</button>
             <button id="rightBtn" class="control-btn">→</button>
         </div>
     </div>
 </div>
 
 
-    <div id="gameEndModal" class="modal">
-        <div class="modal-content">
-            <p id="gameEndMessage"></p>
-            <div class="modal-buttons">
-                <button id="returnButton" class="modal-button return-button">返回設定</button>
-                <button id="continueButton" class="modal-button continue-button">繼續遊戲</button>
-            </div>
+<div id="gameEndModal" class="modal">
+    <div class="modal-content">
+        <p id="gameEndMessage"></p>
+        <div class="modal-buttons">
+            <button id="returnButton" class="modal-button return-button">返回設定</button>
+            <button id="continueButton" class="modal-button continue-button">繼續遊戲</button>
         </div>
     </div>
-
+</div>
 `;
 
 document.body.innerHTML = htmlSettingsPage;
@@ -102,7 +103,6 @@ const myData = `
 二、紹介 00百句	你幾歲	你幾多歲	henˋ giˆ dooˇ seˆ	ˋ ˆ ˇ ˆ	k036.k100
 `;
 */
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const settingsPage = document.getElementById('settingsPage');
@@ -161,7 +161,14 @@ categories.forEach(category => {
     lessonSelect.appendChild(option);
 });
 
-const languages = headers.slice(1, -1);  // 排除 '分類' 和 '音檔'
+
+// 找出 '分類' 和 '音檔' 的索引位置
+const categoryIndex = headers.indexOf('分類');
+const audioIndex = headers.indexOf('音檔');
+
+// 使用 filter 排除 排除 '分類' 和 '音檔'
+const languages = headers.filter((header, index) => index !== categoryIndex && index !== audioIndex);
+
 
 languages.forEach(lang => {
     const qOption = document.createElement('option');
@@ -198,7 +205,7 @@ function initializeLanguageSelects() {
 function updateAnswerSelect() {
     const selectedQuestion = questionSelect.value;
     const availableLanguages = headers.filter(header => !['分類', '音檔'].includes(header));
-    
+
     // 清空答案選擇
     answerSelect.innerHTML = '';
 
@@ -220,6 +227,12 @@ function updateAnswerSelect() {
 
 // 在頁面加載時調用初始化函數
 document.addEventListener('DOMContentLoaded', initializeLanguageSelects);
+
+
+
+
+
+
 
 
 startButton.addEventListener('click', () => {
@@ -247,39 +260,6 @@ startButton.addEventListener('click', () => {
 });
 
 
-
-function resizeCanvas() {
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-    const isPortrait = windowHeight > windowWidth;
-
-    if (isPortrait) {
-        // 直式模式
-        canvasWidth = 400;
-        canvasHeight = 600;
-    } else {
-        // 橫式模式
-        canvasWidth = 800;
-        canvasHeight = 400;
-    }
-
-    if (windowWidth / windowHeight < canvasWidth / canvasHeight) {
-        scale = windowWidth / canvasWidth;
-    } else {
-        scale = windowHeight / canvasHeight;
-    }
-
-    canvas.width = Math.floor(canvasWidth * scale);
-    canvas.height = Math.floor(canvasHeight * scale);
-    ctx.scale(scale, scale);
-
-    // 重新生成平台和單詞
-    generatePlatforms();
-    generateWords();
-    updateWordLabels();
-}
-
-
 const player = {
     x: 50,
     y: 100,
@@ -292,13 +272,13 @@ const player = {
     moveRight: false,
     lives: 5,
     maxLives: 10,
-  jumpStrength: 20,
-  doubleJumpStrength: 15, // 二段跳高度
-  isVerticalJump: false,
-  canDoubleJump: true,
-  jumpCount: 0,
-  lastJumpTime: 0,
-  maxJumpInterval: 500 // 毫秒，連續跳躍的最大間隔時間
+    jumpStrength: 20,
+    doubleJumpStrength: 15, // 二段跳高度
+    isVerticalJump: false,
+    canDoubleJump: true,
+    jumpCount: 0,
+    lastJumpTime: 0,
+    maxJumpInterval: 500 // 毫秒，連續跳躍的最大間隔時間
 
 };
 
@@ -307,7 +287,7 @@ const enemy = {
     y: 0,
     width: 30,
     height: 30,
-    speed: 2,
+    speed: 1,
     yVelocity: 0,
     isJumping: false,
     canDoubleJump: false,
@@ -348,19 +328,17 @@ function jump() {
         player.canDoubleJump = false;
     }
 
-    console.log(`跳躍次數: ${player.jumpCount}, 垂直跳躍: ${player.isVerticalJump}`);
-
     // 檢查是否需要生成新平台（只在垂直跳躍時）
     if (player.jumpCount >= 3 && newPlatformCount == 0 && player.isVerticalJump && player.lives > 1) {
         generateNewPlatform();
         player.jumpCount = 0; // 重置跳躍計數
-		playerColor = 'orange'; // 更新顏色
+        playerColor = 'orange'; // 更新顏色
     }
 }
 
 
 function generateNewPlatform() {
-    if (player.lives > 1) { 
+    if (player.lives > 1) {
         const platformWidth = 100;
         const platformHeight = 20;
         const newPlatform = {
@@ -371,21 +349,19 @@ function generateNewPlatform() {
             isTemporary: true // 標記為臨時平台
         };
         newPlatformCount = 1;
-        playerColor = 'orange'; 
+        playerColor = 'orange';
 
         // 確保平台在畫布範圍內
         newPlatform.x = Math.max(0, Math.min(newPlatform.x, canvasWidth - platformWidth));
         newPlatform.y = Math.max(0, newPlatform.y) + 50;
         platforms.push(newPlatform);
-        
+
         // 扣除一个生命值
         player.lives--;
-        console.log("新平台生成", newPlatform, "剩餘生命：", player.lives);
 
         // 5秒後移除臨時平台
         setTimeout(() => {
             platforms = platforms.filter(p => p !== newPlatform);
-            console.log("臨時平台已移除");
         }, 5000);
 
         // 10秒後重置 newPlatformCount
@@ -409,7 +385,12 @@ function generatePlatforms() {
     const maxGap = isPortrait ? 150 : 100;
 
     // 添加底部平台
-    platforms.push({ x: 0, y: canvasHeight - 50, width: canvasWidth, height: 50 });
+    platforms.push({
+        x: 0,
+        y: canvasHeight - 50,
+        width: canvasWidth,
+        height: 50
+    });
 
     let currentY = canvasHeight - 150; // 從底部平台上方開始
     while (currentY > 50) { // 確保不會生成太靠近頂部的平台
@@ -480,10 +461,9 @@ function generateWords() {
 
 
 
-
 function updateWordLabels() {
     const labelsContainer = document.getElementById('wordLabels');
-    labelsContainer.innerHTML = ''; // 清空現有標籤
+    labelsContainer.innerHTML = '';
     const canvasRect = canvas.getBoundingClientRect();
     const canvasCenterX = canvasRect.left + (canvasRect.width / 2);
 
@@ -492,44 +472,69 @@ function updateWordLabels() {
             const label = document.createElement('div');
             label.className = 'word-label';
             label.id = word.id;
-            label.textContent = word.text;
-            
+            //label.textContent = word.text;
+			label.innerHTML = word.text; // 文字可HTML
+			
+
             // 計算標籤的精確位置
             const scaledWordX = word.x * scale;
             const scaledWordY = word.y * scale;
-            
+
             // 決定標籤在方塊的左側還是右側
             const wordCenterX = canvasRect.left + scaledWordX + (word.width * scale / 2);
             const labelOnRight = wordCenterX < canvasCenterX;
-            
+
             // 設置標籤位置
-            const labelX = labelOnRight
-                ? scaledWordX + (word.width * scale) + 5 
-                : scaledWordX - 5;
-            
+            const labelX = labelOnRight ?
+                scaledWordX + (word.width * scale) + 5 :
+                scaledWordX - 5;
+
             label.style.left = `${canvasRect.left + labelX}px`;
             label.style.top = `${canvasRect.top + scaledWordY + (word.height * scale / 2)}px`;
-            
+
             // 設置文本對齊方式
             label.style.textAlign = labelOnRight ? 'left' : 'right';
-            label.style.transform = labelOnRight 
-                ? 'translate(0, -50%)' 
-                : 'translate(-100%, -50%)';
-            
+            label.style.transform = labelOnRight ?
+                'translate(0, -50%)' :
+                'translate(-100%, -50%)';
+
             labelsContainer.appendChild(label);
         }
     });
 }
 
-function playWrongSound() {
-    const audio = new Audio('wrong.mp3');
-    audio.play();
+
+function resizeCanvas() {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    const isPortrait = windowHeight > windowWidth;
+
+    if (isPortrait) {
+        // 直式模式
+        canvasWidth = 400;
+        canvasHeight = 600;
+    } else {
+        // 橫式模式
+        canvasWidth = 800;
+        canvasHeight = 400;
+    }
+
+    if (windowWidth / windowHeight < canvasWidth / canvasHeight) {
+        scale = windowWidth / canvasWidth;
+    } else {
+        scale = windowHeight / canvasHeight;
+    }
+
+    canvas.width = Math.floor(canvasWidth * scale);
+    canvas.height = Math.floor(canvasHeight * scale);
+    ctx.scale(scale, scale);
+
+    // 重新生成平台和單詞
+    //generatePlatforms();
+    //generateWords();
+    //updateWordLabels();
 }
 
-function playRightSound() {
-    const audio = new Audio('right.mp3');
-    audio.play();
-}
 
 
 function initGame() {
@@ -551,10 +556,9 @@ function initGame() {
 
     const difficultySelect = document.getElementById('difficultySelect');
     const difficulty = parseInt(difficultySelect.value);
-    
+
     if (difficulty >= 1) {
-        
-enemy.x = canvasWidth - 50;
+        enemy.x = canvasWidth - 50;
         enemy.y = canvasHeight - 80;
         enemy.isJumping = false;
         enemy.yVelocity = 0;
@@ -567,7 +571,7 @@ enemy.x = canvasWidth - 50;
         updateQuestionDisplay();
         playCurrentAudio();
     } else {
-        console.log("沒有可用的遊戲數據");
+        //;
     }
     const playbackTimesSelect = document.getElementById('playbackTimesSelect');
     playbackTimesSelect.addEventListener('change', (e) => {
@@ -577,6 +581,15 @@ enemy.x = canvasWidth - 50;
     generateWords();
     updateWordLabels();
     updateControlsPosition();
+}
+
+function updateQuestionDisplay() {
+    if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
+        const questionLangIndex = headers.indexOf(questionSelect.value);
+        questionDisplay.textContent = "🥷 " + gameData[currentQuestionIndex][questionLangIndex];
+    } else {
+        questionDisplay.textContent = "沒有更多問題";
+    }
 }
 
 
@@ -592,7 +605,7 @@ function selectNewQuestions() {
 
     // 過濾並隨機選擇題目
     let filteredData = selectedCategory === '全部' ? availableQuestions : availableQuestions.filter(row => row[0] === selectedCategory);
-    
+
     gameData = [];
     while (gameData.length < count && filteredData.length > 0) {
         const index = Math.floor(Math.random() * filteredData.length);
@@ -610,7 +623,6 @@ function drawPlayer() {
     ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
-
 function drawLives() {
     const blockSize = 15;
     const gap = 5;
@@ -622,16 +634,6 @@ function drawLives() {
         ctx.fillRect(x, 10, blockSize, blockSize);
     }
 }
-
-
-
-function drawPlatforms() {
-    ctx.fillStyle = 'green';
-    platforms.forEach(platform => {
-        ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-    });
-}
-
 
 function drawPlatforms() {
     ctx.fillStyle = 'green';
@@ -649,12 +651,12 @@ function drawPlatforms() {
 function drawWords() {
     ctx.fillStyle = 'blue';
     words.forEach(word => {
-        if (!word.collected) {            
+        if (!word.collected) {
             ctx.fillRect(word.x, word.y, word.width, word.height);
-			ctx.fillStyle = 'white';
-			ctx.fillRect(word.x, word.y, word.width, 10); // 白色線
+            ctx.fillStyle = 'white';
+            ctx.fillRect(word.x, word.y, word.width, 10); // 白色線
             ctx.fillStyle = 'green';
-            ctx.fillRect(word.x, word.y, word.width, 8); // 綠色線 
+            ctx.fillRect(word.x, word.y, word.width, 8); // 綠色線
             // 重置填充顏色為藍色，為下一個單詞做準備
             ctx.fillStyle = 'blue';
         }
@@ -696,22 +698,22 @@ function update() {
     player.yVelocity += 0.8;
     let nextY = player.y + player.yVelocity;
 
-  let onPlatform = false;
-  platforms.forEach(platform => {
-    if (checkCollision(player.x, nextY, player.width, player.height, platform)) {
-      if (player.yVelocity > 0) {
-        nextY = platform.y - player.height;
-        player.yVelocity = 0;
-        player.isJumping = false;
-        player.canDoubleJump = true;
-        onPlatform = true;
-        // 不要在這裡重置 jumpCount，讓它在空中也能累積
-      } else if (player.yVelocity < 0) {
-        nextY = platform.y + platform.height;
-        player.yVelocity = 0;
-      }
-    }
-  });
+    let onPlatform = false;
+    platforms.forEach(platform => {
+        if (checkCollision(player.x, nextY, player.width, player.height, platform)) {
+            if (player.yVelocity > 0) {
+                nextY = platform.y - player.height;
+                player.yVelocity = 0;
+                player.isJumping = false;
+                player.canDoubleJump = true;
+                onPlatform = true;
+                // 不要在這裡重置 jumpCount，讓它在空中也能累積
+            } else if (player.yVelocity < 0) {
+                nextY = platform.y + platform.height;
+                player.yVelocity = 0;
+            }
+        }
+    });
     player.y = nextY;
     if (!onPlatform) {
         player.isJumping = true;
@@ -735,24 +737,24 @@ function update() {
             // 檢查是否從側面或底部碰到單詞
             if (player.x < wordRight && playerRight > word.x &&
                 playerBottom > wordTop && player.y < wordTop + word.height) {
-                
+
                 // 檢查是否站在單詞上
                 if (playerBottom <= wordTop + 5 && player.yVelocity >= 0) {
                     player.y = wordTop - player.height;
                     player.yVelocity = 0;
                     player.isJumping = false;
                     onWordPlatform = true;
-                } else if (player.y >= wordTop + word.height - 5 || 
-                           player.x >= wordRight - 5 || 
-                           playerRight <= word.x + 5) {
+                } else if (player.y >= wordTop + word.height - 5 ||
+                    player.x >= wordRight - 5 ||
+                    playerRight <= word.x + 5) {
                     // 從底部或側面碰到單詞
 
                     if (word.isCorrect && currentQuestionIndex === words.indexOf(word)) {
                         word.collected = true;
                         score++;
                         answeredQuestions++;
-						playRightSound();
-						player.lives = Math.min(player.lives + 1, player.maxLives); // 增加生命值,最多10個
+                        playRightSound();
+                        player.lives = Math.min(player.lives + 1, player.maxLives); // 增加生命值,最多10個
                         if (answeredQuestions < totalQuestions) {
                             currentQuestionIndex++;
                             updateQuestionDisplay();
@@ -764,17 +766,16 @@ function update() {
                         player.x = playerStartX;
                         player.y = playerStartY;
                         player.yVelocity = 0;
-						player.lives--; // 減少生命值
-						//score = Math.max(0, score - 1);
-						if (player.lives <= 0 || answeredQuestions >= totalQuestions) {
-							endGame();
-						}                        
+                        player.lives--; // 減少生命值
+                        if (player.lives <= 0 || answeredQuestions >= totalQuestions) {
+                            endGame();
+                        }
                         playWrongSound();
                     }
                 }
             }
         }
-		updateWordLabels();
+        updateWordLabels();
     });
 
     // 如果不在任何單詞平台上，應用重力
@@ -799,10 +800,9 @@ function update() {
     }
 
     if (player.y > canvasHeight) {
-        console.log('遊戲結束，得分：' + score);
         initGame();
     }
-	playerColor = newPlatformCount === 0 ? 'red' : 'orange';
+    playerColor = newPlatformCount === 0 ? 'red' : 'orange';
 }
 
 
@@ -812,17 +812,17 @@ function updateEnemy() {
         enemy.x += enemy.speed * enemy.direction;
     }
 
-    // 檢查是否到達畫布邊緣或平台邊緣
+    // 檢查是否到達畫布邊緣邊緣
     if (enemy.x <= 0 || enemy.x + enemy.width >= canvasWidth) {
         enemy.direction *= -1;
     }
 
-/*
-    if ( (enemy.currentPlatform && (enemy.x <= enemy.currentPlatform.x || 
-        enemy.x + enemy.width >= enemy.currentPlatform.x + enemy.currentPlatform.width))) {
-        enemy.direction *= -1;
-    }
-*/
+    /*  // 檢查是否到達畫布平台邊緣
+        if ( (enemy.currentPlatform && (enemy.x <= enemy.currentPlatform.x ||
+            enemy.x + enemy.width >= enemy.currentPlatform.x + enemy.currentPlatform.width))) {
+            enemy.direction *= -1;
+        }
+    */
     enemy.yVelocity += 0.8; // 重力效果
     enemy.y += enemy.yVelocity;
 
@@ -830,19 +830,12 @@ function updateEnemy() {
     let onPlatform = false;
     platforms.forEach(platform => {
         if (checkCollision(enemy.x, enemy.y, enemy.width, enemy.height, platform)) {
-            // 如果敵人在平台上，有 50% 機率選擇下來
-            if (enemy.currentPlatform === platform && Math.random() < 0.8 && enemy.y + enemy.height >= canvasHeight) {
-                enemy.y = platform.y + platform.height;
-                enemy.yVelocity = 0;
-                enemy.currentPlatform = null;
-            } else {
                 enemy.y = platform.y - enemy.height;
                 enemy.yVelocity = 0;
                 enemy.isJumping = false;
                 enemy.canDoubleJump = true;
                 enemy.currentPlatform = platform;
                 onPlatform = true;
-            }
         }
     });
 
@@ -885,37 +878,38 @@ function checkEnemyCollision() {
         player.x + player.width > enemy.x &&
         player.y < enemy.y + enemy.height &&
         player.y + player.height > enemy.y
-    ) {		
+    ) {
         enemy.x = canvasWidth - 50;
         enemy.y = canvasHeight - 80;
 
-    player.lives--;
-    
-    player.yVelocity = -15; // 給玩家一個小跳躍，幫助他們逃離
-	playWrongSound();
-    
-    if (player.lives <= 0) {
-      endGame();
+        player.lives--;
+
+        player.yVelocity = -15; // 給玩家一個小跳躍
+        playWrongSound();
+
+        if (player.lives <= 0) {
+            endGame();
+        }
     }
-  }
 
 
 }
 
 
 let gameLoopId;
+
 function gameLoop() {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
     update();
     drawPlatforms();
     drawWords();
     drawPlayer();
-    
+
     const difficulty = parseInt(document.getElementById('difficultySelect').value);
     if (difficulty >= 1) {
         drawEnemy();
     }
-    
+
     drawLives();
     updateWordLabels();
     gameLoopId = requestAnimationFrame(gameLoop);
@@ -923,37 +917,37 @@ function gameLoop() {
 
 function drawEnemy() {
     const difficulty = parseInt(document.getElementById('difficultySelect').value);
-    
+
     if (difficulty === 1) {
         ctx.fillStyle = 'black';
     } else if (difficulty === 2) {
-        ctx.fillStyle = 'black'; // 使用紫色來表示更具挑戰性的敵人
+        ctx.fillStyle = 'black';
     }
-    
+
     ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
 }
 
 document.addEventListener('keydown', (e) => {
-if(move){
-    switch(e.key) {
-        case 'ArrowLeft':
-            player.moveLeft = true;
-            player.isVerticalJump = false;
-            break;
-        case 'ArrowRight':
-            player.moveRight = true;
-            player.isVerticalJump = false;
-            break;
-        case 'ArrowUp':
-        case ' ': // 空格鍵
-            jump();
-            break;
+    if (move) {
+        switch (e.key) {
+            case 'ArrowLeft':
+                player.moveLeft = true;
+                player.isVerticalJump = false;
+                break;
+            case 'ArrowRight':
+                player.moveRight = true;
+                player.isVerticalJump = false;
+                break;
+            case 'ArrowUp':
+            case ' ': // 空格鍵
+                jump();
+                break;
+        }
     }
-}
 });
 
 document.addEventListener('keyup', (e) => {
-    switch(e.key) {
+    switch (e.key) {
         case 'ArrowLeft':
             player.moveLeft = false;
             break;
@@ -968,39 +962,39 @@ const rightBtn = document.getElementById('rightBtn');
 const jumpBtn = document.getElementById('jumpBtn');
 
 leftBtn.addEventListener('touchstart', (e) => {
-if(move){
-	player.jumpCount = 0;
-    e.preventDefault();
-    player.moveLeft = true;
-}
+    if (move) {
+        player.jumpCount = 0;
+        e.preventDefault();
+        player.moveLeft = true;
+    }
 });
 
 leftBtn.addEventListener('touchend', (e) => {
-	player.jumpCount = 0;
+    player.jumpCount = 0;
     e.preventDefault();
     player.moveLeft = false;
 });
 
 rightBtn.addEventListener('touchstart', (e) => {
-if(move){
-	player.jumpCount = 0;
-    e.preventDefault();
-    player.moveRight = true;
-}
+    if (move) {
+        player.jumpCount = 0;
+        e.preventDefault();
+        player.moveRight = true;
+    }
 });
 
 rightBtn.addEventListener('touchend', (e) => {
-	player.jumpCount = 0;
+    player.jumpCount = 0;
     e.preventDefault();
     player.moveRight = false;
 });
 
 jumpBtn.addEventListener('touchstart', (e) => {
-if(move){
-    e.preventDefault();
-    player.isVerticalJump = !player.moveLeft && !player.moveRight;
-    jump();
-}
+    if (move) {
+        e.preventDefault();
+        player.isVerticalJump = !player.moveLeft && !player.moveRight;
+        jump();
+    }
 });
 
 document.addEventListener('keydown', (event) => {
@@ -1010,14 +1004,23 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-function updateQuestionDisplay() {
-    if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
-        const questionLangIndex = headers.indexOf(questionSelect.value);
-        questionDisplay.textContent = "🥷 " + gameData[currentQuestionIndex][questionLangIndex];
-    } else {
-        questionDisplay.textContent = "沒有更多問題";
-    }
+
+
+
+
+
+
+function playWrongSound() {
+    const audio = new Audio('wrong.mp3');
+    audio.play();
 }
+
+function playRightSound() {
+    const audio = new Audio('right.mp3');
+    audio.play();
+}
+
+
 
 function playCurrentAudio(times = audioPlaybackTimes) {
     if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
@@ -1026,7 +1029,6 @@ function playCurrentAudio(times = audioPlaybackTimes) {
 
         if (audioUrl) {
             playAudioMultipleTimes(audioUrl, times)
-                .then(() => console.log('音頻播放完成'))
                 .catch(error => console.error('播放音頻時發生錯誤:', error));
         }
     } else {
@@ -1046,7 +1048,7 @@ function getAudioUrl(audioFileInfo) {
         return audioFileInfo;
     } else {
         let langCode, text;
-        switch(audioFileInfo) {
+        switch (audioFileInfo) {
             case 'zh':
                 langCode = 'zh-TW';
                 text = gameData[currentQuestionIndex][headers.indexOf('國語')];
@@ -1102,21 +1104,19 @@ function playAudioMultipleTimes(audioUrl, times) {
     });
 }
 
-
-
-        function updateControlsPosition() {
-            const controls = document.getElementById('controls');
-            const isLandscape = window.innerWidth > window.innerHeight;
-            const bottomPadding = isLandscape ? '50px' : '10px';
-            controls.style.bottom = bottomPadding;
-        }
+function updateControlsPosition() {
+    const controls = document.getElementById('controls');
+    const isLandscape = window.innerWidth > window.innerHeight;
+    const bottomPadding = isLandscape ? '50px' : '10px';
+    controls.style.bottom = bottomPadding;
+}
 
 document.getElementById('closeButton').addEventListener('click', closeGame);
 
 function closeGame() {
     document.getElementById('gameContainer').style.display = 'none';
     document.getElementById('settingsPage').style.display = 'block';
-    
+
     // 重置遊戲相關狀態
     player.x = playerStartX;
     player.y = playerStartY;
@@ -1127,18 +1127,18 @@ function closeGame() {
     player.lives = livesCount;
     player.jumpCount = 0;
     player.lastJumpTime = 0;
-    
+
     currentQuestionIndex = 0;
     score = 0;
     answeredQuestions = 0;
     newPlatformCount = 0;
-    
+
     // 清空平台和單詞
     platforms = [];
     words = [];
 
-	selectNewQuestions();
-    
+    selectNewQuestions();
+
     // 停止遊戲循環（如果有的話）
     cancelAnimationFrame(gameLoopId);
 }
@@ -1149,7 +1149,7 @@ function showGameEndModal(isLevelCompleted) {
     const modal = document.getElementById('gameEndModal');
     const messageElement = document.getElementById('gameEndMessage');
     const continueButton = document.getElementById('continueButton');
-    
+
     let message = '';
     if (isLevelCompleted) {
         message = `
@@ -1166,21 +1166,21 @@ function showGameEndModal(isLevelCompleted) {
         `;
         continueButton.textContent = '重新開始🔄';
     }
-    
+
     messageElement.innerHTML = message;
     modal.style.display = 'block';
     continueButton.focus();
 }
 
-        function hideGameEndModal() {
-            const modal = document.getElementById('gameEndModal');
-            modal.style.display = 'none';
-        }
+function hideGameEndModal() {
+    const modal = document.getElementById('gameEndModal');
+    modal.style.display = 'none';
+}
 
-        document.getElementById('returnButton').addEventListener('click', () => {
-            hideGameEndModal();
-            closeGame();
-        });
+document.getElementById('returnButton').addEventListener('click', () => {
+    hideGameEndModal();
+    closeGame();
+});
 
 document.getElementById('continueButton').addEventListener('click', () => {
     hideGameEndModal();
@@ -1192,21 +1192,21 @@ document.getElementById('continueButton').addEventListener('click', () => {
     initGame();
 });
 
-		function endGame() {
-			move = false;
-			let isLevelCompleted = answeredQuestions >= totalQuestions;
-			
-			if (isLevelCompleted) {
-				totalScore += score;
-				passedLevels++;
-			}
-			
-			showGameEndModal(isLevelCompleted);
-		}
+function endGame() {
+    move = false;
+    let isLevelCompleted = answeredQuestions >= totalQuestions;
+
+    if (isLevelCompleted) {
+        totalScore += score;
+        passedLevels++;
+    }
+
+    showGameEndModal(isLevelCompleted);
+}
 
 window.addEventListener('resize', () => {
     resizeCanvas();
-	updateControlsPosition();
+    updateControlsPosition();
     updateWordLabels();
 });
 
