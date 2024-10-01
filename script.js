@@ -236,6 +236,7 @@ document.addEventListener('DOMContentLoaded', initializeLanguageSelects);
 
 
 startButton.addEventListener('click', () => {
+	disableTouchBehaviors();
     // 初始化 availableQuestions（如果還沒有的話）
     if (availableQuestions.length === 0 && usedQuestions.length === 0) {
         availableQuestions = [...data];
@@ -1194,6 +1195,8 @@ document.getElementById('continueButton').addEventListener('click', () => {
 
 function endGame() {
     move = false;
+	enableTouchBehaviors();
+
     let isLevelCompleted = answeredQuestions >= totalQuestions;
 
     if (isLevelCompleted) {
@@ -1214,6 +1217,41 @@ window.addEventListener('orientationchange', updateControlsPosition);
 
 // 初始化遊戲設定頁面
 initGame();
+
+
+
+  // 禁用雙擊縮放
+  document.addEventListener('dblclick', function(event) {
+    event.preventDefault();
+  }, { passive: false });
+
+  // 禁用雙指縮放
+  document.addEventListener('gesturestart', function(event) {
+    event.preventDefault();
+  });
+
+  // 禁用捏合縮放
+  document.addEventListener('touchmove', function(event) {
+    if (event.scale !== 1) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  // 在遊戲開始時調用此函數
+  function disableTouchBehaviors() {
+    document.body.style.touchAction = 'none';
+  }
+
+  // 在遊戲結束時調用此函數恢復默認行為
+  function enableTouchBehaviors() {
+    document.body.style.touchAction = 'auto';
+  }
+
+
+
+
+
+
 
 
 let script = document.createElement('script');
