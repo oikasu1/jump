@@ -758,8 +758,13 @@ function update() {
                         player.lives = Math.min(player.lives + 1, player.maxLives); // 增加生命值,最多10個
                         if (answeredQuestions < totalQuestions) {
                             currentQuestionIndex++;
-                            updateQuestionDisplay();
-                            playCurrentAudio();
+                            updateQuestionDisplay();                            
+							if (isIOS() && !iosTouch) {
+								playCurrentAudio();
+								iosTouch = true;
+							}else{
+								playCurrentAudio();							
+							}
                         } else {
                             endGame();
                         }
@@ -963,6 +968,7 @@ const rightBtn = document.getElementById('rightBtn');
 const jumpBtn = document.getElementById('jumpBtn');
 
 leftBtn.addEventListener('touchstart', (e) => {
+	iosTouch = false;
     if (move) {
         player.jumpCount = 0;
         e.preventDefault();
@@ -977,6 +983,7 @@ leftBtn.addEventListener('touchend', (e) => {
 });
 
 rightBtn.addEventListener('touchstart', (e) => {
+	iosTouch = false;
     if (move) {
         player.jumpCount = 0;
         e.preventDefault();
@@ -991,6 +998,7 @@ rightBtn.addEventListener('touchend', (e) => {
 });
 
 jumpBtn.addEventListener('touchstart', (e) => {
+	iosTouch = false;
     if (move) {
         e.preventDefault();
         player.isVerticalJump = !player.moveLeft && !player.moveRight;
@@ -1248,6 +1256,13 @@ initGame();
   }
 
 
+let iosTouch = false;
+function isIOS() {
+			const userAgent = navigator.userAgent.toLowerCase();
+			const isIOSDevice = /iphone|ipod/.test(userAgent);  // iPhone 和 iPod 檢測
+			const isIPad = /ipad/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);  // iPad 檢測
+			return isIOSDevice || isIPad;
+}
 
 
 
