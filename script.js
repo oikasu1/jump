@@ -752,19 +752,15 @@ function update() {
 
                     if (word.isCorrect && currentQuestionIndex === words.indexOf(word)) {
                         word.collected = true;
+						playAudio(rightAudio);
                         score++;
-                        answeredQuestions++;
-                        playRightSound();
+                        answeredQuestions++;                        
                         player.lives = Math.min(player.lives + 1, player.maxLives); // 增加生命值,最多10個
                         if (answeredQuestions < totalQuestions) {
+							iosTouch = false;
                             currentQuestionIndex++;
                             updateQuestionDisplay();                            
-							if (isIOS() && !iosTouch) {
-								playCurrentAudio();
-								iosTouch = true;
-							}else{
-								playCurrentAudio();							
-							}
+								playCurrentAudio();								
                         } else {
                             endGame();
                         }
@@ -776,7 +772,7 @@ function update() {
                         if (player.lives <= 0 || answeredQuestions >= totalQuestions) {
                             endGame();
                         }
-                        playWrongSound();
+                        playAudio(wrongAudio);
                     }
                 }
             }
@@ -1018,17 +1014,13 @@ document.addEventListener('keydown', (event) => {
 
 
 
+        const rightAudio = new Audio('right.mp3');
+        const wrongAudio = new Audio('wrong.mp3');
 
-function playWrongSound() {
-    const audio = new Audio('wrong.mp3');
-    audio.play();
-}
-
-function playRightSound() {
-    const audio = new Audio('right.mp3');
-    audio.play();
-}
-
+        function playAudio(audio) {
+            audio.currentTime = 0;
+            audio.play();
+        }
 
 
 function playCurrentAudio(times = audioPlaybackTimes) {
@@ -1265,7 +1257,18 @@ function isIOS() {
 }
 
 
+function handleTouchStart(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
 
+			if (isIOS() && !iosTouch) {
+				playCurrentAudio();
+				iosTouch = true;
+			}
+
+}
+
+document.addEventListener('touchstart', handleTouchStart, false);
 
 
 

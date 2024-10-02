@@ -11,9 +11,7 @@ body {
 }
 
   /* 禁用下拉刷新 */
-  html, body {
-    overscroll-behavior-y: contain;
-  }
+
 
   /* 確保遊戲容器填滿整個屏幕 
     html, body {
