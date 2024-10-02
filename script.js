@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', initializeLanguageSelects);
 
 startButton.addEventListener('click', () => {
 	disableTouchBehaviors();
-    // 初始化 availableQuestions（如果還沒有的話）
+
     if (availableQuestions.length === 0 && usedQuestions.length === 0) {
         availableQuestions = [...data];
     }
@@ -258,6 +258,7 @@ startButton.addEventListener('click', () => {
     } else {
         alert("沒有足夠的數據來開始遊戲，請選擇其他設置。");
     }
+	iosTouch = true;
 });
 
 
@@ -753,11 +754,11 @@ function update() {
                     if (word.isCorrect && currentQuestionIndex === words.indexOf(word)) {
                         word.collected = true;
 						playAudio(rightAudio);
+						iosTouch = false;
                         score++;
                         answeredQuestions++;                        
                         player.lives = Math.min(player.lives + 1, player.maxLives); // 增加生命值,最多10個
-                        if (answeredQuestions < totalQuestions) {
-							iosTouch = false;
+                        if (answeredQuestions < totalQuestions) {							
                             currentQuestionIndex++;
                             updateQuestionDisplay();                            
 								playCurrentAudio();								
@@ -964,7 +965,7 @@ const rightBtn = document.getElementById('rightBtn');
 const jumpBtn = document.getElementById('jumpBtn');
 
 leftBtn.addEventListener('touchstart', (e) => {
-	iosTouch = false;
+
     if (move) {
         player.jumpCount = 0;
         e.preventDefault();
@@ -979,7 +980,7 @@ leftBtn.addEventListener('touchend', (e) => {
 });
 
 rightBtn.addEventListener('touchstart', (e) => {
-	iosTouch = false;
+
     if (move) {
         player.jumpCount = 0;
         e.preventDefault();
@@ -994,7 +995,7 @@ rightBtn.addEventListener('touchend', (e) => {
 });
 
 jumpBtn.addEventListener('touchstart', (e) => {
-	iosTouch = false;
+
     if (move) {
         e.preventDefault();
         player.isVerticalJump = !player.moveLeft && !player.moveRight;
