@@ -586,6 +586,7 @@ function initGame() {
 }
 
 function updateQuestionDisplay() {
+	playAudio(rightAudio);
     if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
         const questionLangIndex = headers.indexOf(questionSelect.value);
         questionDisplay.textContent = "🥷 " + gameData[currentQuestionIndex][questionLangIndex];
@@ -752,8 +753,7 @@ function update() {
                     // 從底部或側面碰到單詞
 
                     if (word.isCorrect && currentQuestionIndex === words.indexOf(word)) {
-                        word.collected = true;
-						playAudio(rightAudio);
+                        word.collected = true;						
 						iosTouch = false;
                         score++;
                         answeredQuestions++;                        
@@ -1084,27 +1084,54 @@ function getAudioUrl(audioFileInfo) {
 }
 
 
+let currentAudio = null;
+
 function playAudioMultipleTimes(audioUrl, times) {
     return new Promise((resolve, reject) => {
+        // 如果有正在播放的音頻，停止它
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.removeEventListener('ended', currentAudio.audioEndHandler);
+        }
+
         const audio = new Audio(audioUrl);
+        currentAudio = audio; // 保存對當前音頻的引用
         let playCount = 0;
 
-        audio.addEventListener('ended', function audioEndHandler() {
+        audio.audioEndHandler = function() {
             playCount++;
             if (playCount < times) {
                 audio.currentTime = 0;
                 audio.play().catch(reject);
             } else {
-                audio.removeEventListener('ended', audioEndHandler);
+                audio.removeEventListener('ended', audio.audioEndHandler);
+                currentAudio = null; // 清除當前音頻引用
                 resolve();
             }
+        };
+
+        audio.addEventListener('ended', audio.audioEndHandler);
+        audio.addEventListener('error', (e) => {
+            currentAudio = null; // 發生錯誤時也要清除引用
+            reject(e);
         });
 
-        audio.addEventListener('error', reject);
-
-        audio.play().catch(reject);
+        audio.play().catch((e) => {
+            currentAudio = null; // 播放失敗時清除引用
+            reject(e);
+        });
     });
 }
+
+function stopCurrentAudio() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.removeEventListener('ended', currentAudio.audioEndHandler);
+        currentAudio = null;
+    }
+}
+
+
 
 function updateControlsPosition() {
     const controls = document.getElementById('controls');
@@ -1118,6 +1145,8 @@ document.getElementById('closeButton').addEventListener('click', closeGame);
 function closeGame() {
     document.getElementById('gameContainer').style.display = 'none';
     document.getElementById('settingsPage').style.display = 'block';
+
+	stopCurrentAudio();
 
     // 重置遊戲相關狀態
     player.x = playerStartX;
@@ -1197,6 +1226,7 @@ document.getElementById('continueButton').addEventListener('click', () => {
 function endGame() {
     move = false;
 	enableTouchBehaviors();
+	stopCurrentAudio();
 
     let isLevelCompleted = answeredQuestions >= totalQuestions;
 
