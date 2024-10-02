@@ -590,6 +590,7 @@ function updateQuestionDisplay() {
     if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
         const questionLangIndex = headers.indexOf(questionSelect.value);
         questionDisplay.textContent = "🥷 " + gameData[currentQuestionIndex][questionLangIndex];
+		playCurrentAudio();
     } else {
         questionDisplay.textContent = "沒有更多問題";
     }
@@ -761,7 +762,7 @@ function update() {
                         if (answeredQuestions < totalQuestions) {							
                             currentQuestionIndex++;
                             updateQuestionDisplay();                            
-								playCurrentAudio();								
+								//playCurrentAudio();								
                         } else {
                             endGame();
                         }
@@ -1296,7 +1297,6 @@ function handleTouchStart(event) {
 				playCurrentAudio();
 				iosTouch = true;
 			}
-
 }
 
 document.addEventListener('touchstart', handleTouchStart, false);
