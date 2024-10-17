@@ -5,7 +5,6 @@ link.href = 'style.css';
 document.head.appendChild(link);
 
 
-
 let myTitle = document.title;
 let htmlSettingsPage = `
 <div id="settingsPage">
@@ -92,13 +91,14 @@ document.body.innerHTML = htmlSettingsPage;
 /*
 const myData = `
 分類	國語	客語	拼音	注音	音檔
+一、問好 00百句	你叫什麼名字	你喊做麼个名	henˋ heemˆ zooˆ bbooˊ gaiˆ miangˋ	ˋ ˆ ˆ ˊ ˆ ˋ	k027.k100
+一、問好 00百句	你叫什麼名字	你喊做麼个名	henˋ heemˆ zooˆ bbooˊ gaiˆ miangˋ	ˋ ˆ ˆ ˊ ˆ ˋ	k027.k100
 一、問好 00百句	你好	你好	henˋ hooˆ	ˋ ˆ	k009.k100
 一、問好 00百句	老師早	先生𠢕早	sienˇ senˇ ngauˋ zooˆ	ˇ ˇ ˋ ˆ	k010.k100
 一、問好 00百句	謝謝	勞力	looˆ ladˋ	ˆ ˋ	k016.k100
-一、問好 00百句	不必客氣	毋使細義	m suˆ seˆ ngi	 ˆ ˆ 	k021.k100
-一、問好 00百句	老師再見	先生再見	sienˇ senˇ zaiˆ gienˆ	ˇ ˇ ˆ ˆ	k022.k100
-一、問好 00百句	再見	正來尞	zhangˆ loiˋ leeu	ˆ ˋ 	k023.k100
+一、問好 00百句	謝謝	勞力	looˆ ladˋ	ˆ ˋ	k016.k100
 二、紹介 00百句	你叫什麼名字	你喊做麼个名	henˋ heemˆ zooˆ bbooˊ gaiˆ miangˋ	ˋ ˆ ˆ ˊ ˆ ˋ	k027.k100
+二、紹介 00百句	我叫做李東興	𠊎喊做李東興	ngaiˋ heemˆ zooˆ liˆ dungˇ hinˇ	ˋ ˆ ˆ ˆ ˇ ˇ	k028.k100
 二、紹介 00百句	我叫做李東興	𠊎喊做李東興	ngaiˋ heemˆ zooˆ liˆ dungˇ hinˇ	ˋ ˆ ˆ ˆ ˇ ˇ	k028.k100
 二、紹介 00百句	你幾歲	你幾多歲	henˋ giˆ dooˇ seˆ	ˋ ˆ ˇ ˆ	k036.k100
 `;
@@ -145,14 +145,19 @@ let passedLevels = 0;
 const minWordDistance = 100; // 單詞之間的最小距離
 const safeZoneRadius = 100; // 主角初始位置周圍的安全區域半徑
 
+
+/* 題庫解析與選單建立*/
 // 解析題庫資料
 const parsedData = myData.trim().split('\n').map(line => line.split('\t'));
 const headers = parsedData[0];
-const data = parsedData.slice(1);
+const dataSlice = parsedData.slice(1);
+const data = Array.from(new Set(dataSlice.map(JSON.stringify)), JSON.parse); // 使用 Set 移除重複項目;
 
 
 // 獲取所有分類
 const categories = ['全部', ...new Set(data.map(row => row[0]))];
+
+
 
 // 動態生成選項
 categories.forEach(category => {
@@ -161,89 +166,219 @@ categories.forEach(category => {
     lessonSelect.appendChild(option);
 });
 
-
-// 找出 '分類' 和 '音檔' 的索引位置
-const categoryIndex = headers.indexOf('分類');
-const audioIndex = headers.indexOf('音檔');
-
-// 使用 filter 排除 排除 '分類' 和 '音檔'
-const languages = headers.filter((header, index) => index !== categoryIndex && index !== audioIndex);
-
-
-languages.forEach(lang => {
-    const qOption = document.createElement('option');
-    const aOption = document.createElement('option');
-    qOption.value = aOption.value = qOption.textContent = aOption.textContent = lang;
-    questionSelect.appendChild(qOption);
-    answerSelect.appendChild(aOption.cloneNode(true));
-});
-
-
+// 初始化語言選項
 function initializeLanguageSelects() {
-    // 清空現有選項
+    // 取得可用語言並過濾掉 '分類' 和 '音檔'
+    const availableLanguages = headers.filter(header => !['分類', '音檔'].includes(header));
+
+    // 清空 questionSelect 和 answerSelect 並添加語言選項
+    populateSelects(availableLanguages);
+
+    // 添加事件監聽器，當 questionSelect 變更時更新 answerSelect
+    questionSelect.addEventListener('change', () => updateAnswerSelect(availableLanguages));
+}
+
+// 填充選項到 questionSelect 和 answerSelect
+function populateSelects(languages) {
     questionSelect.innerHTML = '';
     answerSelect.innerHTML = '';
 
-    // 獲取所有可用的語言（排除 '分類' 和 '音檔'）
-    const availableLanguages = headers.filter(header => !['分類', '音檔'].includes(header));
-
-    // 為 questionSelect 添加所有語言選項
-    availableLanguages.forEach(lang => {
-        const option = document.createElement('option');
-        option.value = option.textContent = lang;
+    languages.forEach(lang => {
+        const option = createOption(lang);
         questionSelect.appendChild(option);
     });
 
-    // 初始化 answerSelect
-    updateAnswerSelect();
+    updateAnswerSelect(languages);
+}
 
-    // 添加事件監聽器，當 questionSelect 變更時更新 answerSelect
-    questionSelect.addEventListener('change', updateAnswerSelect);
+// 創建選項元素
+function createOption(lang) {
+    const option = document.createElement('option');
+    option.value = option.textContent = lang;
+    return option;
 }
 
 // 更新 answerSelect 的選項
-function updateAnswerSelect() {
+function updateAnswerSelect(languages) {
     const selectedQuestion = questionSelect.value;
-    const availableLanguages = headers.filter(header => !['分類', '音檔'].includes(header));
-
-    // 清空答案選擇
     answerSelect.innerHTML = '';
 
-    // 添加除了 questionSelect 所選語言以外的所有選項
-    availableLanguages.forEach(lang => {
-        if (lang !== selectedQuestion) {
-            const option = document.createElement('option');
-            option.value = option.textContent = lang;
-            answerSelect.appendChild(option);
-        }
-    });
+    languages
+        .filter(lang => lang !== selectedQuestion)
+        .forEach(lang => answerSelect.appendChild(createOption(lang)));
 
-    // 選擇第一個可用的選項
+    // 選擇第一個可用的選項，並根據選項數量啟用或禁用開始按鈕
     answerSelect.selectedIndex = 0;
-
-    // 如果 answerSelect 變為空，禁用開始按鈕
     startButton.disabled = answerSelect.options.length === 0;
 }
 
-// 在頁面加載時調用初始化函數
+// 在頁面加載時初始化語言選項
 document.addEventListener('DOMContentLoaded', initializeLanguageSelects);
 
 
 
+/*音檔、音效播放*/
+const rightAudio = new Audio('right.mp3');
+const wrongAudio = new Audio('wrong.mp3');
 
+// 播放音效;
+function playAudio(audio) {
+    audio.currentTime = 0;
+    audio.play();
+}
 
+// 播放音檔;
+function playCurrentAudio(times = audioPlaybackTimes) {
+    if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
+        const audioFileInfo = gameData[currentQuestionIndex][headers.indexOf('音檔')];
+        let audioUrl = getAudioUrl(audioFileInfo);
 
+        if (audioUrl) {
+            playAudioMultipleTimes(audioUrl, times)
+                .catch(error => console.error('播放音頻時發生錯誤:', error));
+        }
+    } else {
+        console.warn('沒有可用的音頻數據');
+    }
+}
 
+// 取得路徑;
+function getAudioUrl(audioFileInfo) {
+    if (audioFileInfo.endsWith('.k100')) {
+        return `https://oikasu1.github.io/kasu100/${audioFileInfo.replace('.k100', '.mp3')}`;
+    } else if (audioFileInfo.endsWith('.kasu')) {
+        return `https://oikasu1.github.io/snd/mp3kasu/${audioFileInfo.replace('.kasu', '.mp3')}`;
+    } else if (audioFileInfo.endsWith('.holo')) {
+        return `https://oikasu1.github.io/snd/mp3holo/${audioFileInfo.replace('.holo', '.mp3')}`;
+    } else if (audioFileInfo.endsWith('.mp3')) {
+        return audioFileInfo;
+    } else {
+        let langCode, text;
+        
+        // 新增的 TTS 處理邏輯
+        const ttsMatch = audioFileInfo.match(/^tts\s*[:=]?\s*\(?\s*(\w+)\s*\)?$/i);
+        if (ttsMatch) {
+            langCode = ttsMatch[1].toLowerCase();
+            text = gameData[currentQuestionIndex][headers.indexOf(langCode)];
+        } else {
+            switch (audioFileInfo) {
+                case 'zh':
+                    langCode = 'zh-TW';
+                    text = gameData[currentQuestionIndex][headers.indexOf('國語')];
+                    break;
+                case 'en':
+                case '英':
+                    langCode = 'en';
+                    text = gameData[currentQuestionIndex][headers.indexOf('英語')] || gameData[currentQuestionIndex][headers.indexOf('美語')];
+                    break;
+                case 'jp':
+                case '日':
+                    langCode = 'ja';
+                    text = gameData[currentQuestionIndex][headers.indexOf('日語')];
+                    break;
+                case 'es':
+                case '西':
+                    langCode = 'es-ES';
+                    text = gameData[currentQuestionIndex][headers.indexOf('西班牙語')];
+                    break;
+                case 'vi':
+                case '越':
+                    langCode = 'vi';
+                    text = gameData[currentQuestionIndex][headers.indexOf('越南語')];
+                    break;
+                case 'ko':
+                case '韓':
+                    langCode = 'vi';
+                    text = gameData[currentQuestionIndex][headers.indexOf('韓語')];
+                    break;
+                case 'in':
+                case '印':
+                    langCode = 'id';
+                    text = gameData[currentQuestionIndex][headers.indexOf('印尼語')];
+                    break;
+                default:
+                    console.warn('未知的音頻格式:', audioFileInfo);
+                    return null;
+            }
+        }
+        
+        if (langCode && text) {
+            return `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(text)}`;
+        } else {
+            console.warn('無法確定語言或找不到對應的文本');
+            return null;
+        }
+    }
+}
+
+let currentAudio = null;
+
+// 播放多次;
+function playAudioMultipleTimes(audioUrl, times) {
+    return new Promise((resolve, reject) => {
+        // 如果有正在播放的音頻，停止它
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.removeEventListener('ended', currentAudio.audioEndHandler);
+        }
+
+        const audio = new Audio(audioUrl);
+        currentAudio = audio; // 保存對當前音頻的引用
+        let playCount = 0;
+
+        audio.audioEndHandler = function() {
+            playCount++;
+            if (playCount < times) {
+                audio.currentTime = 0;
+                audio.play().catch(reject);
+            } else {
+                audio.removeEventListener('ended', audio.audioEndHandler);
+                currentAudio = null; // 清除當前音頻引用
+                resolve();
+            }
+        };
+
+        audio.addEventListener('ended', audio.audioEndHandler);
+        audio.addEventListener('error', (e) => {
+            currentAudio = null; // 發生錯誤時也要清除引用
+            reject(e);
+        });
+
+        audio.play().catch((e) => {
+            currentAudio = null; // 播放失敗時清除引用
+            reject(e);
+        });
+    });
+}
+
+function stopCurrentAudio() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.removeEventListener('ended', currentAudio.audioEndHandler);
+        currentAudio = null;
+    }
+}
+/*---------------*/
 
 startButton.addEventListener('click', () => {
-	disableTouchBehaviors();
-
-    if (availableQuestions.length === 0 && usedQuestions.length === 0) {
-        availableQuestions = [...data];
+    disableTouchBehaviors();
+    
+    // 檢查是否有選擇特定分類
+    const selectedCategory = lessonSelect.value;
+    
+    // 如果可用題目陣列為空，需要重新填充
+    if (availableQuestions.length === 0) {
+        // 如果選擇「全部」，使用完整資料集
+        if (selectedCategory === '全部') {
+            availableQuestions = [...data];
+        } else {
+            // 選擇特定分類時，只取該分類的題目
+            availableQuestions = data.filter(item => item[0] === selectedCategory);
+        }
     }
-
+    
     selectNewQuestions();
-
+    
     if (gameData.length > 0) {
         totalQuestions = gameData.length;
         // 開始遊戲
@@ -255,12 +390,10 @@ startButton.addEventListener('click', () => {
         initGame();
         resizeCanvas();
         gameLoopId = requestAnimationFrame(gameLoop);
-    } else {
-        alert("沒有足夠的數據來開始遊戲，請選擇其他設置。");
     }
-	iosTouch = true;
+    
+    iosTouch = true;
 });
-
 
 const player = {
     x: 50,
@@ -599,6 +732,7 @@ function updateQuestionDisplay() {
 function selectNewQuestions() {
     const selectedCategory = lessonSelect.value;
     const count = parseInt(countSelect.value);
+    const answerLangIndex = headers.indexOf(answerSelect.value);
 
     // 如果所有題目都用完了，重置 usedQuestions
     if (availableQuestions.length === 0) {
@@ -608,19 +742,27 @@ function selectNewQuestions() {
 
     // 過濾並隨機選擇題目
     let filteredData = selectedCategory === '全部' ? availableQuestions : availableQuestions.filter(row => row[0] === selectedCategory);
-
+    
     gameData = [];
+    const usedAnswers = new Set(); // 用來追踪已選擇的答案
+
     while (gameData.length < count && filteredData.length > 0) {
         const index = Math.floor(Math.random() * filteredData.length);
-        const selectedQuestion = filteredData.splice(index, 1)[0];
-        gameData.push(selectedQuestion);
-        usedQuestions.push(selectedQuestion);
-        availableQuestions = availableQuestions.filter(q => q !== selectedQuestion);
+        const selectedQuestion = filteredData[index];
+        const answer = selectedQuestion[answerLangIndex];
+
+        // 檢查答案是否已經存在
+        if (!usedAnswers.has(answer)) {
+            gameData.push(selectedQuestion);
+            usedAnswers.add(answer);
+            usedQuestions.push(selectedQuestion);
+            availableQuestions = availableQuestions.filter(q => q !== selectedQuestion);
+            filteredData.splice(index, 1);
+        }
     }
 
     totalQuestions = gameData.length;
 }
-
 function drawPlayer() {
     ctx.fillStyle = playerColor;
     ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -1015,121 +1157,6 @@ document.addEventListener('keydown', (event) => {
 
 
 
-        const rightAudio = new Audio('right.mp3');
-        const wrongAudio = new Audio('wrong.mp3');
-
-        function playAudio(audio) {
-            audio.currentTime = 0;
-            audio.play();
-        }
-
-
-function playCurrentAudio(times = audioPlaybackTimes) {
-    if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
-        const audioFileInfo = gameData[currentQuestionIndex][headers.indexOf('音檔')];
-        let audioUrl = getAudioUrl(audioFileInfo);
-
-        if (audioUrl) {
-            playAudioMultipleTimes(audioUrl, times)
-                .catch(error => console.error('播放音頻時發生錯誤:', error));
-        }
-    } else {
-        console.warn('沒有可用的音頻數據');
-    }
-}
-
-
-function getAudioUrl(audioFileInfo) {
-    if (audioFileInfo.endsWith('.k100')) {
-        return `https://oikasu1.github.io/kasu100/${audioFileInfo.replace('.k100', '.mp3')}`;
-    } else if (audioFileInfo.endsWith('.kasu')) {
-        return `https://oikasu1.github.io/snd/mp3kasu/${audioFileInfo.replace('.kasu', '.mp3')}`;
-    } else if (audioFileInfo.endsWith('.holo')) {
-        return `https://oikasu1.github.io/snd/mp3holo/${audioFileInfo.replace('.holo', '.mp3')}`;
-    } else if (audioFileInfo.endsWith('.mp3')) {
-        return audioFileInfo;
-    } else {
-        let langCode, text;
-        switch (audioFileInfo) {
-            case 'zh':
-                langCode = 'zh-TW';
-                text = gameData[currentQuestionIndex][headers.indexOf('國語')];
-                break;
-            case 'en':
-            case '英':
-                langCode = 'en';
-                text = gameData[currentQuestionIndex][headers.indexOf('英語')] || gameData[currentQuestionIndex][headers.indexOf('美語')];
-                break;
-            case 'jp':
-            case '日':
-                langCode = 'ja';
-                text = gameData[currentQuestionIndex][headers.indexOf('日語')];
-                break;
-            case 'in':
-            case '印':
-                langCode = 'id';
-                text = gameData[currentQuestionIndex][headers.indexOf('印尼語')];
-                break;
-            default:
-                console.warn('未知的音頻格式:', audioFileInfo);
-                return null;
-        }
-        if (langCode && text) {
-            return `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(text)}`;
-        } else {
-            console.warn('無法確定語言或找不到對應的文本');
-            return null;
-        }
-    }
-}
-
-
-let currentAudio = null;
-
-function playAudioMultipleTimes(audioUrl, times) {
-    return new Promise((resolve, reject) => {
-        // 如果有正在播放的音頻，停止它
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.removeEventListener('ended', currentAudio.audioEndHandler);
-        }
-
-        const audio = new Audio(audioUrl);
-        currentAudio = audio; // 保存對當前音頻的引用
-        let playCount = 0;
-
-        audio.audioEndHandler = function() {
-            playCount++;
-            if (playCount < times) {
-                audio.currentTime = 0;
-                audio.play().catch(reject);
-            } else {
-                audio.removeEventListener('ended', audio.audioEndHandler);
-                currentAudio = null; // 清除當前音頻引用
-                resolve();
-            }
-        };
-
-        audio.addEventListener('ended', audio.audioEndHandler);
-        audio.addEventListener('error', (e) => {
-            currentAudio = null; // 發生錯誤時也要清除引用
-            reject(e);
-        });
-
-        audio.play().catch((e) => {
-            currentAudio = null; // 播放失敗時清除引用
-            reject(e);
-        });
-    });
-}
-
-function stopCurrentAudio() {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.removeEventListener('ended', currentAudio.audioEndHandler);
-        currentAudio = null;
-    }
-}
 
 
 
@@ -1173,7 +1200,6 @@ function closeGame() {
     // 停止遊戲循環（如果有的話）
     cancelAnimationFrame(gameLoopId);
 }
-
 
 
 function showGameEndModal(isLevelCompleted) {
