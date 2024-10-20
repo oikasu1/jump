@@ -96,6 +96,9 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-height: 90vh; 
+    overflow-y: auto;
+	margin:  40px  0px;
 }
 
 #settingsPage h2 {
@@ -129,6 +132,19 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+
+@media (orientation: landscape) {
+    #settingsPage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #settingsPage > div {
+        width: 100%;
+        max-width: 300px; /* 調整寬度以適應不同螢幕 */
+    }
 }
 
 /* Question Display */
