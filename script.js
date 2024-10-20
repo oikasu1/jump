@@ -664,12 +664,17 @@ function resizeCanvas() {
     canvas.height = Math.floor(canvasHeight * scale);
     ctx.scale(scale, scale);
 
-    // 重新生成平台和單詞
-    //generatePlatforms();
-    //generateWords();
-    //updateWordLabels();
+    // 修改：調整設定頁面
+    const settingsPage = document.getElementById('settingsPage');
+    if (isPortrait) {
+        settingsPage.style.height = 'auto';
+        settingsPage.style.overflowY = 'visible';
+    } else {
+        settingsPage.style.height = '90vh';
+        settingsPage.style.overflowY = 'auto';
+        settingsPage.style.webkitOverflowScrolling = 'touch'; 
+    }
 }
-
 
 
 function initGame() {
@@ -716,53 +721,56 @@ function initGame() {
     generateWords();
     updateWordLabels();
     updateControlsPosition();
+	handleSettingsTouch();
 }
 
 function updateQuestionDisplay() {
 	playAudio(rightAudio);
-    if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
+    if (gameData.length > 0 ) {
         const questionLangIndex = headers.indexOf(questionSelect.value);
         questionDisplay.textContent = "🥷 " + gameData[currentQuestionIndex][questionLangIndex];
-    } else {
-        questionDisplay.textContent = "沒有更多問題";
-    }
 }
-
+}
 
 function selectNewQuestions() {
-    const selectedCategory = lessonSelect.value;
-    const count = parseInt(countSelect.value);
-    const answerLangIndex = headers.indexOf(answerSelect.value);
+  const selectedCategory = lessonSelect.value;
+  const count = parseInt(countSelect.value);
+  const answerLangIndex = headers.indexOf(answerSelect.value);
 
-    // 如果所有題目都用完了，重置 usedQuestions
-    if (availableQuestions.length === 0) {
-        availableQuestions = [...usedQuestions];
-        usedQuestions = [];
+  // 如果可用題目不足，重置題庫
+  if (availableQuestions.length < count) {
+    availableQuestions = [...usedQuestions, ...availableQuestions];
+    usedQuestions = [];
+  }
+
+  // 過濾並隨機選擇題目
+  let filteredData = selectedCategory === '全部' ? 
+    availableQuestions : 
+    availableQuestions.filter(row => row[0] === selectedCategory);
+
+  gameData = [];
+  const usedAnswers = new Set(); // 用來追踪已選擇的答案
+
+  while (gameData.length < count && filteredData.length > 0) {
+    const index = Math.floor(Math.random() * filteredData.length);
+    const selectedQuestion = filteredData[index];
+    const answer = selectedQuestion[answerLangIndex];
+
+    // 檢查答案是否已經存在
+    if (!usedAnswers.has(answer)) {
+      gameData.push(selectedQuestion);
+      usedAnswers.add(answer);
+      usedQuestions.push(selectedQuestion);
+
+      // 從可用題目和過濾後的資料中移除已選擇的題目
+      availableQuestions = availableQuestions.filter(q => q !== selectedQuestion);
+      filteredData.splice(index, 1);
     }
+  }
 
-    // 過濾並隨機選擇題目
-    let filteredData = selectedCategory === '全部' ? availableQuestions : availableQuestions.filter(row => row[0] === selectedCategory);
-    
-    gameData = [];
-    const usedAnswers = new Set(); // 用來追踪已選擇的答案
-
-    while (gameData.length < count && filteredData.length > 0) {
-        const index = Math.floor(Math.random() * filteredData.length);
-        const selectedQuestion = filteredData[index];
-        const answer = selectedQuestion[answerLangIndex];
-
-        // 檢查答案是否已經存在
-        if (!usedAnswers.has(answer)) {
-            gameData.push(selectedQuestion);
-            usedAnswers.add(answer);
-            usedQuestions.push(selectedQuestion);
-            availableQuestions = availableQuestions.filter(q => q !== selectedQuestion);
-            filteredData.splice(index, 1);
-        }
-    }
-
-    totalQuestions = gameData.length;
+  totalQuestions = gameData.length;
 }
+
 function drawPlayer() {
     ctx.fillStyle = playerColor;
     ctx.fillRect(player.x, player.y, player.width, player.height);
@@ -1026,18 +1034,22 @@ function checkEnemyCollision() {
     ) {
         enemy.x = canvasWidth - 50;
         enemy.y = canvasHeight - 80;
-
         player.lives--;
-
         player.yVelocity = -15; // 給玩家一個小跳躍
-        playWrongSound();
-
+        playAudio(wrongAudio);
         if (player.lives <= 0) {
             endGame();
+        } else {
+            // 新增：移動到下一題
+            currentQuestionIndex++;
+            if (currentQuestionIndex < totalQuestions) {
+                updateQuestionDisplay();
+                playCurrentAudio();
+            } else {
+                endGame();
+            }
         }
     }
-
-
 }
 
 
@@ -1199,7 +1211,33 @@ function closeGame() {
 
     // 停止遊戲循環（如果有的話）
     cancelAnimationFrame(gameLoopId);
+    // 新增：啟用觸控行為
+    enableTouchBehaviors();
 }
+
+// 新增這個函數
+function handleSettingsTouch() {
+    const settingsPage = document.getElementById('settingsPage');
+    let startY;
+
+    settingsPage.addEventListener('touchstart', function(e) {
+        startY = e.touches[0].clientY;
+    });
+
+    settingsPage.addEventListener('touchmove', function(e) {
+        const touchY = e.touches[0].clientY;
+        const scrollTop = settingsPage.scrollTop;
+        const scrollHeight = settingsPage.scrollHeight;
+        const clientHeight = settingsPage.clientHeight;
+
+        // 允許滾動，除非已經到達頂部或底部
+        if ((scrollTop === 0 && touchY > startY) || 
+            (scrollTop + clientHeight === scrollHeight && touchY < startY)) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+}
+
 
 
 function showGameEndModal(isLevelCompleted) {
@@ -1272,37 +1310,45 @@ window.addEventListener('resize', () => {
 
 window.addEventListener('orientationchange', updateControlsPosition);
 
+// 修改現有的方向變化監聽器
+window.addEventListener('orientationchange', function() {
+    if (isMobile() && !isTabletOrDesktop()) {
+        setTimeout(function() {
+            if (document.fullscreenElement) {
+                exitFullscreen();
+                enterFullscreen(document.documentElement);
+            }
+            resizeCanvas(); // 新增：在方向變化時調用 resizeCanvas
+        }, 300);
+    }
+});
+
 // 初始化遊戲設定頁面
 initGame();
 
 
 
-  // 禁用雙擊縮放
-  document.addEventListener('dblclick', function(event) {
-    event.preventDefault();
-  }, { passive: false });
 
-  // 禁用雙指縮放
-  document.addEventListener('gesturestart', function(event) {
-    event.preventDefault();
-  });
 
-  // 禁用捏合縮放
-  document.addEventListener('touchmove', function(event) {
-    if (event.scale !== 1) {
-      event.preventDefault();
+document.addEventListener('touchmove', function(event) {
+    // 只在遊戲進行時阻止默認行為
+    if (document.getElementById('gameContainer').style.display !== 'none') {
+        if (event.scale !== 1) {
+            event.preventDefault();
+        }
     }
-  }, { passive: false });
+}, { passive: false });
 
-  // 在遊戲開始時調用此函數
-  function disableTouchBehaviors() {
-    document.body.style.touchAction = 'none';
-  }
+// 修改 disableTouchBehaviors 函數
+function disableTouchBehaviors() {
+    document.getElementById('gameContainer').style.touchAction = 'none';
+}
 
-  // 在遊戲結束時調用此函數恢復默認行為
-  function enableTouchBehaviors() {
+// 修改 enableTouchBehaviors 函數
+function enableTouchBehaviors() {
+    document.getElementById('gameContainer').style.touchAction = 'auto';
     document.body.style.touchAction = 'auto';
-  }
+}
 
 
 let iosTouch = false;
