@@ -52,7 +52,7 @@ let htmlSettingsPage = `
         </select>
     </div>
 
-    <button id="startButton">開始</button>
+    <button id="startButton">開始 跳跳跳</button>
 </div>
 
 <div id="gameContainer" style="position: relative; display: none;">
