@@ -486,7 +486,7 @@ function generateMeteors() {
     y: isPortrait ? 0 : Math.random() * (canvasHeight - 40),
     width: 40,
     height: 40,
-    speed: isMobileOrTablet ? (Math.random() * 0.5 + 1) : (Math.random() * 2 + 1), //語詞移動速度
+    speed: isMobileOrTablet ? (Math.random() * 0.5 + 1) : (Math.random() * 0.8 + 1.5), //語詞移動速度
     text: correctAnswer,
     question: gameData[currentQuestionIndex][questionLangIndex],
     collected: false,
