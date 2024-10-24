@@ -229,12 +229,14 @@ function playAudio(audio) {
 
 // 播放音檔;
 function playCurrentAudio(times = audioPlaybackTimes) {
+	
     if (gameData.length > 0 && currentQuestionIndex < gameData.length) {
         const audioFileInfo = gameData[currentQuestionIndex][headers.indexOf('音檔')];
+		const playbackSpeed = audioFileInfo.toLowerCase().endsWith('.k100') ? 1.3 : 1;
         let audioUrl = getAudioUrl(audioFileInfo);
 
         if (audioUrl) {
-            playAudioMultipleTimes(audioUrl, times)
+            playAudioMultipleTimes(audioUrl, times, playbackSpeed)
                 .catch(error => console.error('播放音頻時發生錯誤:', error));
         }
     } else {
@@ -314,8 +316,14 @@ function getAudioUrl(audioFileInfo) {
 let currentAudio = null;
 
 // 播放多次;
-function playAudioMultipleTimes(audioUrl, times) {
+function playAudioMultipleTimes(audioUrl, times, playbackSpeed = 1) {
     return new Promise((resolve, reject) => {
+        // 驗證播放速度的範圍
+        if (playbackSpeed <= 0) {
+            reject(new Error('Playback speed must be greater than 0'));
+            return;
+        }
+
         // 如果有正在播放的音頻，停止它
         if (currentAudio) {
             currentAudio.pause();
@@ -324,8 +332,12 @@ function playAudioMultipleTimes(audioUrl, times) {
 
         const audio = new Audio(audioUrl);
         currentAudio = audio; // 保存對當前音頻的引用
+        
+        // 設置播放速度
+        audio.playbackRate = playbackSpeed;
+        
         let playCount = 0;
-
+        
         audio.audioEndHandler = function() {
             playCount++;
             if (playCount < times) {
@@ -339,6 +351,7 @@ function playAudioMultipleTimes(audioUrl, times) {
         };
 
         audio.addEventListener('ended', audio.audioEndHandler);
+        
         audio.addEventListener('error', (e) => {
             currentAudio = null; // 發生錯誤時也要清除引用
             reject(e);
