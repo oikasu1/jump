@@ -316,8 +316,8 @@ body {
     }
 }
 
-/* 大手機設備 (480px - 767px) */
-@media screen and (min-width: 480px) and (max-width: 767px) {
+/* 大手機設備 (550px - 767px) */
+@media screen and (min-width: 550px) and (max-width: 767px) {
     #cardGrid {
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
