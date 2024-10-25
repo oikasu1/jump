@@ -167,17 +167,47 @@ categories.forEach(category => {
 });
 
 // 初始化語言選項
+
 function initializeLanguageSelects() {
     // 取得可用語言並過濾掉 '分類' 和 '音檔'
     const availableLanguages = headers.filter(header => !['分類', '音檔'].includes(header));
-
+    
     // 清空 questionSelect 和 answerSelect 並添加語言選項
     populateSelects(availableLanguages);
-
-    // 添加事件監聽器，當 questionSelect 變更時更新 answerSelect
-    questionSelect.addEventListener('change', () => updateAnswerSelect(availableLanguages));
+    
+    // 添加事件監聽器
+    questionSelect.addEventListener('change', () => {
+        updateAnswerSelect(availableLanguages);
+        resetQuestionPool();  // 新增：重置題庫
+    });
+    
+    // 新增：分類選擇變更事件
+    lessonSelect.addEventListener('change', () => {
+        resetQuestionPool();  // 重置題庫
+    });
+    
+    // 新增：答案選擇變更事件
+    answerSelect.addEventListener('change', () => {
+        resetQuestionPool();  // 重置題庫
+    });
 }
 
+
+// 新增：重置題庫的函數
+function resetQuestionPool() {
+    // 清空所有題庫相關陣列
+    gameData = [];
+    availableQuestions = [];
+    usedQuestions = [];
+    
+    // 重新初始化可用題目
+    const selectedCategory = lessonSelect.value;
+    if (selectedCategory === '全部') {
+        availableQuestions = [...data];
+    } else {
+        availableQuestions = data.filter(item => item[0] === selectedCategory);
+    }
+}
 // 填充選項到 questionSelect 和 answerSelect
 function populateSelects(languages) {
     questionSelect.innerHTML = '';
@@ -373,23 +403,16 @@ function stopCurrentAudio() {
 }
 /*---------------*/
 
+
 startButton.addEventListener('click', () => {
     disableTouchBehaviors();
     
-    // 檢查是否有選擇特定分類
-    const selectedCategory = lessonSelect.value;
-    
-    // 如果可用題目陣列為空，需要重新填充
+    // 確保題庫已正確初始化
     if (availableQuestions.length === 0) {
-        // 如果選擇「全部」，使用完整資料集
-        if (selectedCategory === '全部') {
-            availableQuestions = [...data];
-        } else {
-            // 選擇特定分類時，只取該分類的題目
-            availableQuestions = data.filter(item => item[0] === selectedCategory);
-        }
+        resetQuestionPool();
     }
     
+    // 選擇新題目
     selectNewQuestions();
     
     if (gameData.length > 0) {
@@ -404,7 +427,6 @@ startButton.addEventListener('click', () => {
         resizeCanvas();
         gameLoopId = requestAnimationFrame(gameLoop);
     }
-    
     iosTouch = true;
 });
 
@@ -1194,11 +1216,11 @@ function updateControlsPosition() {
 
 document.getElementById('closeButton').addEventListener('click', closeGame);
 
+
 function closeGame() {
     document.getElementById('gameContainer').style.display = 'none';
     document.getElementById('settingsPage').style.display = 'block';
-
-	stopCurrentAudio();
+    stopCurrentAudio();
 
     // 重置遊戲相關狀態
     player.x = playerStartX;
@@ -1210,7 +1232,6 @@ function closeGame() {
     player.lives = livesCount;
     player.jumpCount = 0;
     player.lastJumpTime = 0;
-
     currentQuestionIndex = 0;
     score = 0;
     answeredQuestions = 0;
@@ -1220,11 +1241,13 @@ function closeGame() {
     platforms = [];
     words = [];
 
-    selectNewQuestions();
+    // 重置題庫
+    resetQuestionPool();
 
-    // 停止遊戲循環（如果有的話）
+    // 取消遊戲循環
     cancelAnimationFrame(gameLoopId);
-    // 新增：啟用觸控行為
+    
+    // 啟用觸控行為
     enableTouchBehaviors();
 }
 
