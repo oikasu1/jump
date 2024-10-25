@@ -336,35 +336,52 @@ const enemy = {
 
 // 新增：敵人子彈物件
 class EnemyBullet {
-  constructor(x, y, targetX, targetY) {
-    this.x = x;
-    this.y = y;
-    this.width = 10;
-    this.height = 5;
-    this.speed = 5;
-    const isPortrait = window.innerHeight > window.innerWidth;
+    constructor(x, y, targetX, targetY) {
+        const isPortrait = window.innerHeight > window.innerWidth;
+        
+        // 先設定子彈大小和速度
+        this.width = 10;
+        this.height = 5;
+        this.speed = 3;
+        
+        // 設定子彈起始位置
+        if (isPortrait) {
+            // 直向模式
+            this.x = x - this.width/2; // 從敵人中心發射
+			this.y = enemy.y + enemy.height; // 從敵人底部發射
+        } else {
+            // 橫向模式
+			this.x = enemy.x; // 從敵人左側發射
+			this.y = enemy.y + enemy.height / 2 - this.height / 2; // 從敵人垂直中心發射
+        }
 
-    if (parseInt(difficultySelect.value) === 2) {
-      // 計算子彈飛行角度
-      const angle = Math.atan2(targetY - y, targetX - x);
-      this.dx = Math.cos(angle) * this.speed;
-      this.dy = Math.sin(angle) * this.speed;
-    } else {
-      // 難度1時維持直線移動
-      if (isPortrait) {
-        this.dx = 0;
-        this.dy = this.speed;
-      } else {
-        this.dx = -this.speed;
-        this.dy = 0;
-      }
+        if (parseInt(difficultySelect.value) === 2) {
+            // 難度2時，計算子彈飛行角度
+            const angle = Math.atan2(targetY - y, targetX - x);
+            this.dx = Math.cos(angle) * this.speed;
+            this.dy = Math.sin(angle) * this.speed;
+				console.log("this.x " + this.x)
+				console.log("this.y " + this.y)
+        } else {
+            // 難度1時維持直線移動
+            if (isPortrait) {
+                this.dx = 0;
+                this.dy = this.speed;
+				console.log("this.x " + this.x)
+				console.log("this.y " + this.y)
+            } else {
+                this.dx = -this.speed; // 往左移動
+                this.dy = 0;
+				console.log("this.x " + this.x)
+				console.log("this.y " + this.y)
+            }
+        }
     }
-  }
 
-  update() {
-    this.x += this.dx;
-    this.y += this.dy;
-  }
+    update() {
+        this.x += this.dx;
+        this.y += this.dy;
+    }
 }
 
 
@@ -383,7 +400,7 @@ function enemyShoot() {
   const isPortrait = window.innerHeight > window.innerWidth;
   
   // 根據難度設定不同的發射間隔
-  const shootInterval = difficulty === 1 ? 3000 : 2000; // 難度1為3秒，難度2為2秒
+  const shootInterval = difficulty === 1 ? 3500 : 2500; // 難度1為3秒，難度2為2秒
   
   if ((difficulty === 1 || difficulty === 2) && 
       currentTime - enemy.lastShootTime > shootInterval) {
@@ -435,6 +452,10 @@ function drawEnemyBullets() {
       // 直式螢幕時，旋轉子彈90度
       ctx.translate(bullet.x + bullet.width/2, bullet.y + bullet.height/2);
       ctx.rotate(Math.PI / 2);
+      ctx.translate(-bullet.height/2, -bullet.width/2);
+    } else  {
+      // 橫式螢幕時
+      ctx.translate(bullet.x + bullet.width/2, bullet.y + bullet.height/2);
       ctx.translate(-bullet.height/2, -bullet.width/2);
     }
     
