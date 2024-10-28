@@ -34,9 +34,9 @@ let htmlSettingsPage = `
         <select id="countSelect">
 		    <option value="2">2</option>
 			<option value="3">3</option>
-            <option value="4">4</option>
+            <option value="4" selected>4</option>
 			<option value="5">5</option>
-            <option value="6" selected>6</option>
+            <option value="6">6</option>
 			<option value="7">7</option>
 			<option value="8">8</option>
         </select>
@@ -61,6 +61,7 @@ let htmlSettingsPage = `
 	<div id="timeConditionDiv" style="display: none;">
 	<label for="timeConditionSelect">限時：</label>
 	<select id="timeConditionSelect">
+	  <option value="20">20秒</option>
 	  <option value="60" selected>60秒</option>
 	  <option value="90">90秒</option>
 	  <option value="100">100秒</option>
@@ -72,6 +73,7 @@ let htmlSettingsPage = `
 	<div id="pairsConditionDiv" style="display: none;">
 	<label for="pairsConditionInput">組數：</label>
 		<select id="pairsConditionSelect">
+		<option value="5">5組</option>
 		  <option value="10">10組</option>
 		  <option value="15">15組</option>
 		  <option value="20">20組</option>

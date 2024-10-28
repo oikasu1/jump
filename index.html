@@ -1,13 +1,99 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="data.js"></script>
-<link href="https://oikasu1.github.io/kasuexam/kasu/fonts/twhei.css" rel="stylesheet">
-<title>🥷學校客事💯</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>烏衣行客事真心色</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', '微軟正黑體', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        h2 {
+            color: #333;
+            margin-top: 0;
+        }
+        a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-<script src="script.js"></script>
+    <h1>烏衣行客事真心色</h1>
+    <div class="container" id="cardContainer"></div>
+    <script>
+        const myHtml =`
+名稱	檔名
+貪食蛇	snake
+跳跳跳	jump
+射擊	shot
+配對	match
+`;
+
+        function parseMyHtml(htmlString) {
+            const lines = htmlString.trim().split('\n');
+            const pages = [];
+            for (let i = 1; i < lines.length; i++) {
+                const [name, file] = lines[i].split('\t');
+                pages.push({ name, file });
+            }
+            return pages;
+        }
+        const pages = parseMyHtml(myHtml);
+        const cardContainer = document.getElementById('cardContainer');
+        pages.forEach(page => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h2>${page.name}</h2>
+                <a href="${page.file}.html" target="_blank">進入</a>
+            `;
+            cardContainer.appendChild(card);
+        });
+let script = document.createElement('script');
+script.src = 'wesingmark.js';
+script.type = 'text/javascript';
+document.head.appendChild(script);
+    </script>
+    <script src="https://y.yay.boo/y.js"></script>
 </body>
 </html>

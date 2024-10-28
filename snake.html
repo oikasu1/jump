@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🥷烏衣行(貪食蛇-學校客事100句)</title>
+    <link href="https://oikasu1.github.io/kasuexam/kasu/fonts/twhei.css" rel="stylesheet">
+	<script src="data.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+			user-select: none;
+        }
+
+        #gameSettings {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            max-width: 400px;
+            width: 100%;			          
+        }
+
+        #gameSettings h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        #gameSettings div {
+            margin-bottom: 0px;
+        }
+
+        #gameSettings p {
+            margin-left: 40px;
+
+        }
+
+        #gameSettings label {
+            display: inline-block;
+            width: 80px;
+            text-align: right;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #gameSettings select {
+            width: 250px;
+            padding: 5px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 8px;
+            margin: 5px 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 480px) {
+
+            #gameSettings,
+            #speedSelection {
+                padding: 20px;
+            }
+
+            #gameSettings select {
+                width: 150px;
+            }
+
+            button {
+                padding: 8px 8px;
+                margin: 5px 5px;
+            }
+        }
+
+        #gameCanvas {
+            border: 2px solid #bbb;
+            background-color: #fcfcfc;
+            display: none;
+        }
+
+        #container {
+            display: none;
+            position: relative;
+            text-align: center;
+			margin: 0;
+			transition: transform 0.3s ease;
+        }
+
+        #header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        #scoreDisplay,
+        #wordDisplay,
+        #timeDisplay {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #wordDisplay {
+            font-size: 18px;
+            border: 1px solid #bbb;
+            padding: 5px 10px;
+            border-radius: 50px;
+            color: #555;
+            background-color: #fcfcfc;
+        }
+
+        .food-label {
+            position: absolute;
+            font-size: 18px;
+        }
+
+        select {
+            margin: 5px 10px;
+            padding: 5px;
+        }
+
+        #startButton {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #startButton:hover {
+            background-color: #45a049;
+        }
+
+
+		.modal {
+		  display: none;
+		  position: fixed;
+		  z-index: 1000;
+		  left: 0;
+		  top: 0;
+		  width: 100%;
+		  height: 100%;
+		  background-color: rgba(0,0,0,0.4);
+		}
+
+		.modal-content {
+		  background-color: #fefefe;
+		  margin: 15% auto;
+		  padding: 20px;
+		  border: 1px solid #888;
+		  width: 80%;
+		  max-width: 300px;
+		  border-radius: 10px;
+		  text-align: center;
+		  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		}
+
+		#modalTitle {
+		  color: #333;
+		  margin-top: 0;
+		}
+
+		#modalMessage {
+		  color: #666;
+		  margin-bottom: 20px;
+		}
+
+		#starRating {
+		  font-size: 24px;
+		  color: #FFD700;
+		  margin-bottom: 20px;
+		  display: flex;
+		  flex-wrap: wrap;
+		  justify-content: center;
+		  gap: 5px;
+		}
+
+		.star {
+		  display: inline-block;
+		}
+		#modalClose {
+		  background-color: #4CAF50;
+		  color: white;
+		  padding: 10px 20px;
+		  border: none;
+		  border-radius: 5px;
+		  cursor: pointer;
+		  font-size: 16px;
+		  transition: background-color 0.3s;
+		}
+
+		#modalClose:hover {
+		  background-color: #45a049;
+		}
+    </style>
+</head>
+
+<body>
+
+    <div id="gameSettings">
+        <h2>🥷學校客事💯</h2>
+        <div>
+            <label for="lessonSelect">關卡：</label>
+            <select id="lessonSelect"></select>
+        </div>
+        <div>
+            <label for="questionSelect">題目：</label>
+            <select id="questionSelect"></select>
+        </div>
+        <div>
+            <label for="answerSelect">答案：</label>
+            <select id="answerSelect"></select>
+        </div>
+        <div>
+            <label for="blockCountSelect">數量：</label>
+            <select id="blockCountSelect">
+                <option value="2">2</option>
+                <option value="3" selected>3</option>
+				<option value="4">4</option>
+            </select>
+        </div>
+        <div>
+            <label for="speedSelect">速度：</label>
+            <select id="speedSelect">
+			    <option value="slow">慢慢趖 🦥</option>
+                <option value="slow">寬寬 🐈</option>
+                <option value="normal" selected>普通 🦓</option>
+                <option value="quick">真緊 🛩️</option>
+                <option value="fast">足緊 🚀</option>
+            </select>
+        </div>
+        <button id="startButton">貪食蛇 ;)</button>
+    </div>
+
+
+
+
+    <div id="container">
+        <div id="header">
+            <div id="scoreDisplay">✨得分: 0</div>
+            <div id="wordDisplay"></div>
+            <div id="timeDisplay">⏱️時間: 0</div>
+        </div>
+        <canvas id="gameCanvas"></canvas>
+        <div id="correctFoodLabel" class="food-label"></div>
+        <div id="wrongFoodLabel" class="food-label"></div>
+        <div id="wrongFoodLabel2" class="food-label"></div>
+		<div id="wrongFoodLabel3" class="food-label"></div>
+    </div>
+
+
+	<div id="customModal" class="modal">
+	  <div class="modal-content">
+		<h2 id="modalTitle"></h2>
+		<p id="modalMessage"></p>
+		<div id="starRating"></div>
+		<button id="modalClose">關閉</button>
+	  </div>
+	</div>
+
+    <script>
+
+
+/*
+const myData = `
+分類	國語	客語	拼音	注音	音檔
+一、問好 00百句	你好	你好	henˋ hooˆ	ˋ ˆ	k009.mp3
+一、問好 00百句	老師早	先生𠢕早	sienˇ senˇ ngauˋ zooˆ	ˇ ˇ ˋ ˆ	k010.mp3
+`;
+*/
+
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const wordDisplay = document.getElementById('wordDisplay');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const timeDisplay = document.getElementById('timeDisplay');
+        const correctFoodLabel = document.getElementById('correctFoodLabel');
+        const wrongFoodLabel = document.getElementById('wrongFoodLabel');
+        const container = document.getElementById('container');
+
+        let gridSize = 20;
+        let snake, correctFood, wrongFood, dx, dy, score, baseSpeed, gameSpeed, gameInterval, elapsedTime, startTime;
+        let currentWord, currentCorrectTranslation, currentWrongTranslation;
+        let isAdjacent;
+
+        const rightAudio = new Audio('right.mp3');
+        const wrongAudio = new Audio('wrong.mp3');
+
+        function playAudio(audio) {
+            audio.currentTime = 0;
+            audio.play();
+        }
+
+        let currentAudio = null;
+        let headers = [];
+        let wordPairs = [];
+        let lessons = {};
+        let allWords = [];
+        let unusedWords = [];
+        let isGameRunning = false;
+		let iosTouch = false;
+		let isSnakeYellow = false;
+		let colorChangeTimeout;
+
+
+
+        function playTwice() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio.play();
+                currentAudio.onended = function() {
+                    if (this.playCount === undefined) {
+                        this.playCount = 1;
+                        currentAudio.play(); // 播放第二次
+                    } else {
+                        this.playCount = undefined; // 重置計數
+                    }
+                };
+            }
+        }
+
+		function processMyData() {
+			const lines = myData.trim().split('\n');
+			headers = lines[0].trim().split(/\t/);
+			let wordId = 0;
+			allWords = []; // 重置
+			lessons = {}; // 重置 lessons 對象
+
+			// 輔助函數：檢查單詞是否重複
+			const isDuplicate = (word, wordList) => {
+				return wordList.some(w => w.國語 === word.國語 && w.客語 === word.客語);
+			};
+
+			lines.slice(1).forEach((line, index) => {
+				const parts = line.trim().split(/\t/);
+				if (parts.length >= 3) {
+					const [lesson, ...rest] = parts;
+					if (!lessons[lesson]) {
+						lessons[lesson] = [];
+					}
+					const newWord = {
+						id: wordId++,
+						lesson,
+						...Object.fromEntries(headers.slice(1).map((header, i) => [header, rest[i] || '']))
+					};
+					if (!isDuplicate(newWord, lessons[lesson])) {
+						lessons[lesson].push(newWord);
+						if (!isDuplicate(newWord, allWords)) {
+							allWords.push(newWord);
+						}
+					}
+				} else if (parts.length === 2) {
+					const [value1, value2] = parts;
+					const lesson = `第${Math.floor(index / 10) + 1}組`;
+					if (!lessons[lesson]) {
+						lessons[lesson] = [];
+					}
+					const newWord = {
+						id: wordId++,
+						lesson,
+						[headers[0]]: value1,
+						[headers[1]]: value2
+					};
+					if (!isDuplicate(newWord, lessons[lesson])) {
+						lessons[lesson].push(newWord);
+						if (!isDuplicate(newWord, allWords)) {
+							allWords.push(newWord);
+						}
+					}
+				}
+			});
+			populateSelects();
+		}
+        function populateSelects() {
+            const lessonSelect = document.getElementById('lessonSelect');
+            const questionSelect = document.getElementById('questionSelect');
+            const answerSelect = document.getElementById('answerSelect');
+
+            // 清空現有選項
+            lessonSelect.innerHTML = '';
+            questionSelect.innerHTML = '';
+            answerSelect.innerHTML = '';
+
+            // 添加"全部"選項到課別
+            const allOption = document.createElement('option');
+            allOption.value = 'all';
+            allOption.textContent = '全部';
+            lessonSelect.appendChild(allOption);
+
+            // 添加其他課程選項
+            for (const lesson in lessons) {
+                const option = document.createElement('option');
+                option.value = lesson;
+                option.textContent = lesson;
+                lessonSelect.appendChild(option);
+            }
+
+            // 獲取非"音檔"和"分類"的標題
+            const validHeaders = headers.filter(header => header !== '音檔' && header !== '分類');
+
+			// 檢查是否包含所有必要的標題
+			const hasAllRequiredHeaders = ['國語', '注音'].every(header => validHeaders.includes(header));
+
+            // 填充題目選單
+            validHeaders.forEach(header => {
+                const questionOption = document.createElement('option');
+                questionOption.value = header;
+                questionOption.textContent = header;
+                questionSelect.appendChild(questionOption);
+            });
+
+			// 設置默認選項
+			if (hasAllRequiredHeaders) {
+				// 如果包含所有必要的標題,設置默認值
+				questionSelect.value = '注音';
+			} else if (questionSelect.options.length > 0) {
+				// 否則,選擇第一個選項
+				questionSelect.selectedIndex = 0;
+			}
+
+			// 初始填充答案選單
+			updateAnswerSelect();
+
+			// 如果包含所有必要的標題,設置答案默認值為"國語"
+			if (hasAllRequiredHeaders) {
+				answerSelect.value = '國語';
+			}
+
+			// 添加事件監聽器
+			questionSelect.addEventListener('change', updateAnswerSelect);
+		}
+
+        function updateAnswerSelect() {
+            const questionSelect = document.getElementById('questionSelect');
+            const answerSelect = document.getElementById('answerSelect');
+            const selectedQuestion = questionSelect.value;
+            const validHeaders = headers.filter(header => header !== '音檔' && header !== '分類');
+
+            // 儲存答案選單的當前選擇
+            const currentAnswerSelection = answerSelect.value;
+
+            // 清空答案選單
+            answerSelect.innerHTML = '';
+
+            // 重新填充答案選單，排除在題目中選擇的選項
+            validHeaders.forEach(header => {
+                if (header !== selectedQuestion) {
+                    const option = document.createElement('option');
+                    option.value = header;
+                    option.textContent = header;
+                    answerSelect.appendChild(option);
+                }
+            });
+
+            // 如果答案選單的之前選擇仍然可用，則選中它
+            if (Array.from(answerSelect.options).some(option => option.value === currentAnswerSelection)) {
+                answerSelect.value = currentAnswerSelection;
+            } else {
+                // 否則，選擇第一個可用選項
+                answerSelect.selectedIndex = 0;
+            }
+        }
+
+        function updateSelectOptions(changedSelect, otherSelect) {
+            const changedValue = changedSelect.value;
+            const otherValue = otherSelect.value;
+            const validHeaders = headers.filter(header => header !== '音檔' && header !== '分類');
+
+            // 儲存其他選單的當前選擇
+            const currentOtherSelection = otherSelect.value;
+
+            // 清空其他選單
+            otherSelect.innerHTML = '';
+
+            // 重新填充其他選單，排除已在變更的選單中選擇的選項
+            validHeaders.forEach(header => {
+                if (header !== changedValue) {
+                    const option = document.createElement('option');
+                    option.value = header;
+                    option.textContent = header;
+                    otherSelect.appendChild(option);
+                }
+            });
+
+            // 如果其他選單的之前選擇仍然可用，則選中它
+            if (Array.from(otherSelect.options).some(option => option.value === currentOtherSelection)) {
+                otherSelect.value = currentOtherSelection;
+            } else {
+                // 否則，選擇第一個可用選項
+                otherSelect.selectedIndex = 0;
+            }
+        }
+
+        function getWordStats(wordId) {
+            const stats = JSON.parse(localStorage.getItem(`word_${wordId}`)) || {
+                correct: 0,
+                wrong: 0
+            };
+            return stats;
+        }
+
+        function updateWordStats(wordId, isCorrect) {
+            const stats = getWordStats(wordId);
+            if (isCorrect) {
+                stats.correct++;
+            } else {
+                stats.wrong++;
+            }
+            localStorage.setItem(`word_${wordId}`, JSON.stringify(stats));
+        }
+
+        // 在文檔加載完成後執行
+        window.onload = function() {
+            processMyData();
+            populateSelects();
+
+            // 為開始遊戲按鈕添加事件監聽器
+            document.getElementById('startButton').addEventListener('click', function() {
+                const speed = document.getElementById('speedSelect').value;				
+                startGame(speed);
+				document.addEventListener('click', playTwice);
+            });
+        };
+
+		function initGame() {
+			snake = [{ x: 10, y: 10 }];
+			dx = 0;
+			dy = 0;
+			score = 0;
+			gameSpeed = baseSpeed;
+			startTime = Date.now();
+			resetUnusedWords();
+			generateNewWord();
+		}
+
+        function resetUnusedWords() {
+            unusedWords = [...wordPairs];
+        }
+
+        function generateNewWord() {			
+            playAudio(rightAudio);
+
+            // 停止當前正在播放的音檔（如果有）
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            // 如果所有單詞都已經使用過，重置未使用單詞列表
+            if (unusedWords.length === 0) {
+                resetUnusedWords();
+            }
+
+
+            // 從未使用的單詞中隨機選擇一個
+            const randomIndex = Math.floor(Math.random() * unusedWords.length);
+            const selectedWord = unusedWords[randomIndex];
+
+            // 從未使用單詞列表中移除這個單詞
+            unusedWords.splice(randomIndex, 1);
+
+            currentWord = selectedWord.question;
+            currentCorrectTranslation = selectedWord.answer;
+            currentWordId = selectedWord.id;
+
+            wordDisplay.textContent = `🥷 ${currentWord}`;
+
+
+            // 檢查是否有對應的音檔並設置
+            if (selectedWord['音檔']) {
+                //currentAudio = new Audio(`https://oikasu1.github.io/kasu100/${selectedWord['音檔']}`);
+				let audioUrl = getAudioUrl(selectedWord['音檔']);
+				currentAudio = new Audio(audioUrl);
+
+                playTwice(); // 直接調用 playTwice()
+            }
+
+            // 獲取選擇的方塊數量
+            const selectedBlockCount = parseInt(document.getElementById('blockCountSelect').value);
+
+            // 生成正確答案的位置
+            correctFood = generateFoodPosition();
+
+            // 生成錯誤答案的位置，確保 y 座標不同
+			// 生成錯誤答案的位置
+			wrongFood = generateFoodPosition();
+			while (wrongFood.y === correctFood.y) {
+				wrongFood = generateFoodPosition();
+			}
+
+			// 生成第二個錯誤答案的位置
+			if (selectedBlockCount >= 3) {
+				wrongFood2 = generateFoodPosition();
+				while (wrongFood2.y === correctFood.y || wrongFood2.y === wrongFood.y) {
+					wrongFood2 = generateFoodPosition();
+				}
+			} else {
+				wrongFood2 = null;
+			}
+
+
+			// 生成第三個錯誤答案的位置
+			if (selectedBlockCount === 4) {
+				wrongFood3 = generateFoodPosition();
+				while (wrongFood3.y === correctFood.y || wrongFood3.y === wrongFood.y || 
+					   (wrongFood2 && wrongFood3.y === wrongFood2.y)) {
+					wrongFood3 = generateFoodPosition();
+				}
+			} else {
+				wrongFood3 = null;
+			}
+
+
+
+            // 設置食物標籤位置和內容
+            setFoodLabelPosition(correctFoodLabel, correctFood, currentCorrectTranslation);
+
+            // 為錯誤答案生成不同的翻譯
+            let wrongTranslations = wordPairs.filter(pair => pair.id !== selectedWord.id).map(pair => pair.answer);
+            currentWrongTranslation = wrongTranslations[Math.floor(Math.random() * wrongTranslations.length)];
+            setFoodLabelPosition(wrongFoodLabel, wrongFood, currentWrongTranslation);
+
+
+			if (selectedBlockCount >= 3 && wrongFood2) {
+				let secondWrongTranslation;
+				do {
+					secondWrongTranslation = wrongTranslations[Math.floor(Math.random() * wrongTranslations.length)];
+				} while (secondWrongTranslation === currentWrongTranslation);
+				setFoodLabelPosition(document.getElementById('wrongFoodLabel2'), wrongFood2, secondWrongTranslation);
+				document.getElementById('wrongFoodLabel2').style.display = 'block';
+			} else {
+				document.getElementById('wrongFoodLabel2').style.display = 'none';
+			}
+
+			if (selectedBlockCount === 4 && wrongFood3) {
+				let thirdWrongTranslation;
+				do {
+					thirdWrongTranslation = wrongTranslations[Math.floor(Math.random() * wrongTranslations.length)];
+				} while (thirdWrongTranslation === currentWrongTranslation || 
+						 thirdWrongTranslation === document.getElementById('wrongFoodLabel2').textContent);
+				setFoodLabelPosition(document.getElementById('wrongFoodLabel3'), wrongFood3, thirdWrongTranslation);
+				document.getElementById('wrongFoodLabel3').style.display = 'block';
+			} else {
+				document.getElementById('wrongFoodLabel3').style.display = 'none';
+			}
+		}
+
+
+
+
+
+// 取得路徑;
+function getAudioUrl(audioFileInfo) {
+    if (audioFileInfo.endsWith('.k100')) {
+        return `https://oikasu1.github.io/kasu100/${audioFileInfo.replace('.k100', '.mp3')}`;
+    } else if (audioFileInfo.endsWith('.kasu')) {
+        return `https://oikasu1.github.io/snd/mp3kasu/${audioFileInfo.replace('.kasu', '.mp3')}`;
+    } else if (audioFileInfo.endsWith('.holo')) {
+        return `https://oikasu1.github.io/snd/mp3holo/${audioFileInfo.replace('.holo', '.mp3')}`;
+    } else if (audioFileInfo.endsWith('.mp3')) {
+        return audioFileInfo;
+    } else {
+        let langCode, text;
+        
+        // 新增的 TTS 處理邏輯
+        const ttsMatch = audioFileInfo.match(/^tts\s*[:=]?\s*\(?\s*(\w+)\s*\)?$/i);
+        if (ttsMatch) {
+            langCode = ttsMatch[1].toLowerCase();
+            text = gameData[currentQuestionIndex][headers.indexOf(langCode)];
+        } else {
+            switch (audioFileInfo) {
+                case 'zh':
+                    langCode = 'zh-TW';
+                    text = gameData[currentQuestionIndex][headers.indexOf('國語')];
+                    break;
+                case 'en':
+                case '英':
+                    langCode = 'en';
+                    text = gameData[currentQuestionIndex][headers.indexOf('英語')] || gameData[currentQuestionIndex][headers.indexOf('美語')];
+                    break;
+                case 'jp':
+                case '日':
+                    langCode = 'ja';
+                    text = gameData[currentQuestionIndex][headers.indexOf('日語')];
+                    break;
+                case 'es':
+                case '西':
+                    langCode = 'es-ES';
+                    text = gameData[currentQuestionIndex][headers.indexOf('西班牙語')];
+                    break;
+                case 'vi':
+                case '越':
+                    langCode = 'vi';
+                    text = gameData[currentQuestionIndex][headers.indexOf('越南語')];
+                    break;
+                case 'ko':
+                case '韓':
+                    langCode = 'vi';
+                    text = gameData[currentQuestionIndex][headers.indexOf('韓語')];
+                    break;
+                case 'in':
+                case '印':
+                    langCode = 'id';
+                    text = gameData[currentQuestionIndex][headers.indexOf('印尼語')];
+                    break;
+                default:
+                    console.warn('未知的音頻格式:', audioFileInfo);
+                    return null;
+            }
+        }
+        
+        if (langCode && text) {
+            return `https://translate.google.com/translate_tts?ie=UTF-8&tl=${langCode}&client=tw-ob&q=${encodeURIComponent(text)}`;
+        } else {
+            console.warn('無法確定語言或找不到對應的文本');
+            return null;
+        }
+    }
+}
+
+
+        function generateFoodPosition() {
+            const x = Math.floor(Math.random() * (canvas.width / gridSize));
+            const y = Math.floor(Math.random() * (canvas.height / gridSize));
+            return {
+                x,
+                y
+            };
+        }
+
+        function checkCollision() {
+            const head = snake[0];
+            return (
+                head.x < 0 || head.x >= canvas.width / gridSize ||
+                head.y < 0 || head.y >= canvas.height / gridSize ||
+                snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)
+            );
+        }
+
+
+
+        function generateFoodPositions(count) {
+            const positions = [];
+            const maxY = canvas.height / gridSize - 1;
+            const availableYs = [...Array(maxY + 1).keys()];
+
+            for (let i = 0; i < count; i++) {
+                if (availableYs.length === 0) {
+                    console.warn('Not enough vertical space for all blocks');
+                    break;
+                }
+                const yIndex = Math.floor(Math.random() * availableYs.length);
+                const y = availableYs.splice(yIndex, 1)[0];
+                const x = Math.floor(Math.random() * (canvas.width / gridSize));
+                positions.push({
+                    x,
+                    y
+                });
+            }
+
+            return positions;
+        }
+
+
+		function setFoodLabelPosition(label, food, text) {
+			const labelOffset = 5; // 可以根據需要調整這個值
+			const canvasMiddle = canvas.width / 2;
+
+			if (food.x * gridSize >= canvasMiddle) {
+				// 食物在畫布右半部分，標籤放在左邊
+				label.style.right = `${canvas.width - food.x * gridSize + labelOffset}px`;
+				label.style.left = 'auto';
+			} else {
+				// 食物在畫布左半部分，標籤放在右邊
+				label.style.left = `${food.x * gridSize + gridSize + labelOffset}px`;
+				label.style.right = 'auto';
+			}
+
+			// 設置垂直位置和文字
+			label.style.top = `${food.y * gridSize + 44}px`;
+			label.textContent = text;
+		}
+
+		function drawSnake() {
+		  snake.forEach((segment, index) => {
+			// 如果蛇處於"黃色狀態"，則使用黃色繪製
+			ctx.fillStyle = isSnakeYellow ? 'gold' : 'green';
+			ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+			// 在蛇頭上顯示得分
+			if (index === 0) {
+			  ctx.fillStyle = 'white';
+			  ctx.font = '12px Arial';
+			  ctx.textAlign = 'center';
+			  ctx.textBaseline = 'middle';
+			  ctx.fillText(score.toString(), (segment.x * gridSize) + (gridSize / 2), (segment.y * gridSize) + (gridSize / 2));
+			}
+		  });
+		}
+
+		function drawFood() {
+			ctx.fillStyle = 'red';
+			ctx.fillRect(correctFood.x * gridSize, correctFood.y * gridSize, gridSize - 2, gridSize - 2);
+			ctx.fillRect(wrongFood.x * gridSize, wrongFood.y * gridSize, gridSize - 2, gridSize - 2);
+
+			const selectedBlockCount = parseInt(document.getElementById('blockCountSelect').value);
+			if (selectedBlockCount >= 3 && wrongFood2) {
+				ctx.fillRect(wrongFood2.x * gridSize, wrongFood2.y * gridSize, gridSize - 2, gridSize - 2);
+			}
+			if (selectedBlockCount === 4 && wrongFood3) {
+				ctx.fillRect(wrongFood3.x * gridSize, wrongFood3.y * gridSize, gridSize - 2, gridSize - 2);
+			}
+		}
+
+		function moveSnake() {
+		  const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+		  snake.unshift(head);
+
+		  if (head.x === correctFood.x && head.y === correctFood.y) {
+			score++;
+			iosTouch = false;
+			updateWordStats(currentWordId, true);
+			
+			// 將蛇變為黃色
+			isSnakeYellow = true;
+			
+			// 清除之前的計時器（如果存在）
+			if (colorChangeTimeout) {
+			  clearTimeout(colorChangeTimeout);
+			}
+			
+			// 設置新的計時器，1秒後將蛇變回綠色
+			colorChangeTimeout = setTimeout(() => {
+			  isSnakeYellow = false;
+			}, 500);
+
+			generateNewWord();
+			updateScore();
+			// 更新遊戲速度
+			gameSpeed = Math.max(150, baseSpeed - score * 2);
+			clearInterval(gameInterval);
+			gameInterval = setInterval(gameLoop, gameSpeed);
+		  } else if (head.x === wrongFood.x && head.y === wrongFood.y ||
+			(wrongFood2 && head.x === wrongFood2.x && head.y === wrongFood2.y) ||
+			(wrongFood3 && head.x === wrongFood3.x && head.y === wrongFood3.y)) {
+			updateWordStats(currentWordId, false);
+			endGame();
+		  } else {
+			snake.pop();
+		  }
+		}
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            moveSnake();
+            drawSnake();
+            drawFood();
+
+            updateTime();
+
+            if (checkCollision()) {
+                endGame();
+            }
+        }
+
+
+
+        function endGame() {
+            playAudio(wrongAudio);
+			iosTouch = false;
+
+	  	   if (colorChangeTimeout) {
+			 clearTimeout(colorChangeTimeout);
+		   }
+
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            showCustomModal('🥷遊戲煞啊', `🎉你得著: ${score} 分`, score);
+            clearInterval(gameInterval);
+            isGameRunning = false;
+            document.removeEventListener('keydown', handleKeyDown);
+            // 移除點擊事件監聽器
+            document.removeEventListener('click', playTwice);
+        }
+
+
+
+
+        function handleKeyDown(event) {
+            if (!isGameRunning) return;
+
+            switch (event.key) {
+                case 'ArrowUp':
+                    if (dy === 0) {
+                        dx = 0;
+                        dy = -1;
+                    }
+                    break;
+                case 'ArrowDown':
+                    if (dy === 0) {
+                        dx = 0;
+                        dy = 1;
+                    }
+                    break;
+                case 'ArrowLeft':
+                    if (dx === 0) {
+                        dx = -1;
+                        dy = 0;
+                    }
+                    break;
+                case 'ArrowRight':
+                    if (dx === 0) {
+                        dx = 1;
+                        dy = 0;
+                    }
+                    break;
+                case ' ': // 空格鍵
+                    event.preventDefault(); // 防止頁面滾動
+                    playTwice();
+                    break;
+            }
+        }
+
+		
+
+		function isIOS() {
+			const userAgent = navigator.userAgent.toLowerCase();
+			const isIOSDevice = /iphone|ipod/.test(userAgent);  // iPhone 和 iPod 檢測
+			const isIPad = /ipad/.test(userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);  // iPad 檢測
+			return isIOSDevice || isIPad;
+		}
+
+
+
+
+
+        function handleTouchStart(event) {
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+
+			if (isIOS() && !iosTouch) {
+				playTwice();
+				iosTouch = true;
+			}
+
+        }
+
+        function handleTouchEnd(event) {
+            const touchEndX = event.changedTouches[0].clientX;
+            const touchEndY = event.changedTouches[0].clientY;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0 && dx === 0) {
+                    dx = 1;
+                    dy = 0;
+                } else if (deltaX < 0 && dx === 0) {
+                    dx = -1;
+                    dy = 0;
+                }
+            } else {
+                if (deltaY > 0 && dy === 0) {
+                    dx = 0;
+                    dy = 1;
+                } else if (deltaY < 0 && dy === 0) {
+                    dx = 0;
+                    dy = -1;
+                }
+            }
+        }
+
+
+        function startGame(speed) {
+            const selectedLesson = document.getElementById('lessonSelect').value;
+            const selectedQuestion = document.getElementById('questionSelect').value;
+            const selectedAnswer = document.getElementById('answerSelect').value;
+            const selectedBlockCount = parseInt(document.getElementById('blockCountSelect').value);
+            resizeCanvas();
+
+            isGameRunning = true;
+            document.addEventListener('keydown', handleKeyDown);
+
+            if (selectedLesson === 'all') {
+                wordPairs = allWords;
+            } else {
+                wordPairs = lessons[selectedLesson];
+            }
+
+            // 更新 currentWord 和 currentCorrectTranslation 的設置
+            wordPairs = wordPairs.map(word => ({
+                ...word,
+                question: word[selectedQuestion] || '',
+                answer: word[selectedAnswer] || ''
+            }));
+
+			switch (speed) {
+				case 'slow':
+					baseSpeed = 400;
+					break;
+				case 'normal':
+					baseSpeed = 300;
+					break;
+				case 'quick':
+					baseSpeed = 250;
+					break;
+				case 'fast':
+					baseSpeed = 200;
+					break;
+			}
+
+
+
+            document.getElementById('gameSettings').style.display = 'none';
+            canvas.style.display = 'block';
+            container.style.display = 'block';
+            correctFoodLabel.style.display = 'block';
+            wrongFoodLabel.style.display = 'block';
+
+            // 添加點擊事件監聽器
+            //document.addEventListener('click', playTwice);
+
+            resetUnusedWords();
+            initGame();
+            gameInterval = setInterval(gameLoop, gameSpeed);
+        }
+
+        function updateScore() {
+            scoreDisplay.textContent = `✨得分: ${score}`;
+        }
+
+        function updateTime() {
+            elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+            timeDisplay.textContent = `⏱時間: ${elapsedTime}`;
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('touchstart', handleTouchStart, false);
+        document.addEventListener('touchend', handleTouchEnd, false);
+
+        document.body.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, {
+            passive: false
+        });
+
+
+
+        function resizeCanvas() {
+            const canvas = document.getElementById('gameCanvas');
+            const container = document.getElementById('container');
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            let canvasWidth, canvasHeight, containerWidth, containerHeight;
+
+            if (windowWidth < windowHeight) { // 直式
+                if (windowWidth < 600) { // 小螢幕手機
+                    canvasWidth = 300;
+                    canvasHeight = 400;
+                    containerWidth = 304;
+                    containerHeight = 451;
+                } else { // 大螢幕或平板
+                    canvasWidth = 400;
+                    canvasHeight = 400;
+                    containerWidth = 400;
+                    containerHeight = 451;
+                }
+            } else { // 橫式
+                if (windowHeight < 450) { // 小螢幕手機
+                    canvasWidth = 450;
+                    canvasHeight = 250;
+                    containerWidth = 454;
+                    containerHeight = 301;
+                } else { // 大螢幕或平板
+                    canvasWidth = 400;
+                    canvasHeight = 400;
+                    containerWidth = 400;
+                    containerHeight = 451;
+                }
+            }
+
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+
+            // 更新全局變量 gridSize
+            gridSize = Math.min(canvasWidth, canvasHeight) / 20;
+
+            scaleElement(container, containerWidth, containerHeight);
+        }
+
+
+        function scaleElement(e, w, h) {
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            let scaleX = windowWidth / w * 0.9;
+            let scaleY = windowHeight / h * 0.9;
+
+            const scale = Math.min(scaleX, scaleY);
+
+            e.style.transform = `scale(${scale})`;
+            container.style.marginTop = "10px";
+        }
+
+        // 在頁面載入和視窗大小改變時調用 resizeCanvas
+        window.addEventListener('load', resizeCanvas);
+        window.addEventListener('resize', resizeCanvas);
+
+
+
+		function showCustomModal(title, message, score) {
+		  const modal = document.getElementById('customModal');
+		  const modalTitle = document.getElementById('modalTitle');
+		  const modalMessage = document.getElementById('modalMessage');
+		  const starRating = document.getElementById('starRating');
+		  const modalClose = document.getElementById('modalClose');
+
+		  modalTitle.textContent = title;
+		  modalMessage.textContent = message;
+		  
+		  // 清空之前的星星
+		  starRating.innerHTML = '';
+		  
+		  for (let i = 0; i < score; i++) {
+			const star = document.createElement('span');
+			star.textContent = '⭐';
+			star.className = 'star';
+			starRating.appendChild(star);
+		  }
+		  
+		  modal.style.display = 'block';
+
+		  modalClose.onclick = function() {
+			modal.style.display = 'none';
+			// 在這裡添加任何在關閉模態框後需要執行的代碼
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+			container.style.display = 'none';
+			canvas.style.display = 'none';
+			document.getElementById('gameSettings').style.display = 'block';
+			correctFoodLabel.style.display = 'none';
+			wrongFoodLabel.style.display = 'none';
+		  }
+
+		  window.onclick = function(event) {
+			if (event.target == modal) {
+			  modal.style.display = 'none';
+			  // 在這裡添加任何在關閉模態框後需要執行的代碼
+				if (currentAudio) {
+					currentAudio.pause();
+					currentAudio.currentTime = 0;
+				}
+			  container.style.display = 'none';
+			  canvas.style.display = 'none';
+			  document.getElementById('gameSettings').style.display = 'block';
+			  correctFoodLabel.style.display = 'none';
+			  wrongFoodLabel.style.display = 'none';
+			}
+		  }
+		}
+
+
+
+let script = document.createElement('script');
+script.src = 'wesingmark.js';
+script.type = 'text/javascript';
+document.head.appendChild(script);
+    </script>
+
+</body>
+
+</html>

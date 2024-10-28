@@ -14,6 +14,7 @@ document.head.appendChild(link);
 
 let myTitle = document.title;
 let htmlSettingsPage = `
+
 <div id="settingsPage">
     <h2>${myTitle}</h2>
     <div>
@@ -30,14 +31,14 @@ let htmlSettingsPage = `
     </div>
     <div>
         <label for="countSelect">數量：</label>
-		<select id="countSelect">
-			<option disabled>每次題目數量</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4" selected>4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-		</select>
+        <select id="countSelect">
+            <option disabled>每次題目數量</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+        </select>
     </div>
     <div>
         <label for="playbackTimesSelect">播音：</label>
@@ -63,21 +64,21 @@ let htmlSettingsPage = `
 </div>
 
 <div id="gameContainer" style="position: relative; display: none;">
-  <button id="closeButton">X</button>
-  <div id="questionDisplay"></div>
-  <canvas id="gameCanvas"></canvas>
-  <div id="wordLabels"></div>
-	<div id="controls">
-	  <div class="control-group-left">
-		<button id="shootBtn" class="control-btn">🎯</button>
-	  </div>
-	  <div class="control-group-right">
-		<button id="upBtn" class="control-btn">↑</button>
-		<button id="leftBtn" class="control-btn">←</button>
-		<button id="downBtn" class="control-btn">↓</button>
-		<button id="rightBtn" class="control-btn">→</button>
-	  </div>
-	</div>
+    <button id="closeButton">X</button>
+    <div id="questionDisplay"></div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="wordLabels"></div>
+    <div id="controls">
+        <div class="control-group-left">
+            <button id="shootBtn" class="control-btn">🎯</button>
+        </div>
+        <div class="control-group-right">
+            <button id="upBtn" class="control-btn">↑</button>
+            <button id="leftBtn" class="control-btn">←</button>
+            <button id="downBtn" class="control-btn">↓</button>
+            <button id="rightBtn" class="control-btn">→</button>
+        </div>
+    </div>
 </div>
 
 
@@ -90,6 +91,7 @@ let htmlSettingsPage = `
         </div>
     </div>
 </div>
+
 `;
 
 document.body.innerHTML = htmlSettingsPage;
@@ -488,59 +490,38 @@ function checkEnemyBulletCollisions() {
 // 隕石(語詞)系統
 function generateMeteors() {
   meteors = [];
-  const questionLangIndex = headers.indexOf(questionSelect.value);
-  const answerLangIndex = headers.indexOf(answerSelect.value);
+  const [questionLangIndex, answerLangIndex] = [headers.indexOf(questionSelect.value), headers.indexOf(answerSelect.value)];
   const selectedCategory = lessonSelect.value;
   const totalMeteors = parseInt(countSelect.value);
   const isPortrait = window.innerHeight > window.innerWidth;
   const isMobileOrTablet = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-  // 獲取當前分類的所有可能答案
-  const categoryAnswers = selectedCategory === '全部' ?
-    data.map(row => row[answerLangIndex]) :
-    data.filter(row => row[0] === selectedCategory).map(row => row[answerLangIndex]);
-
-  // 先加入正確答案
+  // 取得分類的所有可能答案，排除正確答案
   const correctAnswer = gameData[currentQuestionIndex][answerLangIndex];
-  meteors.push({
-    x: isPortrait ? Math.random() * (canvasWidth - 40) : canvasWidth,
-    y: isPortrait ? 0 : Math.random() * (canvasHeight - 40),
-    width: 40,
-    height: 40,
-    speed: isMobileOrTablet ? (Math.random() * 0.5 + 1) : (Math.random() * 0.8 + 1.2), //語詞移動速度
-    text: correctAnswer,
-    question: gameData[currentQuestionIndex][questionLangIndex],
-    collected: false,
-    isCorrect: true,
-    id: `meteor-correct`
-  });
-
-  // 創建一個不包含當前正確答案的可用答案池
+  const categoryAnswers = selectedCategory === '全部' ? 
+    data.map(row => row[answerLangIndex]) : 
+    data.filter(row => row[0] === selectedCategory).map(row => row[answerLangIndex]);
   let availableAnswers = categoryAnswers.filter(answer => answer !== correctAnswer);
 
-  // 需要生成的錯誤答案數量 = 總數量 - 1（正確答案）
-  const wrongAnswersCount = totalMeteors - 1;
+  // 生成隕石參數的通用函數
+  const createMeteor = (text, isCorrect, id) => ({
+    x: isPortrait ? Math.random() * (canvasWidth - 40) : canvasWidth,
+    y: isPortrait ? 0 : Math.random() * (canvasHeight - 40),
+    width: 40, height: 40,
+    speed: isMobileOrTablet ? (Math.random() * 0.4 + 0.7) : (Math.random() * 0.6 + 0.9),
+    text, collected: false, isCorrect, id
+  });
 
-  // 隨機選擇不重複的錯誤答案
-  for (let i = 0; i < wrongAnswersCount && availableAnswers.length > 0; i++) {
-    const randomIndex = Math.floor(Math.random() * availableAnswers.length);
-    const wrongAnswer = availableAnswers[randomIndex];
-    meteors.push({
-      x: isPortrait ? Math.random() * (canvasWidth - 40) : canvasWidth,
-      y: isPortrait ? 0 : Math.random() * (canvasHeight - 40),
-      width: 40,
-      height: 40,
-      speed: isMobileOrTablet ? (Math.random() * 0.5 + 0.3) : (Math.random() * 2 + 1), // 修改這裡
-      text: wrongAnswer,
-      collected: false,
-      isCorrect: false,
-      id: `meteor-wrong-${i}`
-    });
+  // 加入正確答案隕石
+  meteors.push(createMeteor(correctAnswer, true, 'meteor-correct'));
 
-    // 從可用答案中移除已使用的答案
-    availableAnswers.splice(randomIndex, 1);
+  // 隨機選取錯誤答案隕石
+  for (let i = 0; i < totalMeteors - 1 && availableAnswers.length > 0; i++) {
+    const wrongAnswer = availableAnswers.splice(Math.floor(Math.random() * availableAnswers.length), 1)[0];
+    meteors.push(createMeteor(wrongAnswer, false, `meteor-wrong-${i}`));
   }
 }
+
 
 function updateMeteors() {
   let allMeteorsOffScreen = true;
@@ -587,25 +568,37 @@ function updateMeteors() {
   }
 }
 
-// here
+
 function drawMeteors() {
-  meteors.forEach(meteor => {
-    if (!meteor.collected) {
-      if (meteor.hitTime && Date.now() - meteor.hitTime < 200) {
-        ctx.fillStyle = 'red'; // 被射中時短暫變紅
-      } else {
-        ctx.fillStyle = 'brown';
-      }
-      ctx.fillRect(meteor.x, meteor.y, meteor.width, meteor.height);
-      
-      // 繪製語詞文本
-      ctx.fillStyle = 'white';
-	  ctx.font = '14px twhei-s, TWHEI, "台灣黑體", tauhu-oo, PingFangTC-Regular, "Microsoft JhengHei", sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(meteor.text, meteor.x + meteor.width / 2, meteor.y + meteor.height / 2);
-    }
-  });
+    // 先清除所有現有的文字標籤
+    const existingLabels = document.querySelectorAll('.meteor-label');
+    existingLabels.forEach(label => label.remove());
+
+    meteors.forEach(meteor => {
+        if (!meteor.collected) {
+            // 繪製隕石方塊
+            if (meteor.hitTime && Date.now() - meteor.hitTime < 200) {
+                ctx.fillStyle = 'red'; // 被射中時短暫變紅
+            } else {
+                ctx.fillStyle = 'brown';
+            }
+            ctx.fillRect(meteor.x, meteor.y, meteor.width, meteor.height);
+
+            // 創建文字標籤
+            const label = document.createElement('div');
+            label.className = 'meteor-label';
+            label.innerHTML = meteor.text;
+            label.style.position = 'absolute';
+            label.style.left = `${(meteor.x + meteor.width/2) * scale}px`;
+            label.style.top = `${(meteor.y + meteor.height/2) * scale}px`;
+            label.style.transform = 'translate(-50%, -50%)';
+            label.style.color = 'white';
+            label.style.fontSize = '22px';
+            label.style.pointerEvents = 'none'; // 防止標籤干擾點擊事件
+            label.style.zIndex = '1000';
+            document.getElementById('gameContainer').appendChild(label);
+        }
+    });
 }
 
 // 碰撞檢測
@@ -718,7 +711,7 @@ function generateWords() {
 }
 
 
-
+// here
 function updateWordLabels() {
     const labelsContainer = document.getElementById('wordLabels');
     labelsContainer.innerHTML = '';
