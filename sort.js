@@ -589,6 +589,7 @@ function updateAnswerArea() {
         wordElement.addEventListener('click', () => removeWord(gameState.selectedWords.indexOf(index)));
         answerArea.appendChild(wordElement);
     });
+	updateCheckButton();
 }
 
 // 11. 單字選擇處理
@@ -617,7 +618,12 @@ function removeWord(selectedIndex) {
 // 14. 檢查答案按鈕狀態更新
 function updateCheckButton() {
     const checkButton = document.getElementById('checkButton');
-    checkButton.disabled = gameState.selectedWords.length === 0;
+    
+    // 取得當前題目的總字詞數
+    const totalWords = gameState.shuffledWords.length;
+    
+    // 只有當選擇的字詞數等於總字詞數時才啟用按鈕
+    checkButton.disabled = gameState.selectedWords.length !== totalWords;
 }
 
 // 15. 答案檢查
