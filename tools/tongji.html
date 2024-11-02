@@ -441,6 +441,8 @@
       <option value="combineHyphen" title="Excel左欄漢字右欄拼音，輸出：詔安\zhiox-onv 客事\kaz-su">併多音節</option>
       <option value="combineWords" title="左欄漢字要分詞，右欄拼音，輸出：詔安\zhiox onv_客事\kaz su">詞音合併</option>
       <option value="combineWordsPinyin" title="左欄漢字要分詞，右欄拼音，輸出：詔\zhiox 安\onv_客\kaz 事\su">詞音交錯</option>
+      <option value="arrangeText" title="文a 字b => 文字\a b">字音詞音</option>
+	  <option value="reverseArrangeText" title="文字\a b => 文a 字b">詞音字音</option>
 	  <option value="" disabled></option>
       <option value="examText" title="Excel「數字 漢字 拼音」">字音字形</option>
       <option value="rubyText" title="Ruby注音標示">&#123;漢字/標音&#125;</option>
@@ -478,6 +480,7 @@
       onblur="resetOptions(this)">
       <option value="" disabled selected>其他</option>
       <option value="importData">載入txt</option>
+      <option value="matchText" title="詞 詞彙、詞條、語詞">詞符合的</option>
       <option value="replaceFn">自訂取代</option>
       <option value="removeDuplicateLinesIdB">去除重複</option>
       <option value="convertToFullMark">全形標點</option>
@@ -486,7 +489,6 @@
       <option value="splitTextByPunctuation">標點斷行</option>
       <option value="connectText">斷行接回</option>
       <option value="spaceToNewline">\s_換行</option>
-      <option value="arrangeText" title="文\a 字\b => 文字\a b">字\yin</option>
 
       <option value="wordWrongToRight">校正異字</option>
       <option value="generateText" title="一你生成語詞">生成語詞</option>
@@ -500,7 +502,7 @@
 
   <div class="result-container">
     <div class="section result-wrapper">
-      <h2 id="toggle-textarea-c">( 累加 )</h2>
+      <h2 id="toggle-textarea-c">( 累加 / 查詞 )</h2>
       <textarea id="id_C" placeholder="次數　文字..."></textarea>
       <div class="small-button-container-BC" id="smallButtonContainer_C">
         <span class="copy-button-A" onclick="swapLeftAndRightIdC()"
@@ -2362,37 +2364,162 @@ function rhoobbToROV() {
 	document.getElementById('id_B').value = t;
 }
 
+// 將 「爆bau 發fads」轉成「爆發\bau fads」
 // 將 「爆\bau 發\fads」轉成「爆發\bau fads」
+// 將 「大\tai 家\gav、爆\bau 發\fads」轉成「大家\tai gav、爆發\bau fads」
 function arrangeText() {
             const inputText = document.getElementById('id_A').value;
-            const lines = inputText.trim().split('\n');
-            const outputLines = lines.map(line => {
-                // 將每行拆分成字符對
-                const pairs = line.trim().split(/\s+/);
+    
+    // 將輸入文本按行分割，然後處理每一行
+    const result = inputText.split(/\r?\n/).map(line => {
+        // 如果是空行，直接返回空字符串
+        if (!line.trim()) return '';
+        
+        // 用標點符號分割文本並處理每個段落
+        return line.split(/([；、，：。！])/g).map(segment => {
+            // 如果是空字符串或標點符號，直接返回
+            if (!segment.trim() || /^[；、，：。！]$/.test(segment)) return segment;
+            
+            // 處理包含漢字和拼音的段落
+            const pairs = segment.trim().split(/\s+/);
+            if (!pairs[0]) return '';
+            
+            const characters = [];
+            const pronunciations = [];
+            
+            // 處理每一對漢字和拼音
+            pairs.forEach(pair => {
+                // 處理單個配對
+                let char, pron;
                 
-                // 分離漢字和拼音
-                const characters = [];
-                const pronunciations = [];
-                
-                pairs.forEach(pair => {
-                    const [char, pron] = pair.split('\\');
-                    if (char && pron) {
-                        characters.push(char);
-                        pronunciations.push(pron);
+                // 檢查是否包含反斜線
+                if (pair.includes('\\')) {
+                    [char, pron] = pair.split('\\');
+                } else {
+                    // 如果沒有反斜線，尋找第一個拼音字母的位置
+                    const pinyinStart = pair.search(/[a-zA-Z]/);
+                    if (pinyinStart !== -1) {
+                        char = pair.slice(0, pinyinStart);
+                        pron = pair.slice(pinyinStart);
                     }
-                });
-                
-                // 組合輸出格式
-                if (characters.length > 0 && pronunciations.length > 0) {
-                    return `${characters.join('')}\\${pronunciations.join(' ')}`;
                 }
-                return '';
+                
+                if (char && pron) {
+                    characters.push(char);
+                    pronunciations.push(pron);
+                }
             });
             
-            // 過濾空行並組合結果
-            const result = outputLines.filter(line => line).join('\n');
+            // 如果有有效的字符和拼音，返回組合後的結果
+            return characters.length > 0 ? 
+                `${characters.join('')}\\${pronunciations.join(' ')}` : '';
+        }).join('');
+    }).join('\n');
+    
             document.getElementById('id_B').value = result;
 }
+
+
+// 將「爆發\bau fads」 轉成「爆bau 發fads」
+// 將「爆發\bau fads」 轉成「爆\bau 發\fads」
+// 將「大家\tai gav、爆發\bau fads」 轉成「大\tai 家\gav、爆\bau 發\fads」
+function reverseArrangeText() {
+    // 1. 先用行分割
+    const lines = document.getElementById('id_A').value.split(/\r?\n/);
+    
+    const result = lines.map(line => {
+        if (!line.trim()) return '';
+        
+        // 2. 同行用標點分割
+        const segments = line.split(/([；、，：」])/);
+        
+        return segments.map(segment => {
+            if (/^[；、，：」]$/.test(segment)) return segment;
+            if (!segment.trim()) return '';
+            
+            // 檢查是否包含反斜線
+            if (!segment.includes('\\')) {
+                // 使用正則表達式匹配漢字
+                const hanziRegex = /[\u3007\u3400-\u4DB5\u4E00-\u9FCB\uE815-\uE864\uD840-\uD87F][\uDC00-\uDFFF]?/g;
+                const hanziMatches = segment.match(hanziRegex) || [];
+                
+                // 移除漢字，剩下的就是拼音
+                let remainingText = segment;
+                hanziMatches.forEach(hanzi => {
+                    remainingText = remainingText.replace(hanzi, '');
+                });
+                
+                // 清理拼音字串（移除多餘空格）
+                const prons = remainingText.trim().split(/\s+/);
+                
+                // 如果漢字和拼音數量相同，加入反斜線
+                if (hanziMatches.length === prons.length) {
+                    segment = hanziMatches.join('') + '\\' + prons.join(' ');
+                }
+            }
+            
+            // 3. 用反斜線分割單一段落
+            let [chars, prons] = segment.trim().split('\\');
+            if (!prons) return segment;
+            
+            // 4. 漢字用 Array.from 分割
+            const charArray = Array.from(chars);
+            // 5. 拼音用空格分割
+            const pronArray = prons.split(/\s+/);
+            
+            // 6. 組合起來
+            if (charArray.length === pronArray.length) {
+                return charArray.map((char, i) => `${char}\\${pronArray[i]}`).join(' ');
+            }
+            return segment;
+        }).join('');
+    }).join('\n');
+    
+    document.getElementById('id_B').value = result;
+}
+
+// 查符合的詞
+// 在 id_A 匯入文字，一行一字詞；在id_C 放要查的詞，最終輸出在id_B
+function matchText() {
+    let myData = [];
+    let t = document.getElementById('id_A').value;
+    if (t.startsWith('載入的資料共')) {
+        t = allData.join("\n");
+    }
+    myData = t.trim().split(/\r\n|\r|\n/);
+    
+    // 獲取輸入文本
+    const inputText = document.getElementById('id_C').value.trim();
+    
+    // 將輸入文本按行分割
+    const inputLines = inputText.split('\n');
+    
+    // 存儲結果的陣列
+    const results = [];
+    
+    // 遍歷每一行輸入
+    inputLines.forEach(line => {
+        // 尋找符合前綴的數據項
+        const matchedItems = myData.filter(dataItem => {
+            return dataItem.startsWith(line);
+        });
+        
+        // 如果找到匹配項
+        if (matchedItems.length > 0) {
+            // 將原始輸入與匹配的項目組合成單行字串
+            results.push(`${line}\t${matchedItems.join('、')}`);
+        } else {
+            results.push(line);
+        }
+    });
+    
+    // 將結果顯示在輸出區，確保是單行輸出
+    document.getElementById('id_B').value = results.join('\n');
+}
+
+
+
+
 
 
 function zxvToTone() {
