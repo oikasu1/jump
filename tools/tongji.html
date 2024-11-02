@@ -486,6 +486,8 @@
       <option value="splitTextByPunctuation">標點斷行</option>
       <option value="connectText">斷行接回</option>
       <option value="spaceToNewline">\s_換行</option>
+      <option value="arrangeText" title="文\a 字\b => 文字\a b">字\yin</option>
+
       <option value="wordWrongToRight">校正異字</option>
       <option value="generateText" title="一你生成語詞">生成語詞</option>
     </select>
@@ -2360,8 +2362,37 @@ function rhoobbToROV() {
 	document.getElementById('id_B').value = t;
 }
 
-
-
+// 將 「爆\bau 發\fads」轉成「爆發\bau fads」
+function arrangeText() {
+            const inputText = document.getElementById('id_A').value;
+            const lines = inputText.trim().split('\n');
+            const outputLines = lines.map(line => {
+                // 將每行拆分成字符對
+                const pairs = line.trim().split(/\s+/);
+                
+                // 分離漢字和拼音
+                const characters = [];
+                const pronunciations = [];
+                
+                pairs.forEach(pair => {
+                    const [char, pron] = pair.split('\\');
+                    if (char && pron) {
+                        characters.push(char);
+                        pronunciations.push(pron);
+                    }
+                });
+                
+                // 組合輸出格式
+                if (characters.length > 0 && pronunciations.length > 0) {
+                    return `${characters.join('')}\\${pronunciations.join(' ')}`;
+                }
+                return '';
+            });
+            
+            // 過濾空行並組合結果
+            const result = outputLines.filter(line => line).join('\n');
+            document.getElementById('id_B').value = result;
+}
 
 
 function zxvToTone() {
