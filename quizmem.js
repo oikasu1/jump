@@ -15,7 +15,7 @@ document.head.appendChild(style);
 
 let htmlSettingsPage = `
 <div id="settingsPage">
-    <h2>🥷客事100排排排</h2>
+    <h2>🥷客事100選選選</h2>
     <div>
         <label for="lessonSelect">分類：</label>
         <select id="lessonSelect"></select>
@@ -96,7 +96,7 @@ let htmlSettingsPage = `
     </div>
 	<div class="button-container">
 		<button id="viewButton">檢視</button>
-		<button id="startButton">開始排排排</button>
+		<button id="startButton">開始選選選</button>
 	</div>
 </div>
 <button id="closeButton">✕</button>
