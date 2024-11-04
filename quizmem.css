@@ -713,29 +713,37 @@ font-size: 1.2rem;
 
 .nav-buttons-container {
   position: fixed;
-  bottom: 20px;
+  bottom: 10px;
   left: 20px;
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   z-index: 1000;
+  background-color: rgba(230, 230, 230, 0.7);
+  padding: 0.3rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
+
 .nav-button {
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  font-size: 1.2rem;
-  min-width: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    background-color: white;
+    color: #666; /* 淺灰色文字 */
+    border: 1px solid #e2e8f0; /* 淺灰色邊框 */
+    padding: 8px 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.2rem;
+    min-width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 .nav-button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-  transform: translateY(-2px);
+  background-color: #f7fafc;
+  color: #4299e1;
+  transform: translateY(-1px);
+  border-color: #4299e1;
 }
 .nav-button.active {
   background-color: rgba(0, 0, 0, 0.8);
@@ -746,7 +754,6 @@ font-size: 1.2rem;
 .back-button {
   display: none;
 }
-
 .mode-switch {
   background-color: rgba(0, 0, 0, 0.6);
   color: white;
@@ -756,7 +763,6 @@ font-size: 1.2rem;
   cursor: pointer;
   margin-right: 10px;
 }
-
 .mode-switch:hover {
   background-color: rgba(0, 0, 0, 0.8);
 }
@@ -766,24 +772,69 @@ font-size: 1.2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
-  padding: 20px;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .single-card {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  padding: 40px;
-  width: 80%;
-  max-width: 800px;
-  text-align: center;
+  width: 90%;
+  height: 70vh;
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem; /* 題目和答案之間的間距 */
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: none; /* 移除陰影 */
 }
-
+.single-card .item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
 .single-card .item-question,
 .single-card .item-answer {
-  font-size: 2rem;
-  margin: 20px 0;
-  padding: 15px;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  margin: 0;
+  padding: 1rem;
+  text-align: center;
+  min-width: unset;
+  width: auto;
+  background: none;
+}
+.single-card .item-number {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  font-size: 1.2rem;
+  width: auto;
+  color: #718096;
 }
 
+
+@media (max-width: 768px) {
+  .single-card {
+    width: 95%;
+    height: 60vh;
+    padding: 20px;
+  }
+
+  .nav-buttons-container {
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
