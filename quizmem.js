@@ -33,7 +33,6 @@ let htmlSettingsPage = `
         <select id="orderSelect">
             <option value="random">隨機</option>
             <option value="sequential">依序</option>
-			<option value="view">檢視</option>
         </select>
     </div>
     <div>
@@ -1982,53 +1981,50 @@ function showViewList() {
   // 返回設定按鈕
   const backButton = document.createElement('button');
   backButton.className = 'nav-button';
-  backButton.innerHTML = '⬅️';
+  backButton.innerHTML = '✕';
   backButton.title = '返回設定';
   backButton.onclick = returnToSettings;
 
   // 檢視模式切換按鈕
   const modeSwitch = document.createElement('button');
   modeSwitch.className = 'nav-button';
-  modeSwitch.innerHTML = '📑';
+  modeSwitch.innerHTML = '單';
   modeSwitch.title = '切換檢視模式';
 
   // 上一個/組按鈕
   const prevButton = document.createElement('button');
   prevButton.className = 'nav-button';
-  prevButton.innerHTML = '◀️';
+  prevButton.innerHTML = '←';
   prevButton.title = '上一個';
 
   // 下一個/組按鈕
   const nextButton = document.createElement('button');
   nextButton.className = 'nav-button';
-  nextButton.innerHTML = '▶️';
+  nextButton.innerHTML = '→';
   nextButton.title = '下一個';
 
   // 渲染群組視圖的函數
-  function renderGroupView() {
+function renderGroupView() {
     contentContainer.innerHTML = '';
     for (let i = 0; i < filteredData.length; i += 5) {
-      const group = filteredData.slice(i, i + 5);
-      const groupContainer = document.createElement('div');
-      groupContainer.className = 'group-container';
-      
-      const groupTitle = document.createElement('h3');
-      groupTitle.id = `group-${Math.floor(i/5)}`;
-      groupTitle.textContent = `第 ${Math.floor(i/5) + 1} 組`;
-      groupContainer.appendChild(groupTitle);
+        const group = filteredData.slice(i, i + 5);
+        const groupContainer = document.createElement('div');
+        groupContainer.className = 'group-container';
+        const groupTitle = document.createElement('h3');
+        groupTitle.id = `group-${Math.floor(i/5)}`;
+        groupTitle.textContent = `第 ${Math.floor(i/5) + 1} 組`;
+        groupContainer.appendChild(groupTitle);
 
-      const itemsContainer = document.createElement('div');
-      itemsContainer.className = 'items-container';
-
-      group.forEach((item, index) => {
-        const itemElement = createItemElement(item, i + index);
-        itemsContainer.appendChild(itemElement);
-      });
-
-      groupContainer.appendChild(itemsContainer);
-      contentContainer.appendChild(groupContainer);
+        const itemsContainer = document.createElement('div');
+        itemsContainer.className = 'items-container';
+        group.forEach((item, index) => {
+            const itemElement = createItemElement(item, i + index);
+            itemsContainer.appendChild(itemElement);
+        });
+        groupContainer.appendChild(itemsContainer);
+        contentContainer.appendChild(groupContainer);
     }
-  }
+}
 
   // 渲染單個視圖的函數
   function renderSingleView() {
@@ -2048,37 +2044,56 @@ function showViewList() {
   }
 
   // 創建項目元素的輔助函數
-  function createItemElement(item, index) {
-    const itemElement = document.createElement('div');
-    itemElement.className = 'item';
-    
-    itemElement.innerHTML = `
-      <div class="item-number">${index + 1}</div>
-      <div class="item-question clickable">${item[headers.indexOf(questionType)]}</div>
-      <div class="item-answer clickable">${item[headers.indexOf(answerType)]}</div>
-    `;
+function createItemElement(item, index) {
+  const itemElement = document.createElement('div');
+  itemElement.className = 'item';
 
-    const questionElement = itemElement.querySelector('.item-question');
-    const answerElement = itemElement.querySelector('.item-answer');
-    const audioFile = item[headers.indexOf('音檔')];
-
-    const clickHandler = (element) => {
-      element.addEventListener('click', () => {
-        if (audioFile) {
-          playCurrentAudio(audioFile, 1);
-          element.classList.add('playing');
-          setTimeout(() => {
-            element.classList.remove('playing');
-          }, 1500);
-        }
-      });
-    };
-
-    clickHandler(questionElement);
-    clickHandler(answerElement);
-
-    return itemElement;
+  if (!isGroupMode) {
+    // 單個檢視模式下
+    const indexElement = document.createElement('div');
+    indexElement.className = 'item-number';
+    indexElement.textContent = `${index + 1} / ${filteredData.length}`;
+    itemElement.appendChild(indexElement);
+  } else {
+    // 分組檢視模式下
+    const indexElement = document.createElement('div');
+    indexElement.className = 'item-number';
+    indexElement.textContent = `${index + 1}`;
+    itemElement.appendChild(indexElement);
   }
+
+  // 題目和答案顯示元素
+  const questionElement = document.createElement('div');
+  questionElement.className = 'item-question clickable';
+  questionElement.textContent = item[headers.indexOf(questionType)];
+  const answerElement = document.createElement('div');
+  answerElement.className = 'item-answer clickable';
+  answerElement.textContent = item[headers.indexOf(answerType)];
+
+  // 組裝元素
+  itemElement.appendChild(questionElement);
+  itemElement.appendChild(answerElement);
+
+  const audioFile = item[headers.indexOf('音檔')];
+
+  // 點擊效果修改
+  const clickHandler = (element) => {
+    element.addEventListener('click', () => {
+      if (audioFile) {
+        playCurrentAudio(audioFile, 1);
+        element.style.color = '#4299e1'; // 播放時變為藍色
+        setTimeout(() => {
+          element.style.color = ''; // 恢復原色
+        }, 1500);
+      }
+    });
+  };
+
+  clickHandler(questionElement);
+  clickHandler(answerElement);
+
+  return itemElement;
+}
 
   // 導航函數
   function navigate(direction) {
@@ -2105,7 +2120,7 @@ function showViewList() {
   // 模式切換處理
   modeSwitch.addEventListener('click', () => {
     isGroupMode = !isGroupMode;
-    modeSwitch.innerHTML = isGroupMode ? '📑' : '📖';
+    modeSwitch.innerHTML = isGroupMode ? '單' : '全';
     modeSwitch.title = isGroupMode ? '切換為單個模式' : '切換為分組模式';
     
     if (isGroupMode) {
@@ -2148,13 +2163,37 @@ function showViewList() {
     }
   }
 
+// 滑鼠按鈕事件處理
+function handleMouseNavigation(event) {
+  // 滑鼠後退鍵 (簡報筆上一頁)
+  if (event.button === 33) {
+    event.preventDefault();
+    navigate(-1);
+  }
+  // 滑鼠前進鍵 (簡報筆下一頁)
+  if (event.button === 34) {
+    event.preventDefault();
+    navigate(1);
+  }
+}
+
+document.addEventListener('mouseup', (event) => {
+  console.log('按鈕編號:', event.button);
+});
+
+
+// 添加鍵盤和滑鼠事件監聽
+document.addEventListener('keydown', handleKeyNavigation);
+document.addEventListener('mouseup', handleMouseNavigation);
+
+
   document.addEventListener('keydown', handleKeyNavigation);
 
   // 清理功能
-  const cleanup = () => {
-    document.removeEventListener('keydown', handleKeyNavigation);
-  };
-
+const cleanup = () => {
+  document.removeEventListener('keydown', handleKeyNavigation);
+  document.removeEventListener('mouseup', handleMouseNavigation);
+};
   // 更新返回設定的處理
   backButton.onclick = () => {
     cleanup();
