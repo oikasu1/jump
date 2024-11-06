@@ -1202,6 +1202,85 @@ let script = document.createElement('script');
 script.src = 'wesingmark.js';
 script.type = 'text/javascript';
 document.head.appendChild(script);
+
+
+
+
+
+
+
+
+// emoji-detector.js
+class EmojiDetector {
+    constructor() {
+        this.hasEmojiSupport = this.checkEmojiSupport();
+        this.needsWebfont = this.checkOSSupport().needsWebfont;
+    }
+
+    // 檢測是否支援新版emoji
+    checkEmojiSupport() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const testEmoji = '🦾';
+        
+        ctx.fillStyle = '#000000';
+        ctx.textBaseline = 'top';
+        ctx.font = '32px Arial';
+        ctx.fillText(testEmoji, 0, 0);
+        
+        const emojiData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        return !emojiData.data.every(pixel => pixel === 0);
+    }
+
+    // 檢測作業系統版本
+    checkOSSupport() {
+        const ua = navigator.userAgent;
+        const osVersion = {
+            iOS: parseInt((ua.match(/OS (\d+)_/i) || [])[1], 10),
+            Android: parseInt((ua.match(/Android (\d+)/i) || [])[1], 10),
+            Windows: parseInt((ua.match(/Windows NT (\d+\.\d+)/i) || [])[1], 10)
+        };
+        
+        return {
+            needsWebfont: (
+                (osVersion.iOS && osVersion.iOS < 14) ||
+                (osVersion.Android && osVersion.Android < 11) ||
+                (osVersion.Windows && osVersion.Windows < 10)
+            )
+        };
+    }
+
+    // 載入 Emoji 字型
+    loadEmojiFont() {
+        if (!this.hasEmojiSupport || this.needsWebfont) {
+            const style = document.createElement('style');
+            style.textContent = `
+                @font-face {
+                    font-family: 'EmojiFont';
+                    src: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/fonts/twemoji-mozilla.woff2') format('woff2');
+                    font-display: swap;
+                }
+                
+                body {
+                    font-family: 'EmojiFont', system-ui, -apple-system, sans-serif;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    // 初始化
+    init() {
+        this.loadEmojiFont();
+    }
+}
+
+// 建立全域實例
+window.emojiDetector = new EmojiDetector();
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.emojiDetector.init();
+});
     </script>
 
 </body>

@@ -482,7 +482,7 @@ function populateSelects(languages) {
 
     // 設定題目預設值為「國語」
     Array.from(questionSelect.options).forEach((option, index) => {
-        if (option.value === '國語') {
+        if (option.value === '注音') {
             questionSelect.selectedIndex = index;
         }
     });
@@ -1041,7 +1041,7 @@ function initGame() {
     sentenceText.textContent = currentQuestion[headers.indexOf(questionType)];
     
     // 更新表情符號
-    const emojis = ["🎯", "🎲", "🎨", "🎭", "🎪", "🎫", "🎗️", "🎋", "🎊", "🎉"];
+    const emojis = ["😀","😄","😆","🙂","🫠","😉","😊","😜","👻","🤡","🤖","😺","😸","👧","🧑","🙋‍♂️","🙋‍♀️","🥷","🧑‍🏫","👩‍🏫","🧑‍💻","👩‍💻","🧑‍🎨","👩‍🎨","🧑‍🚀","👩‍🚀","👮","👮‍♀️","🕵️","🕵️‍♀️","🦸‍♀️","🦸","🦹","🦹‍♀️","🧙","🧙‍♀️","🧚","🧚‍♀️","🧜","🧜‍♀️","🧝","🧝‍♀️","🧞","🧞‍♀️","🤵","🤵‍♀️","🤹","🤹‍♀️","🧘","🧘‍♀️","🐶","🐵","🐻‍","🐼","🐹","🐯"];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
     emoji.textContent = randomEmoji;
     
@@ -1913,40 +1913,17 @@ const zhuyinMiniPinyin = `
 //-- 音檔處理相關 (30-34)
 
 
+// 在檢視模式狀態部分新增
+let isGroupMode = true;
+let currentIndex = 0;
+let isRandomMode = false;  // 新增：控制是否為亂數模式
+let randomIndices = [];    // 新增：儲存亂數順序的陣列
 
-// 2. 新增檢視模式的相關控制邏輯
-function handleViewMode() {
-    const orderSelect = document.getElementById('orderSelect');
-    const countSelect = document.getElementById('countSelect');
-    const winConditionSelect = document.getElementById('winConditionSelect');
-    const timeConditionSelect = document.getElementById('timeConditionSelect');
-    const playbackTimesSelect = document.getElementById('playbackTimesSelect');
-    const startButton = document.getElementById('startButton');
-    
-    // 當選擇檢視模式時
-    if (orderSelect.value === 'view') {
-        // 禁用相關選項
-        countSelect.disabled = true;
-        winConditionSelect.disabled = true;
-        timeConditionSelect.disabled = true;
-        playbackTimesSelect.disabled = true;
-        
-        // 修改開始按鈕文字
-        startButton.textContent = '檢視清單';
-        
-        // 顯示檢視模式內容
-        showViewList();
-    } else {
-        // 啟用相關選項
-        countSelect.disabled = false;
-        winConditionSelect.disabled = false;
-        timeConditionSelect.disabled = false;
-        playbackTimesSelect.disabled = false;
-        
-        // 恢復開始按鈕文字
-        startButton.textContent = '開始排排排';
-    }
-}
+// 在創建導航按鈕容器的部分新增亂數按鈕
+const randomButton = document.createElement('button');
+randomButton.className = 'nav-button';
+randomButton.innerHTML = '順';
+randomButton.title = '切換順序/亂數模式';
 
 // 3. 新增顯示檢視清單的函數
 function showViewList() {
@@ -2026,24 +2003,128 @@ function renderGroupView() {
     }
 }
 
-  // 渲染單個視圖的函數
-  function renderSingleView() {
+// 渲染單個視圖的函數
+
+function renderSingleView() {
     contentContainer.innerHTML = '';
     const singleViewContainer = document.createElement('div');
     singleViewContainer.className = 'single-view-container';
     
+    // 創建卡片容器
     const card = document.createElement('div');
     card.className = 'single-card';
+
+    // 創建進度條容器並放在卡片頂部
+    const sliderContainer = document.createElement('div');
+    sliderContainer.className = 'slider-container';
     
+    // 創建進度條
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.className = 'progress-slider';
+    slider.min = '0';
+    slider.max = (isRandomMode ? randomIndices.length : filteredData.length) - 1;
+    slider.value = isRandomMode ? randomIndices.indexOf(currentIndex) : currentIndex;
+    
+    // 進度條事件處理
+    slider.addEventListener('input', (e) => {
+        if (isRandomMode) {
+            currentIndex = randomIndices[parseInt(e.target.value)];
+        } else {
+            currentIndex = parseInt(e.target.value);
+        }
+        renderCard();
+    });
+    
+    // 加入進度條
+    sliderContainer.appendChild(slider);
+    
+    // 創建內容容器
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'content-wrapper';
+    
+    // 添加語詞卡內容
     const item = filteredData[currentIndex];
     const itemElement = createItemElement(item, currentIndex);
-    card.appendChild(itemElement);
+    
+    // 組裝卡片：進度條在上，內容在下
+    card.appendChild(sliderContainer);
+    contentWrapper.appendChild(itemElement);
+    card.appendChild(contentWrapper);
     
     singleViewContainer.appendChild(card);
     contentContainer.appendChild(singleViewContainer);
-  }
+}
 
-  // 創建項目元素的輔助函數
+
+
+function renderCard() {
+    const card = document.querySelector('.single-card');
+    if (card) {
+        // 保存現有的進度條值和監聽器
+        const existingSlider = card.querySelector('.progress-slider');
+        const currentValue = existingSlider ? existingSlider.value : (isRandomMode ? randomIndices.indexOf(currentIndex) : currentIndex);
+        
+        // 清空卡片內容
+        card.innerHTML = '';
+        
+        // 重新創建進度條容器
+        const sliderContainer = document.createElement('div');
+        sliderContainer.className = 'slider-container';
+        
+        // 創建新的進度條
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.className = 'progress-slider';
+        slider.min = '0';
+        slider.max = (isRandomMode ? randomIndices.length : filteredData.length) - 1;
+        slider.value = currentValue;
+        
+        // 重新綁定事件監聽器
+        slider.addEventListener('input', function(e) {
+            const newIndex = parseInt(e.target.value);
+            if (isRandomMode) {
+                currentIndex = randomIndices[newIndex];
+            } else {
+                currentIndex = newIndex;
+            }
+            updateCardContent();
+        });
+        
+        sliderContainer.appendChild(slider);
+        card.appendChild(sliderContainer);
+        
+        // 創建並添加內容
+        const contentWrapper = document.createElement('div');
+        contentWrapper.className = 'content-wrapper';
+        const item = filteredData[currentIndex];
+        const itemElement = createItemElement(item, currentIndex);
+        contentWrapper.appendChild(itemElement);
+        card.appendChild(contentWrapper);
+    }
+}
+
+// 輔助函數，只更新卡片內容而不重新創建進度條
+function updateCardContent() {
+    const card = document.querySelector('.single-card');
+    if (card) {
+        const contentWrapper = card.querySelector('.content-wrapper');
+        if (contentWrapper) {
+            const item = filteredData[currentIndex];
+            const itemElement = createItemElement(item, currentIndex);
+            contentWrapper.innerHTML = '';
+            contentWrapper.appendChild(itemElement);
+        }
+        
+        // 更新進度條值
+        const slider = card.querySelector('.progress-slider');
+        if (slider) {
+            slider.value = isRandomMode ? randomIndices.indexOf(currentIndex) : currentIndex;
+        }
+    }
+}
+
+// 創建項目元素的輔助函數
 function createItemElement(item, index) {
   const itemElement = document.createElement('div');
   itemElement.className = 'item';
@@ -2081,7 +2162,7 @@ function createItemElement(item, index) {
     element.addEventListener('click', () => {
       if (audioFile) {
         playCurrentAudio(audioFile, 1);
-        element.style.color = '#4299e1'; // 播放時變為藍色
+        element.style.color = 'blue'; // 播放時變為藍色
         setTimeout(() => {
           element.style.color = ''; // 恢復原色
         }, 1500);
@@ -2095,40 +2176,95 @@ function createItemElement(item, index) {
   return itemElement;
 }
 
-  // 導航函數
-  function navigate(direction) {
+// 導航函數
+function navigate(direction) {
     if (isGroupMode) {
-      const totalGroups = Math.ceil(filteredData.length / 5);
-      const newGroupIndex = Math.floor(currentIndex / 5) + direction;
-      
-      if (newGroupIndex >= 0 && newGroupIndex < totalGroups) {
-        currentIndex = newGroupIndex * 5;
-        const targetElement = document.getElementById(`group-${newGroupIndex}`);
-        if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
+        // 分組模式的導航保持不變
+        const totalGroups = Math.ceil(filteredData.length / 5);
+        const currentGroup = Math.floor(currentIndex / 5);
+        const newGroupIndex = currentGroup + direction;
+        if (newGroupIndex >= 0 && newGroupIndex < totalGroups) {
+            currentIndex = newGroupIndex * 5;
+            const targetElement = document.getElementById(`group-${newGroupIndex}`);
+            if (targetElement) {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }
         }
-      }
     } else {
-      const newIndex = currentIndex + direction;
-      if (newIndex >= 0 && newIndex < filteredData.length) {
-        currentIndex = newIndex;
-        renderSingleView();
-      }
+        // 單字卡模式的導航
+        if (isRandomMode) {
+            const currentRandomIndex = randomIndices.indexOf(currentIndex);
+            const newRandomIndex = currentRandomIndex + direction;
+            if (newRandomIndex >= 0 && newRandomIndex < randomIndices.length) {
+                currentIndex = randomIndices[newRandomIndex];
+                updateCardContent(); // 使用新函數
+            }
+        } else {
+            const newIndex = currentIndex + direction;
+            if (newIndex >= 0 && newIndex < filteredData.length) {
+                currentIndex = newIndex;
+                updateCardContent(); // 使用新函數
+            }
+        }
     }
-  }
+}
 
-  // 模式切換處理
-  modeSwitch.addEventListener('click', () => {
+// 亂數模式切換函數
+function toggleRandomMode() {
+    isRandomMode = !isRandomMode;
+    randomButton.innerHTML = isRandomMode ? '亂' : '順';
+    randomButton.title = isRandomMode ? '切換為順序模式' : '切換為亂數模式';
+    console.log("B")
+    if (isRandomMode) {
+		console.log("A")
+        // 生成亂數順序
+        randomIndices = Array.from({length: filteredData.length}, (_, i) => i);
+        for (let i = randomIndices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [randomIndices[i], randomIndices[j]] = [randomIndices[j], randomIndices[i]];
+        }
+        // 從當前組的第一個詞開始
+        const currentGroup = Math.floor(currentIndex / 5);
+        currentIndex = randomIndices[0];
+    } else {
+        // 返回順序模式時，回到當前組的第一個詞
+        currentIndex = Math.floor(currentIndex / 5) * 5;
+    }
+    renderSingleView();
+}
+
+// 在亂數按鈕加入事件監聽
+modeSwitch.addEventListener('click', () => {
     isGroupMode = !isGroupMode;
     modeSwitch.innerHTML = isGroupMode ? '單' : '全';
     modeSwitch.title = isGroupMode ? '切換為單個模式' : '切換為分組模式';
     
+    // 控制亂數按鈕的顯示/隱藏
+    randomButton.style.display = isGroupMode ? 'none' : 'flex';
+    
     if (isGroupMode) {
-      renderGroupView();
+        // 從單詞檢視切換到分組檢視
+        // 計算當前詞應該在哪一組，並滾動到該組
+        const groupIndex = Math.floor(currentIndex / 5);
+        currentIndex = groupIndex * 5; // 將當前索引設為該組的第一個
+        renderGroupView();
+        // 滾動到對應的組
+        const targetElement = document.getElementById(`group-${groupIndex}`);
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
     } else {
-      renderSingleView();
+        // 從分組檢視切換到單詞檢視
+        // 保持 currentIndex 在當前組的第一個詞
+        currentIndex = Math.floor(currentIndex / 5) * 5;
+        renderSingleView();
     }
-  });
+});
+// 預設隱藏亂數按鈕
+randomButton.style.display = 'none';
+
+// 在亂數按鈕加入事件監聽
+randomButton.addEventListener('click', toggleRandomMode);
 
   // 按鈕事件監聽
   prevButton.addEventListener('click', () => navigate(-1));
@@ -2137,6 +2273,7 @@ function createItemElement(item, index) {
   // 添加所有按鈕到容器
   navButtonsContainer.appendChild(backButton);
   navButtonsContainer.appendChild(modeSwitch);
+  navButtonsContainer.appendChild(randomButton);
   navButtonsContainer.appendChild(prevButton);
   navButtonsContainer.appendChild(nextButton);
 
@@ -2255,3 +2392,77 @@ function returnToSettings() {
     updateTimeDisplay();
 }
 
+
+
+
+// emoji-detector.js
+class EmojiDetector {
+    constructor() {
+        this.hasEmojiSupport = this.checkEmojiSupport();
+        this.needsWebfont = this.checkOSSupport().needsWebfont;
+    }
+
+    // 檢測是否支援新版emoji
+    checkEmojiSupport() {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const testEmoji = '🦾';
+        
+        ctx.fillStyle = '#000000';
+        ctx.textBaseline = 'top';
+        ctx.font = '32px Arial';
+        ctx.fillText(testEmoji, 0, 0);
+        
+        const emojiData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        return !emojiData.data.every(pixel => pixel === 0);
+    }
+
+    // 檢測作業系統版本
+    checkOSSupport() {
+        const ua = navigator.userAgent;
+        const osVersion = {
+            iOS: parseInt((ua.match(/OS (\d+)_/i) || [])[1], 10),
+            Android: parseInt((ua.match(/Android (\d+)/i) || [])[1], 10),
+            Windows: parseInt((ua.match(/Windows NT (\d+\.\d+)/i) || [])[1], 10)
+        };
+        
+        return {
+            needsWebfont: (
+                (osVersion.iOS && osVersion.iOS < 14) ||
+                (osVersion.Android && osVersion.Android < 11) ||
+                (osVersion.Windows && osVersion.Windows < 10)
+            )
+        };
+    }
+
+    // 載入 Emoji 字型
+    loadEmojiFont() {
+        if (!this.hasEmojiSupport || this.needsWebfont) {
+            const style = document.createElement('style');
+            style.textContent = `
+                @font-face {
+                    font-family: 'EmojiFont';
+                    src: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/fonts/twemoji-mozilla.woff2') format('woff2');
+                    font-display: swap;
+                }
+                
+                body {
+                    font-family: 'EmojiFont', system-ui, -apple-system, sans-serif;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    // 初始化
+    init() {
+        this.loadEmojiFont();
+    }
+}
+
+// 建立全域實例
+window.emojiDetector = new EmojiDetector();
+
+document.addEventListener('DOMContentLoaded', () => {
+    window.emojiDetector.init();
+});
