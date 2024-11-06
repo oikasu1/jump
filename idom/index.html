@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🥷烏衣行成語</title>
+	<link rel="stylesheet" href="https://oikasu1.github.io/fonts/twfonts.css">
+	<script src="dict.js"></script>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+			user-select: none;
+        }
+        .container {
+            background-color: white;
+	  	    justify-content: center;
+		    align-items: center;
+            padding: 30px 20px 20px 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+        .setup, .game {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        select, button {
+            margin: 10px;
+            padding: 5px 10px;
+        }
+        .item-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .left-item, .right-item {
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+			border: 2px solid #fff;			
+        }
+
+        .left-item:hover, .right-item:hover {
+            background-color: #c0f0c0;
+        }
+
+        .left-item {
+			background-color: #f3f3f3;
+			font-family: BpmfZihiSans-Regular;	
+			font-size: 1.3em;
+        }
+
+        .right-item {
+			background-color: #eaeaea;
+        }
+
+        .selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .selected:hover {
+            background-color: #299920;
+            color: white;
+        }
+
+        .selected-wrong {
+            background-color: #CC5550;
+            color: white;
+        }
+
+        .selected-wrong:hover {
+            background-color: #CC5550;
+            color: white;
+        }
+
+		.left-item.correct, .right-item.correct {
+			background-color: #fff !important;
+			color: #1B5E20;
+			border: 2px solid #AACC88;
+		}
+
+        #start-button, #view-idioms-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+		#next-button-container {
+			display: flex;
+			justify-content: space-between;
+			margin-top: 10px;
+		}
+		#next-button, #end-button {
+			width: calc(50% - 5px);
+			height: 40px;
+			padding: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			visibility: hidden;
+			opacity: 0;
+			transition: opacity 0.3s ease;
+		}
+
+		#next-button.visible, #end-button.visible {
+			visibility: visible;
+			opacity: 1;
+		}
+
+
+
+		#return-to-setup {
+			display: block;
+			margin-top: 20px;
+			padding: 10px 20px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+        .progress-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .close-button {
+            margin-right: 40px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: orange;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .round-info {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        #character {
+		font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+        #character.animated {
+            transform: scale(1.5);
+        }
+
+		.result {
+			display: none;
+	  	    justify-content: center;
+		    align-items: center;
+			margin: 20px auto;
+			max-width: 400px;
+			padding: 20px;
+			border-radius: 10px;
+
+		}
+
+		.result h2 {
+			text-align: center;
+			margin-bottom: 20px;
+			color: #333;
+		}
+
+		.result p {
+			margin: 10px 0;
+			font-size: 16px;
+			color: #555;
+		}
+
+		.accuracy-container {
+		 text-align: center;
+		}
+
+		.accuracy-bar {
+			flex-grow: 1;
+			height: 20px;
+			background-color: #e0e0e0;
+			border-radius: 10px;
+			margin-left: 10px;
+			overflow: hidden;
+		}
+
+		#accuracy-progress {
+			height: 100%;
+			background-color: orange;
+			width: 0%;
+			transition: width 0.5s ease-in-out;
+		}
+
+		#return-to-setup {
+			display: block;
+			width: 100%;
+			margin-top: 20px;
+			padding: 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+			transition: background-color 0.3s;
+		}
+
+		#return-to-setup:hover {
+			background-color: #45a049;
+		}
+
+		@media (max-width: 768px) {
+			.right-item {
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.game {
+				height: 90vh;
+				overflow-y: auto;
+				scrollbar-width: none;
+				-ms-overflow-style: none;
+			}
+
+			.game::-webkit-scrollbar {
+				display: none;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.item-container {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			#leftContainer {
+				flex-direction: row;
+				flex-wrap: wrap;
+				justify-content: space-between;
+			}
+
+			#leftContainer .left-item {
+				width: calc(50% - 10px);
+				box-sizing: border-box;\				
+			}
+
+			#rightContainer .right-item {
+				width: calc(100% - 30px);
+				margin-bottom: 10px;
+			}
+
+			#next-button-container {
+				flex-direction: row;
+			}
+
+			#next-button, #end-button {
+				width: calc(50% - 5px);
+			}
+
+
+		}
+
+		.sound-button {
+
+			margin: 0px 5px;
+			cursor: pointer;
+			font-size: 20px;
+		}
+
+.idiom-list {
+    background-color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+	height: 70vh;
+    position: relative;
+}
+
+.idiom-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.idiom-header h2 {
+    margin: 0;
+    flex-grow: 1;
+    text-align: center;
+}
+
+.idiom-header .close-button {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0;
+}
+
+.list-close-button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* 確保其他關閉按鈕不受影響 */
+.close-button:not(#close-idiom-list) {
+    position: static;
+    transform: none;
+}
+
+
+
+
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #333;
+}
+
+.idiom-controls {
+    margin-bottom: 10px;
+}
+
+.idiom-controls label {
+    margin-right: 10px;
+}
+
+
+
+
+.idiom-table-container {
+    overflow-x: auto;
+    max-height: calc(80vh - 130px);
+}
+
+#idiom-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#idiom-table thead {
+    position: sticky;
+    top: 0;
+	padding: 20px;
+    background-color: #f2f2f2;
+    z-index: 1;
+}
+
+#idiom-table th  {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+#idiom-table td {
+    border: 1px solid #ddd;
+    padding: 5px 5px 5px 10px;
+    text-align: left;
+}
+
+
+
+.small-number{
+    color: #ff5555;
+	font-size: 0.4em;
+}
+
+.idiom {
+    min-width: 130px;
+	font-size: 1.1em;
+	font-family: BpmfZihiSans-Regular;
+}
+
+
+
+
+#idiom-table th {
+    background-color: #e1e1e1;
+}
+
+#idiom-table tbody tr:nth-child(odd) {
+    background-color: #f8f8f8;
+}
+
+#idiom-table tbody tr:nth-child(even) {
+    background-color: #fefefe;
+}
+
+@media (max-width: 768px) {
+    .idiom-list {
+        padding: 10px;
+        max-height: 90vh;
+    }
+
+    .idiom-controls {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .idiom-controls label {
+        margin-bottom: 10px;
+    }
+
+    #idiom-table {
+        font-size: 14px;
+    }
+    
+    #idiom-table th, #idiom-table td {
+        padding: 5px;
+    }
+}
+
+.nav-button {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #45a049;
+}
+
+.nav-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+.font-toggle-button {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #4CAF50;
+    background-color: white;
+    color: #4CAF50;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#clear-records {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+    margin: 10px 5px 0 5px;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.3s;
+}
+
+#clear-records:hover {
+    background-color: #d32f2f;
+}
+
+#clear-records:active {
+    background-color: #b71c1c;
+}
+
+#clear-records:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.sorting-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.answer-area {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 65px;
+    border-bottom: 2px solid #eee;
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+
+.character-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.character-option, .in-answer {
+    font-size: 1.5em;
+    margin: 5px;
+    padding: 8px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.check-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.check-button:disabled {
+	visibility: hidden;
+}
+
+.idiom-question {
+    margin-bottom: 0px;
+}
+
+
+.character-option:hover, .in-answer:hover {
+    background-color: #e0e0e0;
+}
+
+
+
+.in-answer {
+    font-size: 1.5em;
+    margin: 5px;
+    padding: 10px;
+    background-color: #e0f0e0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+        @keyframes jumpAnimation {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes shakeAnimation {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        .jump {
+            animation: jumpAnimation 0.3s ease;
+        }
+
+        .shake {
+            animation: shakeAnimation 0.3s ease;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+		<div class="setup active" id="setup">
+			<h1 id="myTitle">🥷烏衣行成語</h1>
+			<div>
+				<label for="category-select">分類：</label>
+				<select id="category-select">
+					<option value="all">所有分類</option>
+					<!-- 其他分類選項將在這裡動態生成 -->
+				</select>
+			</div>
+			<div>
+				<label for="match-type-select">配對：</label>
+				<select id="match-type-select">
+					<option value="成語-表達意思">成語 - 表達意思</option>
+					<option value="成語-字面意思">成語 - 字面意思</option>
+					<option value="成語-例句">成語 - 例句</option>
+					<option value="成語-排序">成語 - 排序</option>
+				</select>
+			</div>
+			<div>
+				<label for="order-select">順序：</label>
+				<select id="order-select">
+					<option value="random">隨機</option>
+					<option value="sequential">依序</option>
+				</select>
+			</div>			
+			<button id="view-idioms-button">檢視成語 🔎</button>
+			<button id="start-button">開始遊戲 🚀</button>
+		</div>
+
+		<div class="game" id="game">
+			<div class="progress-container">
+				<div class="close-button" id="close-button">✖︎</div>				
+				<div class="progress-bar">
+					<div class="progress" id="progress"></div>
+				</div>
+				<div class="round-info" id="round-info"></div>
+				<div class="sound-button" id="sound-button">🔔</div>
+				<div class="font-toggle-button" id="font-toggle-button">字</div>
+			</div>
+			<h1><span id="character">🙂</span></h1>
+			<div id="left-right-container">
+				<div class="item-container" id="leftContainer"></div>
+				<div class="item-container" id="rightContainer"></div>
+			</div>
+			<div id="sorting-container" style="display: none;">
+				<div class="idiom-question" id="idiom-question"></div>
+				<div class="sorting-area">
+					<div id="answer-area" class="answer-area"></div>
+					<div id="character-options" class="character-options"></div>
+				</div>
+				<button id="check-answer" class="check-button">確定</button>
+			</div>
+			<div id="next-button-container">                
+				<button id="end-button">🎉 結束</button>
+				<button id="next-button">下一題 🚀</button>
+			</div>
+		</div>
+
+		<div class="idiom-list" id="idiom-list" style="display: none;">
+			<div class="idiom-header">
+			<button id="close-idiom-list" class="list-close-button">✖︎</button><button id="prev-category" class="nav-button">上一分類</button>
+				<h2>🥷成語</h2>
+				
+				<button id="next-category" class="nav-button">下一分類</button><div class="font-toggle-button" id="list-font-toggle-button">字</div>
+			</div>
+
+			<div class="idiom-controls">
+				<label><input type="checkbox" id="show-category" checked>分類</label>
+				<label><input type="checkbox" id="show-idiom" checked>成語</label>
+				<label><input type="checkbox" id="show-literal" checked>字面</label>
+				<label><input type="checkbox" id="show-figurative" checked>用意</label>
+				<label><input type="checkbox" id="show-example">例句</label>
+			</div>
+			<div class="idiom-table-container">
+				<table id="idiom-table">
+					<thead>
+						<tr>
+							<th class="category">分類</th>
+							<th class="idiom">成語</th>
+							<th class="literal">字面意思</th>
+							<th class="figurative">表達意思</th>
+							<th class="example">例句</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- 成語資料將在這裡動態生成 -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div id="result" class="result">
+			<h2>🥷烏衣行成語</h2>
+		
+				<div class="accuracy-bar">
+					<div id="accuracy-progress"></div>
+				</div>
+
+			<div class="accuracy-container">		
+				<p id="accuracy"></p>
+				<p id="time-spent"></p>
+				<p id="total-rounds"></p>
+				<p id="total-pairs"></p>
+				<p id="selected-category"></p>
+				<p id="match-type-result"></p>
+				<p id="order-type-result"></p>
+			</div>
+			<button id="clear-records" disabled>清除紀錄 🗑️</button>
+			<button id="return-to-setup">返回 🛸</button>
+		</div>
+
+    </div>
+
+    <script>
+        const idiomsData = `
+分類	成語	字面意思	表達意思	例句	拼音
+勇氣與膽量	匹󠇡夫之勇	指匹夫的蠻勇，無謀的勇氣	像普通人那樣有勇無謀	僅憑匹夫之勇，他無法改變局勢。|他只憑匹夫之勇，不顧後果，往往吃虧。	pi3 fu1 zhi1 yong3
+態度與行為	不拘小節	不計較細節或小事	不在意小事細節	他一向不拘小節，對生活中的瑣事並不在意。|他處事大方，不拘小節。	bu4 ju1 xiao3 jie2
+無所作為	刻舟求劍	比喻拘泥不變，固執己見	在船上刻記號找劍	他固執己見，不願改變計劃，這種行為如同刻舟求劍，徒勞無功。|他的做法猶如刻舟求劍，不合時宜。	ke4 zhou1 qiu2 jian4
+學習與進步	夜以繼日	日夜不停地工作	用夜晚接續白天	為了趕上進度，他夜以繼日地工作，幾乎沒有休息。|為了完成任務，他夜以繼日地工作。	ye4 yi3 ji4 ri4
+氣勢	火傘高張	形容烈日當空，炎熱難耐	火熱的太陽高高掛著	在火傘高張的夏日午後，人們都在尋找避暑的地方。|烈日當空，火傘高張，令人汗流浹背。	huo3 san3 gao1 zhang1
+混亂	水泄不通	形容擁擠或封閉得嚴密	嚴密到像水都無法滲透過去	演唱會現場擠滿了人，幾乎水泄不通。|節慶期間，城市的街道上人潮洶湧，幾乎水泄不通。	shui3 xie4 bu4 tong1
+愛情與婚姻	一󠇡飯千金	形容重重報答恩人	吃一頓飯給予千金酬謝	他曾幫助過一個窮困的小孩，數年後，小孩一飯千金，報答了他的恩情。|為報答救命之恩，他一飯千金，慷慨回報。	yi1 fan4 qian1 jin1
+平靜	不󠇡動聲色	形容鎮定自若，不表露感情	神情和語氣都不變	即使在危急關頭，他依然不動聲色，冷靜應對。|面對挑釁，他始終不動聲色，保持冷靜。	bu4 dong4 sheng1 se4
+友情與交往	投桃報李	用禮物或行為回報他人	以桃子回報李子	他幫助了朋友，朋友也以同樣的方式投桃報李，回報了他。|他幫助了我，我自然也應該投桃報李。	tou2 tao2 bao4 li3
+自負與驕傲	夜郎自大	形容人自大而不知量力	夜郎國自以為大	他總是夜郎自大，看不起其他競爭對手。|他對自己的成就夜郎自大，目中無人。	ye4 lang2 zi4 da4
+混亂	尾大不󠇡掉	比喻勢力過大，不易控制	尾巴太大無法甩動	這個組織層級複雜，尾大不掉，管理起來相當困難。|這個組織已經尾大不掉，難以有效管理。	wei3 da4 bu4 diao4
+態度與行為	從善如流	形容樂於接受善意的勸告	順從善行如流水般自然	他是一個虛心的人，對別人的建議總是從善如流。|他總是從善如流，聽取別人的建議，不斷改進。	cong2 shan4 ru2 liu2
+驕傲與自負	莫衷一󠇡是	各有意見，無法一致	無法得出一致的意見	對於這個問題，大家莫衷一是，無法達成一致。|對於這個問題，大家的意見莫衷一是。	mo4 zhong1 yi1 shi4
+希望與期待	柳暗花明	比喻絕境中出現轉機	柳暗處花開明亮	就在他絕望之際，事情卻突然柳暗花明，出現了轉機。|在最困難的時候，他突然發現柳暗花明的機會。	liu3 an4 hua1 ming2
+時勢與形勢	風起雲湧	事情發展迅速，來勢兇猛	像風起雲湧一樣，事態急速發展	隨著社會變革，新的挑戰風起雲湧。|近來的政治局勢風起雲湧，變化莫測。	feng1 qi3 yun2 yong3
+自負與驕傲	飛揚跋扈	形容驕橫跋扈，肆意妄為	狂妄不羈、不可一世	他因為有權有勢，行事飛揚跋扈，讓人不敢接近。|他的態度飛揚跋扈，讓人難以忍受。	fei1 yang2 ba2 hu4
+忠誠與信義	移風易俗	改變風俗習慣	改變舊有的風俗習慣	推動社會進步，需要大家共同努力移風易俗。|這次改革大力推行移風易俗，改善社會風氣。	yi2 feng1 yi4 su2
+不變	鉅細靡遺	形容大小事情都處理得非常仔細	大大小小都不遺漏	這份報告鉅細靡遺，對每個細節都進行了深入分析。|這份報告鉅細靡遺，連細節都考慮周全。	ju4 xi4 mi3 yi2
+欺騙與詭計	烏合之眾	形容沒有紀律、團結的臨時集合的人群	像烏鴉聚集的一群人	這支隊伍看似人多勢眾，實則烏合之眾，毫無戰鬥力。|這支隊伍雖然人多，但無紀律，真是烏合之眾。	wu1 he2 zhi1 zhong4
+歡樂與喜悅	笑比河清	形容事情難得發生或幾乎不可能	笑容比河水清澈還難見	這件事情實在荒唐得讓人笑比河清，無法置信。|要他改變固執的觀點，簡直是笑比河清。	xiao4 bi3 he2 qing1
+恐懼與驚慌	朝󠇡秦暮楚	形容人反覆無常	早上依附秦，晚上依附楚	他性格不定，朝秦暮楚，難以信賴。|他立場不穩，經常朝秦暮楚，讓人難以信任。	zhao1 qin2 mu4 chu3
+糊塗與愚蠢	惻隱之心	指對他人不幸的同情心	心中感到同情憐憫	見到流浪的小動物，他不禁生起惻隱之心，收留了它們。|他對流浪漢充滿惻隱之心，總是慷慨解囊。	ce4 yin3 zhi1 xin1
+驕傲與自負	搬弄是非	指故意挑起紛爭或製造矛盾	挑撥是非，製造矛盾	他總是喜歡在背後搬弄是非，挑撥離間，破壞別人的關係。|他愛在背後搬弄是非，挑撥離間。	ban1 nong4 shi4 fei1
+經驗與閱歷	班班可考	指證據或事實明顯清楚	清楚明白可以查證	這段歷史的資料班班可考，無可辯駁。|這段歷史班班可考，史書中有明確記載。	ban1 ban1 ke3 kao3
+無所作為	緣木求魚	比喻方法錯誤，徒勞無功	爬樹找魚，方法錯誤	想要在這片沙漠中找到水源，無異於緣木求魚，根本不可能。|想在這裡找到真愛，無異於緣木求魚。	yuan2 mu4 qiu2 yu2
+荒涼	不毛之地	形容貧瘠荒涼、不適合耕種的地方	沒有草木生長的土地	這片沙漠是一片不毛之地，沒有任何生機。|他在這片不毛之地上創造了奇蹟，建成了繁榮的城市。	bu4 mao2 zhi1 di4
+技藝與能力	信手拈來	形容做事輕鬆，毫不費力	隨手拿來就能用	對他來說，這些複雜的計算題都能信手拈來。|對於他來說，寫文章就像信手拈來一般簡單。	xin4 shou3 nian1 lai2
+變化與轉變	具體而微	形容事物具備了主要的部分	細小的事物呈現具體整體	這個模型設計得具體而微，將實物的每個細節都完美呈現。|這篇報告內容具體而微，細節非常豐富。	ju4 ti3 er2 wei1
+辛勤	披星戴月	形容日夜奔波，辛勤勞動	趕路時披著星月	他披星戴月地工作，只為早日完成項目。|他們披星戴月地工作，終於完成了任務。	pi1 xing1 dai4 yue4
+學習與進步	青出於藍	比喻學生超越老師	青色從藍色中提煉而來	他的才華超越了老師，真是青出於藍而勝於藍。|這位學生的表現真是青出於藍，勝於老師。	qing1 chu1 yu2 lan2
+成功	俯拾即是	形容事物隨處可得	俯身就能撿到，比比皆是	在這裡，機會俯拾即是，只要你願意抓住，就能成功。|在這座歷史名城，古跡俯拾即是。	fu3 shi2 ji2 shi4
+奢華	炊金饌玉	形容飲食極為奢華	像金玉般珍貴的食物	這家餐廳以炊金饌玉的美食著稱，每道菜都是藝術品。|宴會上，炊金饌玉，各種美食令人垂涎欲滴。	chui1 jin1 zhuan4 yu4
+友情與交往	拳拳服膺	形容真心服從，牢記在心	懷著忠誠牢牢記在心中	老師的教誨他一直拳拳服膺，並實踐於生活中。|老師的教誨我一直拳拳服膺，牢記於心。	quan2 quan2 fu2 ying1
+成功	席卷󠇡天下	比喻力量強大，迅速控制全局	像席子般捲起整個天下	這場風潮席卷天下，無人能夠置身事外。|這部電影上映後迅速席卷天下。	xi2 juan3 tian1 xia4
+美麗	栩栩如生	形容非常生動，像真的一樣	像活的一樣生動	這幅畫中的人物栩栩如生，彷彿隨時會走出畫框。|他的畫技高超，畫中的人物栩栩如生。	xu3 xu3 ru2 sheng1
+危險	浮雲蔽日	比喻一時的困難或障礙	浮雲遮蔽了太陽	天上的浮雲蔽日，讓整個城市都陷入了陰影。|他的心情像浮雲蔽日，鬱悶不堪。	fu2 yun2 bi4 ri4
+無用	得寸進尺	形容貪得無厭	得到一寸就進一步要更多	他對於所得從不滿足，總是得寸進尺，提出更多要求。|對於他的要求，我們已經讓步了，但他卻得寸進尺，越來越過分。	de2 cun4 jin4 chi3
+無所作為	心勞日拙	形容事情越做越差	費盡心力反而越來越差	他雖然很努力，但方法不對，結果心勞日拙，事倍功半。|雖然他心勞日拙，但事業依然毫無起色。	xin1 lao2 ri4 zhuo1
+憤怒與憎恨	淒風苦雨	比喻淒涼、困苦的環境	寒冷的風與酸苦的雨	他獨自一人在淒風苦雨中徘徊，感到無比的孤獨。|在這樣的淒風苦雨中，他依然堅持不懈。	qi1 feng1 ku3 yu3
+勇氣與決心	臥薪嘗膽	形容刻苦自勵，奮發圖強	躺在柴薪上，嘗膽汁激勵自己	他經歷了失敗，但臥薪嘗膽，終於在下一次比賽中奪冠。|為了報仇，他十年如一日地臥薪嘗膽。	wo4 xin1 chang2 dan3
+無知與淺薄	不󠇡識之無	形容人非常愚昧無知	不懂得「無」的道理	這個問題對於他來說簡直是不識之無，完全無法理解。|他對這件事情完全不識之無，一無所知。	bu4 shi2 zhi1 wu2
+無用	大瓠之用	比喻看似無用但實際上有大用處	像大葫蘆般有大的作用	這個項目具有大瓠之用，可以帶來巨大的經濟效益。|這個簡單的工具卻有著大瓠之用，十分實用。	da4 hu4 zhi1 yong4
+相似	並駕齊驅	比喻實力相當，並肩前進	像並排的馬車一樣並行前進，實力相當	這兩家公司在市場上並駕齊驅，競爭激烈。|這兩家公司在市場上並駕齊驅，競爭激烈。	bing4 jia4 qi2 qu1
+速度與效率	不󠇡脛而走	形容消息迅速傳播	沒有腿也能傳播開來	這個消息不脛而走，很快就傳遍了整個公司。|這個消息迅速傳開，不脛而走。	bu4 jing4 er2 zou3
+死亡與結束	天不假年	形容人英年早逝	上天不給予延長壽命	他本應前途無量，卻因病早逝，真是天不假年。|這位天才詩人英年早逝，真是天不假年。	tian1 bu4 jia3 nian2
+無用	付之一󠇡炬	形容把某物燒毀	把東西投入火中燒毀	他的多年心血在一場意外中付之一炬，讓他十分痛心。|多年積攢的財物在一場火災中付之一炬。	fu4 zhi1 yi1 ju4
+謙遜與低調	功成不居	形容立了功不自誇	功成之後不自居傲慢	他雖然立下了大功，但卻始終保持低調，功成不居。|他完成了許多成就，但一直保持低調，功成不居。	gong1 cheng2 bu4 ju1
+機智與聰明	好󠇡行小慧	愛賣弄小聰明	喜歡賣弄小聰明	他總愛好行小慧，在小事上賣弄聰明，卻忽略了整體的問題。|他總是好行小慧，喜歡炫耀自己的小聰明。	hao4 xing2 xiao3 hui4
+速度與效率	如火如荼	形容氣勢旺盛，熱烈繁榮	如火燃燒般旺盛	活動現場如火如荼，大家都充滿了熱情。|活動進行得如火如荼，大家熱情高漲。	ru2 huo3 ru2 tu2
+背叛與不義	大義滅親	為了正義不顧親情，嚴懲親屬	為大義而犧牲親情	為了正義，他不得不大義滅親，揭發了家人的犯罪行為。|為了正義，他大義滅親，揭發了親人的罪行。	da4 yi4 mie4 qin1
+速度	行雲流水	形容文筆流暢或動作自然不拘束	像流動的雲水般自然順暢	他的書法作品行雲流水，筆勢流暢，極具美感。|他的書法如行雲流水，自然流暢。	xing2 yun2 liu2 shui3
+辛勤	汗馬功勞	形容作戰中的功勞	騎馬出征立下的功勞	他為公司發展立下了汗馬功勞，得到了大家的肯定。|為了公司的發展，他立下了汗馬功勞。	han4 ma3 gong1 lao2
+數量	更󠇡僕難數󠇡	形容次數太多，難以計算	換了很多僕人都數不清	他的優點實在是太多，真的是更僕難數。|他的優點多得更僕難數，難以盡述。	geng4 pu2 nan2 shu3
+欺騙與詭計	含沙射影	暗中攻擊或中傷他人	像含著沙子暗中攻擊或誹謗	他的話語中充滿了含沙射影，讓人無法不感到不安。|他在背後含沙射影，暗中攻擊對手。	han2 sha1 she4 ying3
+狡猾與奸詐	見風使舵	看情勢做事，缺乏原則	隨風向變換方向	他在政壇上見風使舵，隨時調整立場以自保。|他總是見風使舵，沒有堅定的立場。	jian4 feng1 shi3 duo4
+愛情與婚姻	乘龍快婿	指理想的女婿	像騎乘龍一樣優秀的好女婿	他成為了這個大家族的乘龍快婿，未來前途無量。|他不僅事業有成，更娶了一位賢妻，真是乘龍快婿。	cheng2 long2 kuai4 xu4
+貧困與艱難	家徒四壁	形容極度貧困，家中空無一物	家中只有四面空牆	他雖然家徒四壁，但卻依然保持著積極向上的態度。|他家境貧寒，家徒四壁，生活艱難。	jia1 tu2 si4 bi4
+醜陋	首如飛蓬	形容人頭髮散亂，無法整頓	頭髮亂如飛散的蓬草	經過長時間的奔波，他的髮型已經亂得首如飛蓬。|他多年奔波，已經首如飛蓬。	shou3 ru2 fei1 peng2
+不變	略見一󠇢斑	形容從部分可以推測整體	看到部分便可推知全貌	雖然只是部分數據，但我們已經可以略見一斑，全貌應該大致如此。|從他的言行中，可以略見一斑他的修養。	lue4 jian4 yi1 ban1
+困難與挑戰	海底撈針	比喻事情極難達成	像在海底撈針般困難	在茫茫人海中尋找她，簡直如同海底撈針。|在這樣的情況下找到線索無異於海底撈針。	hai3 di3 lao1 zhen1
+技藝與能力	班門弄斧	比喻在行家面前賣弄本領	在魯班門前賣弄斧技	在大師面前講技術，簡直是班門弄斧，不自量力。|在他面前討論這個話題，簡直是班門弄斧。	ban1 men2 nong4 fu3
+無所作為	削󠇡足適履	比喻強行遷就或改變事物以適應需求	削去腳來適應鞋子	他的解決方案就像削足適履，完全不切實際。|他的解決方案猶如削足適履，不合實際。	xiao1 zu2 shi4 lv3
+家庭與親情	脣亡齒寒	比喻雙方關係密切，一方遭難，另一方也不能保全	嘴唇沒了，牙齒就感寒冷	這兩家公司長期合作，互相依賴，真是脣亡齒寒的關係。|兩國唇亡齒寒，應該互相依存。	chun2 wang2 chi3 han2
+變化與轉變	眾望所歸	指受到了大家的期待和推崇	眾人的期望匯聚於此	他以卓越的能力和貢獻，成為了公司新任CEO，這是眾望所歸的結果。|他當選市長可說是眾望所歸，符合民意。	zhong4 wang4 suo3 gui1
+成功與成就	雪中送炭	比喻在困難時給予適時的幫助	雪中送來炭火，解人急需	他在我最困難的時候幫助了我，真是雪中送炭，令人感激。|他的幫助對我而言真是雪中送炭。	xue3 zhong1 song4 tan4
+混亂	雪泥鴻爪	比喻往事留下的痕跡	雪地留下鴻雁的爪印	那些過往的痕跡，猶如雪泥鴻爪，雖然模糊，卻讓人無法忘懷。|他留在日記裡的文字，如雪泥鴻爪般珍貴。	xue3 ni2 hong2 zhao3
+繁華	火樹銀花	形容節日或慶典的燦爛景象	像火樹般亮麗的銀色花朵	元宵節當晚，街頭火樹銀花，景象壯觀，令人流連忘返。|新年夜的煙火綻放，火樹銀花，煥然一新。	huo3 shu4 yin2 hua1
+學習與進步	魚目混珠	以假亂真	用魚眼冒充珍珠	市場上常有不肖業者企圖以魚目混珠，欺騙消費者。|市場上有許多假貨，魚目混珠，難以分辨。	yu2 mu4 hun4 zhu1
+變化	勞燕分飛	比喻夫妻或情人離別	夫妻分離像燕子南飛北返	因為工作的原因，他們不得不勞燕分飛，分隔兩地。|因工作調動，他們不得不勞燕分飛。	lao2 yan4 fen1 fei1
+無所作為	畫地自限	比喻自己限制自己	劃地為界，自我限制	他總是畫地自限，不願嘗試新事物，導致成長受限。|如果總是畫地自限，就無法突破自我。	hua4 di4 zi4 xian4
+謙遜與低調	無忝所生	不愧於父母的養育之恩	不辜負父母的養育	他在各方面都表現優異，無忝所生，令父母驕傲。|他時刻提醒自己要無忝所生，不辜負父母的期望。	wu2 tian3 suo3 sheng1
+言談與表達	滔滔不絕	形容話多，連續不斷	話語像流水不停	他在會議上滔滔不絕，大家都被他的熱情感染。|她說起話來滔滔不絕，十分健談。	tao1 tao1 bu4 jue2
+欺騙與詭計	嘔心瀝血	形容非常辛苦地付出心血	耗盡心血與精力	這部作品凝聚了他多年的嘔心瀝血，值得細細品味。|這本書是作者嘔心瀝血的結晶，凝聚了他多年的心血。	ou3 xin1 li4 xue4
+學習與進步	鳩佔鵲巢	比喻強佔別人的位置或財產	鳩鳥占了鵲鳥的巢穴	這座豪宅原本屬於他，卻被那人鳩佔鵲巢，霸佔了多年。|他們用詭計佔據了本不屬於他們的位置，如鳩佔鵲巢。	jiu1 zhan4 que4 chao2
+學習與智慧	學富五車󠇡	形容學問淵博	學識像五輛車那麼豐富	他是一位學富五車的學者，知識淵博，令人敬佩。|他學富五車，知識淵博，深受大家敬重。	xue2 fu4 wu3 che1
+成功	大器晚成	形容大人物成名較晚	大器物往往晚成	雖然他起步較晚，但最終大器晚成，成為了業界的翹楚。|他雖然起步較晚，但終於大器晚成。	da4 qi4 wan3 cheng2
+辛勤	席不暇暖	形容非常忙碌，無暇休息	座位還來不及坐熱就起身	他剛從一個會議出來，又馬上投入到另一個工作中，真是席不暇暖。|這段時間他忙得席不暇暖，連休息的時間都沒有。	xi2 bu4 xia2 nuan3
+變化與轉變	黔驢技窮	比喻才智有限，黔驢技窮	貴州的驢技窮，無計可施	他在辯論中已無法反駁，顯得黔驢技窮，只能默默無言。|他用了所有的方法，終於黔驢技窮。	qian2 lv2 ji4 qiong2
+變化與轉變	窮山惡水	形容偏僻荒涼、環境惡劣的地方	荒涼貧瘠的山水	他們居住在窮山惡水之中，生活艱難。|在這片窮山惡水之中，他依然堅持生存下來。	qiong2 shan1 e4 shui3
+猶豫	舉棋不󠇡定	形容猶豫不決，無法做出決定	拿著棋子猶豫不決	在兩個方案之間，他遲遲舉棋不定，無法做出決定。|在重要決策前，他總是舉棋不定，難以抉擇。	ju3 qi2 bu2 ding4
+輕鬆	大快朵頤	形容盡情享受美食	痛快地大吃一頓	美食擺滿了整桌，大家都大快朵頤，享受著美味。|在這場美食饗宴中，大家都吃得大快朵頤，十分滿足。	da4 kuai4 duo3 yi2
+時間與歲月	不󠇡惑之年	指四十歲	四十歲不再困惑的年紀	他在不惑之年終於找到了自己人生的方向。|他已到不惑之年，但依然充滿熱情，積極進取。	bu4 huo4 zhi1 nian2
+巧合	天衣無縫󠇡	比喻做事或作品無懈可擊	像天上的衣裳無縫隙完美	這個計劃安排得天衣無縫，沒有一絲漏洞。|他的計劃天衣無縫，幾乎無懈可擊。	tian1 yi1 wu2 feng4
+判斷與洞察	反躬自省󠇡	反省自己的過錯	反過來檢討自己	在發生錯誤後，他選擇反躬自省，深刻反思自己的過失。|每天他都會反躬自省，檢討自己。	fan3 gong1 zi4 xing3
+權力與地位	一󠇢手遮天	比喻企圖用權勢蒙蔽事實，壓制他人	用一隻手遮住天，隱瞞真相	儘管他試圖一手遮天，但最終還是難逃法律的制裁。|他以權力一手遮天，掩蓋了所有的真相。	yi1 shou3 zhe1 tian1
+背叛與不義	兔死狗烹	比喻事情成功後，功臣被拋棄或害死	兔子死了，狗被煮了	當他失去了利用價值後，立刻就被拋棄，真是兔死狗烹。|他們一旦完成任務，可能會被兔死狗烹。	tu4 si3 gou3 peng1
+友情與交往	如魚得水	比喻得到了與自己投合的人或環境	像魚回到水裡般自在	他在新公司如魚得水，工作得心應手。|他在新公司如魚得水，很快適應了環境。	ru2 yu2 de2 shui3
+言談與表達	各執一󠇢詞	指雙方堅持各自的觀點	各自堅持自己的說法	在這場爭論中，雙方各執一詞，難以達成共識。|在這場爭論中，雙方各執一詞，難分對錯。	ge4 zhi2 yi1 ci2
+誇張與浮誇	文󠇡過飾非	掩飾錯誤	用文詞掩飾錯誤	在犯錯後，他試圖文過飾非，掩蓋真相。|他習慣文過飾非，為自己的錯誤找藉口。	wen2 guo4 shi4 fei1
+才能與天賦	別出心裁	形容構思獨特，與眾不同	另有一番獨特的構思	這次的設計風格別出心裁，令人耳目一新。|他的設計風格獨特，總能別出心裁，令人耳目一新。	bie2 chu1 xin1 cai2
+重要	泰山鴻毛	比喻事物的輕重懸殊	泰山與鴻毛般輕重懸殊	在他眼中，名利如同泰山鴻毛，毫不在意。|為了大義，他把生死看得如泰山鴻毛。	tai4 shan1 hong2 mao2
+言談與表達	侃侃而談	從容不迫地談話	談話時從容不迫	他在會議上侃侃而談，表達了自己的見解。|他在會議上侃侃而談，表現出色。	kan3 kan3 er2 tan2
+差異	良莠不齊	形容好人壞人混雜在一起	好的壞的參差不齊	這個市場中的產品質量良莠不齊，消費者難以選擇。|這些產品的質量良莠不齊，需要仔細挑選。	liang2 you3 bu4 qi2
+變化與轉變	楚材晉用	比喻人才外流，被他國所用	楚國的人才被晉國使用	他原本是A公司的員工，後來跳槽到B公司，成為楚材晉用的典型。|他在異鄉楚材晉用，得到了重用。	chu3 cai2 jin4 yong4
+急躁冒進	一󠇡意孤行	形容不聽勸告，堅持己見	堅持己見，獨自行事	儘管大家都反對，他仍然一意孤行，最終導致了失敗。|他不聽勸告，一意孤行，終於自食惡果。	yi1 yi4 gu1 xing2
+機智與聰明	盲人摸象	比喻只憑片面了解，無法得知全貌	盲人摸象只見片面不知全貌	如果不全面考慮問題，只憑部分事實下結論，無異於盲人摸象。|他們對真相的了解不過是盲人摸象。	mang2 ren2 mo1 xiang4
+歡樂與喜悅	眉飛色舞	形容情緒高昂，十分興奮	眉毛飛揚，臉色生動興奮	他講起自己新取得的成就，臉上滿是眉飛色舞的神情。|他說起自己的成就時，整個人眉飛色舞，充滿自豪。	mei2 fei1 se4 wu3
+憤怒與憎恨	張皇失措	慌張得不知如何是好	慌張而不知所措	地震發生時，他張皇失措，不知該如何應對。|面對突發事件，他顯得張皇失措，不知所措。	zhang1 huang2 shi1 cuo4
+團結	眾志成城	形容大家團結一致，力量強大	眾人的意志如城牆般堅固	在這次災難面前，全國人民眾志成城，共同渡過了難關。|在危急時刻，大家團結一心，眾志成城。	zhong4 zhi4 cheng2 cheng2
+無知與淺薄	庸人自擾	指不必要的煩惱或自找麻煩	平庸的人自找煩惱	這些問題本來就不存在，你不必庸人自擾，自己嚇自己。|事情其實並不複雜，他卻庸人自擾，自找麻煩。	yong1 ren2 zi4 rao3
+變化與轉變	歷歷在目	形容事物清晰地呈現在眼前	清晰地呈現在眼前	那些美好的回憶，至今仍歷歷在目，彷彿昨日重現。|那段難忘的經歷至今仍歷歷在目。	li4 li4 zai4 mu4
+欺騙與詭計	欲蓋彌彰	想要掩蓋反而更明顯	想掩蓋卻更加顯露	他的謊言欲蓋彌彰，反而暴露了更多的問題。|他企圖隱瞞真相，但結果卻欲蓋彌彰。	yu4 gai4 mi2 zhang1
+驕傲與自負	銷聲匿跡	形容聲音消失，行蹤隱匿	聲音消失，蹤跡隱藏	自從公司倒閉後，他便銷聲匿跡，再也沒有出現在公眾場合。|經過一段時間的風波後，他便銷聲匿跡，不再出現。	xiao1 sheng1 ni4 ji4
+痛苦與煎熬	淺斟低唱	形容輕鬆愉快地飲酒和唱歌	輕斟慢飲，低聲吟唱	在這個小酒館裡，大家淺斟低唱，享受著悠閒時光。|在幽靜的酒館裡，大家淺斟低唱，共享時光。	qian3 zhen1 di1 chang4
+混亂	無病呻吟	比喻無實際問題卻故作悲傷或不滿	沒有病卻發出呻吟聲	他總是在無病呻吟，表現得比實際情況更為嚴重。|他總愛無病呻吟，讓人感到厭煩。	wu2 bing4 shen1 yin2
+懶惰與怠慢	游手好󠇡閒	形容懶惰，不做正事	雙手閒置不做事	他整天游手好閒，毫無上進心。|他成天游手好閒，沒有固定工作。	you2 shou3 hao4 xian2
+家庭與親情	愛屋及烏	比喻愛一個人而連帶地喜歡與他有關的人或物	愛著房屋連同房上的烏鴉一起愛	由於喜歡他，她對他的家人也愛屋及烏，關心備至。|因為喜歡他，所以我也愛屋及烏地喜歡他的朋友。	ai4 wu1 ji2 wu1
+憤怒與憎恨	滄海一粟	比喻極為渺小，微不足道	大海中的一顆小米粒	在廣闊的宇宙中，人類如同滄海一粟，微不足道。|我們個人的力量不過是滄海一粟。	cang1 hai3 yi1 su4
+學習與智慧	溫故知新	指在複習舊知識中領悟新的道理	溫習舊事以獲得新知	他經常重讀經典書籍，從中溫故知新，獲得新的啟發。|老師鼓勵學生溫故知新，從過去的知識中獲得新見解。	wen1 gu4 zhi1 xin1
+無所作為	袖手旁觀	比喻置身事外，不願參與	雙手袖在一旁只觀看	面對困難，他選擇袖手旁觀，沒有給予任何幫助。|在這場爭執中，他始終袖手旁觀，不願插手。	xiu4 shou3 pang2 guan1
+差異	相󠇡提並論	指將兩個不同的事物放在一起比較	將兩者並列一起討論	這兩件作品雖然風格不同，但在藝術價值上卻可以相提並論。|這兩件事根本無法相提並論，不具可比性。	xiang1 ti2 bing4 lun4
+謹慎與小心	戰戰兢兢	形容非常謹慎，小心翼翼	小心謹慎而顫抖	初次登台演講時，他戰戰兢兢，顯得非常緊張。|面對這麼多的考官，他回答問題時顯得戰戰兢兢。	zhan4 zhan4 jing1 jing1
+無所作為	墨守成規	固守舊有的規矩，不願改變	固守著成規不變通	他總是墨守成規，拒絕接受任何新的觀念和做法。|他處事保守，總是墨守成規，不願創新。	mo4 shou3 cheng2 gui1
+驕傲與自負	調嘴弄舌	形容挑撥是非，搬弄口舌	搬弄是非，挑撥離間	他總是喜歡調嘴弄舌，挑撥離間，給別人帶來麻煩。|他經常調嘴弄舌，喜歡搬弄是非。	tiao2 zui3 nong4 she2
+新穎	反璞歸真	回歸自然，返本歸真	回歸樸實的本真	在繁忙的都市生活中，他渴望能反璞歸真，回歸自然。|在繁忙的生活中，他希望反璞歸真，回歸自然。	fan3 pu2 gui1 zhen1
+欺騙與詭計	濠上之樂	比喻對他人處境的悠閒猜測	河堤上的閒適之樂	他不與世俗爭鬥，過著濠上之樂的隱居生活。|他無憂無慮地過著濠上之樂的生活。	hao2 shang4 zhi1 le4
+憤怒與憎恨	懷才不󠇡遇	指有才能的人不得志，無法施展才能	懷有才能卻未能遇到機會	他一直感到懷才不遇，無法在職場上展現自己的才能。|他自認懷才不遇，總感嘆時運不濟。	huai2 cai2 bu4 yu4
+荒涼	趨炎附勢	奉承有權勢的人	依附有權勢的人	他總是趨炎附勢，巴結有權勢的人。|他為了自己的利益，總是趨炎附勢，結交權貴。	qu1 yan2 fu4 shi4
+勇氣與膽量	毛遂自薦	比喻自己推薦自己	毛遂自己推薦自己	在這次專案中，他毛遂自薦，願意擔任負責人。|他毛遂自薦，希望能夠參加這次項目。	mao2 sui4 zi4 jian4
+堅持與毅力	鍥而不󠇡捨	形容堅持不懈，努力不放棄	刻刀不停下，堅持到底	他以鍥而不捨的精神，最終完成了這項艱巨的任務。|他鍥而不捨地追求夢想，終於取得了成功。	qie4 er2 bu4 she3
+友情與交往	三顧茅廬	比喻禮賢下士，誠心求賢	三次拜訪草屋中的賢人	他為了邀請這位專家出山，三顧茅廬，誠意十足。|經過三顧茅廬，他終於請到了名師指導。	san1 gu4 mao2 lu2
+脆弱	千鈞一󠇢髮	形容非常危急的情況	千鈞重物懸於一根頭髮上	當時情況千鈞一髮，幸好他及時作出正確的決定，避免了災難。|在千鈞一髮的時刻，消防員及時救出了被困的人。	qian1 jun1 yi1 fa4
+機智與聰明	大智若愚	形容極聰明的人表面上看似愚鈍	有大智慧卻看似愚鈍	他雖然表面上看起來平凡無奇，實際上卻是大智若愚。|他雖然看起來樸實無華，其實是大智若愚。	da4 zhi4 ruo4 yu2
+巧合	一󠇢語成讖	說的話成為事後的預言	一句話成為預言	當年的一句玩笑話，如今竟一語成讖，真的發生了。|當年的預言竟然一語成讖，如今果真發生了。	yi1 yu3 cheng2 chen4
+速度	尺寸千里	比喻不大的地方或事情卻具有很大的影響	短小的尺寸包含千里的遙遠	雖然我們的想法只差了一點點，但實際上的結果卻可能有尺寸千里的差異。|這幅畫雖然小，但意境如尺寸千里。	chi3 cun4 qian1 li3
+言談與表達	支吾其詞	用含糊其詞來掩蓋真相	含糊不清地回答	在被問及關鍵問題時，他支吾其詞，顯得心虛。|面對質問，他不斷支吾其詞，顯得心虛。	zhi1 wu2 qi2 ci2
+友情與交往	人之常情	指一般人的普遍心理和情感	人們普遍的正常情感	在這種情況下感到沮喪是人之常情，不必太過自責。|在困難時期求助於朋友，是人之常情。	ren2 zhi1 chang2 qing2
+猶豫	因噎廢食	比喻因為害怕發生意外而放棄重要的事	因為噎住就停止進食	因為一次失敗就放棄努力，這無異於因噎廢食。|不能因噎廢食，放棄所有的可能性。	yin1 ye1 fei4 shi2
+無所作為	守株待兔	比喻不經過努力而妄想成功	守在樹下等待撞樹而死的兔子	如果總是守株待兔，而不主動努力，那麼成功遙不可及。|他總是守株待兔，等待機會降臨。	shou3 zhu1 dai4 tu4
+言談與表達	瓜田李下	比喻容易引起嫌疑的地方或情況	在瓜田和李樹下，容易被懷疑	在這種場合行事，必須避開瓜田李下的嫌疑，以免招致誤解。|在瓜田李下處，他們行事格外謹慎。	gua1 tian2 li3 xia4
+憤怒與憎恨	令人髮指	形容憤怒到極點	讓人憤怒得頭髮豎起	這起暴行令人髮指，社會各界紛紛譴責。|他的暴行令人髮指，讓人無法忍受。	ling4 ren2 fa4 zhi3
+學習與進步	行遠自邇	比喻從簡單的事情開始，逐步進行	走遠路從近處開始	成功的道路需要一步步來，正所謂行遠自邇，不能操之過急。|要達到目標，必須行遠自邇，一步步來。	xing2 yuan3 zi4 er3
+新穎	別開生面	創新，開創新局面	開創出新的局面	這次的展覽設計別開生面，吸引了大量觀眾。|這次的展覽別開生面，給人耳目一新的感覺。	bie2 kai1 sheng1 mian4
+痛苦與煎熬	刻骨銘心	形容感受深刻，難以忘懷	刻在骨頭裡，銘記在心中	這段經歷讓他刻骨銘心，終生難忘。|這段經歷讓他刻骨銘心，終身難忘。	ke4 gu3 ming2 xin1
+言談與表達	刺刺不休	形容言語繁瑣，不停抱怨	喋喋不休地說話	他對小事刺刺不休，讓人感到厭煩。|她對這件事刺刺不休，抱怨個不停。	ci4 ci4 bu4 xiu1
+平靜	曲󠇡肱而枕󠇡	形容安於簡陋的生活	用手臂當枕頭，表示安逸自足	儘管他生活簡樸，曲肱而枕，但內心卻十分充實快樂。|他生活簡樸，常常曲肱而枕，自得其樂。	qu1 gong1 er2 zhen3
+謙遜與低調	抱柱之信	比喻堅守信約，至死不渝	堅守承諾如抱住柱子不放	他對愛情抱持著抱柱之信的態度，堅守承諾，至死不渝。|他對朋友的承諾如抱柱之信，永不改變。	bao4 zhu4 zhi1 xin4
+繁華	車水馬龍	形容來往車馬繁多，熱鬧非凡	車馬像流水般川流不息	節日期間，市中心的街道車水馬龍，非常熱鬧。|城市中心車水馬龍，繁華熱鬧。	che1 shui3 ma3 long2
+勤奮努力	事必躬親	形容凡事親力親為，不假手他人	所有事都親自去做	作為領導者，他事必躬親，無論大事小事都要親自過問。|他對公司大小事務都事必躬親，不假手他人。	shi4 bi4 gong1 qin1
+平靜與安寧	河清海晏	比喻天下太平，社會安定	河水清澈，海面平靜	在經歷了動盪的年代後，國家終於達到了河清海晏的太平盛世。|現在的社會局勢猶如河清海晏，一片祥和。	he2 qing1 hai3 yan4
+繁華	門庭若市	形容賓客眾多，來訪的人很多	門前庭院像市場般熱鬧	這家新開的餐廳門庭若市，顧客絡繹不絕。|這家新開的餐廳因為口碑好，每天門庭若市。	men2 ting2 ruo4 shi4
+孤獨與寂寞	萍水相󠇡逢	形容素不相識的人偶然相遇	像浮萍在水上偶然相逢	我們只是萍水相逢，但他卻給了我莫大的幫助。|我們雖然萍水相逢，卻一見如故。	ping2 shui3 xiang1 feng2
+欺騙與詭計	指桑罵槐	比喻借機罵人或批評某人	指著桑樹罵槐樹，借題發揮	他在會議上指桑罵槐，實際上是在暗示某些人的不當行為。|他不直接批評人，卻經常指桑罵槐。	zhi3 sang1 ma4 huai2
+誇張與浮誇	信口雌黃	毫無根據地胡亂說話	隨口說出錯誤的話	他在公共場合信口雌黃，散布不實言論，引起了爭議。|他在公眾場合信口雌黃，製造混亂。	xin4 kou3 ci2 huang2
+成功	長驅直入	形容攻勢迅猛，勢如破竹	長途驅車直接深入敵境	他們在比賽中長驅直入，很快就取得了勝利。|大軍長驅直入，一舉攻克了敵方城池。	chang2 qu1 zhi2 ru4
+態度與行為	按部就班	按照一定的步驟或規矩進行	按照既定步驟進行	這項工程正在按部就班地進行，進度非常穩定。|他做事按部就班，從不越級冒進。	an4 bu4 jiu4 ban1
+孤獨與寂寞	秋扇見捐	比喻人失去恩寵或愛情	秋天的扇子被丟棄不用	她的建議一再被忽視，終究成為秋扇見捐，無人問津。|她感到自己像秋扇見捐，遭到冷落。	qiu1 shan4 jian4 juan1
+友善與善良	高風亮節	形容品德高尚	高尚的品德和堅定的節操	他在逆境中仍然堅持自己的信念，展現出高風亮節的品格。|他的行為彰顯出高風亮節，深受尊敬。	gao1 feng1 liang4 jie2
+技藝與能力	鬼斧神工	形容技藝精湛，超乎尋常	像鬼神雕刻般巧妙的工藝	這座雕像工藝精湛，宛如鬼斧神工般令人驚嘆。|這座雕像工藝精湛，真是鬼斧神工。	gui3 fu3 shen2 gong1
+欺騙與詭計	假公濟私	指假借公事來謀取私利	假借公事來謀取私利	他利用職權之便，假公濟私，為自己謀取了不少利益。|他利用職務之便假公濟私，損公肥私。	jia3 gong1 ji4 si1
+敵對與仇恨	動如參󠇡商	比喻兩者永遠無法見面	行蹤像參星與商星般難以相見	他們兄弟之間動如參商，感情早已淡漠無關。|兩兄弟已經動如參商，互不往來。	dong4 ru2 can1 shang1
+失敗與挫折	野人獻曝	比喻獻出平庸的東西，自以為貢獻寶貴	鄉野之人獻上取暖的土方法	他的建議雖然粗淺，但卻像野人獻曝一樣，有時候也能起到關鍵作用。|他的建議雖然簡單，卻是野人獻曝，實在可取。	ye3 ren2 xian4 pu4
+不變	獨占鰲頭	形容在比賽或考試中名列前茅	在競賽中獲得第一	在這次比賽中，他表現出色，獨占鰲頭，奪得冠軍。|在這次比賽中，他技壓群雄，獨占鰲頭。	du2 zhan4 ao2 tou2
+困難與挑戰	順水推舟	比喻順應情勢行事	順著水流推船，比喻順勢而為	他趁著這次機會順水推舟，成功達成了交易。|他見機行事，順水推舟，達成了自己的目的。	shun4 shui3 tui1 zhou1
+混亂	魚沉雁杳	比喻書信斷絕，音信全無	魚潛入水中，雁飛向天際，無消息	自從他離開後，就像魚沉雁杳一樣，再也沒有音訊。|他出國後，消息全無，真是魚沉雁杳。	yu2 chen2 yan4 yao3
+家庭與親情	承歡膝下	指孝順父母，侍奉在側	在父母膝前盡孝	他年事已高，但子女們仍然常常承歡膝下，讓他感到幸福。|她孝順父母，時常承歡膝下，讓父母開心。	cheng2 huan1 xi1 xia4
+猶豫	裹足不前	猶豫不敢前進	裹著腳猶豫而不往前走	面對未知的風險，他選擇裹足不前，不敢向前邁進。|面對困難，他裹足不前，遲遲不敢行動。	guo3 zu2 bu4 qian2
+變化與轉變	餘音嫋嫋	聲音悠遠綿長	聲音綿延不斷地迴響	音樂會結束後，演奏的餘音嫋嫋，令人回味無窮。|音樂會結束後，餘音嫋嫋，令人回味無窮。	yu2 yin1 niao3 niao3
+忠誠與信義	雄才大略	形容傑出的才能和遠大的謀略	有雄厚的才華和遠大的謀略	這位領袖雄才大略，帶領國家走向了繁榮富強。|他是一位有雄才大略的領袖，帶領國家走向繁榮。	xiong2 cai2 da4 lüe4
+狡猾與奸詐	鳥盡弓藏	比喻事情成功後，功臣被棄	鳥打完了，弓也被藏起來	這位功臣在完成任務後被解職，真是鳥盡弓藏的命運。|在危機解除後，他感到自己被鳥盡弓藏。	niao3 jin4 gong1 cang2
+謊言與欺騙	瞞天過海	比喻用欺騙手段暗中行事	在天上掩蓋，在海上偷偷過去	他巧妙地瞞天過海，成功完成了這項困難的任務。|他們巧妙地瞞天過海，讓計劃得以順利進行。	man2 tian1 guo4 hai3
+貧困與艱難	一󠇢貧如洗	形容極度貧困	窮得像被水洗過一樣	他雖然一貧如洗，但依然保持著樂觀的心態。|他一貧如洗，但依然保持樂觀積極的態度。	yi1 pin2 ru2 xi3
+不變	輾󠇡轉反側	形容因心事重重而翻來覆去，難以入眠	輾轉不能入睡，心中煩亂	因為心事重重，他整晚輾轉反側，無法入睡。|他整夜輾轉反側，無法入睡。	zhan3 zhuan3 fan3 ce4
+貧困與艱難	牛衣對泣	形容夫妻共同承受貧困的艱難	夫妻共處貧困，彼此哭泣	他們雖然生活困苦，卻仍然相互扶持，牛衣對泣，共度難關。|夫妻倆雖然生活困苦，卻也牛衣對泣，共同面對。	niu2 yi1 dui4 qi4
+忠誠與信義	一󠇡諾千金	形容信守承諾，信用極好	一個承諾重於千金	他是個講信譽的人，對別人許下的一諾千金，從不食言。|他說話一向算數，一諾千金。	yi1 nuo4 qian1 jin1
+無知與淺薄	吳下阿蒙	比喻人學識尚淺或經過努力學習後學識進步	吳地的蒙昧之人，指人學識淺薄	他出國留學歸來後，再也不是當年那個吳下阿蒙了，學識大增。|別小看他，他早已不是吳下阿蒙。	wu2 xia4 a1 meng2
+自負與驕傲	敝帚自珍	比喻自己雖然不好，但卻特別珍惜	自己的破掃帚仍然珍惜	雖然這個舊物已經破舊不堪，但他仍然敝帚自珍，捨不得丟掉。|這雖然是件舊物，但他卻敝帚自珍。	bi4 zhou3 zi4 zhen1
+矛盾	以卵擊石	比喻不自量力，自取滅亡	拿蛋去碰石頭，必敗無疑	他這麼做無異於以卵擊石，完全是在自取滅亡。|他的行為無異於以卵擊石，自取滅亡。	yi3 luan3 ji1 shi2
+時勢與形勢	司空見慣	形容常見而不覺得奇怪	司空見得多而習慣了	這樣的小事在我們的生活中早已司空見慣，不足為奇。|這種情況在大城市裡已經司空見慣。	si1 kong1 jian4 guan4
+氣勢	叱吒風雲	形容氣勢威猛，能左右局勢	聲威能讓風雲變色	他年輕時在商界叱吒風雲，風頭一時無兩。|他曾經是商界叱吒風雲的人物。	chi4 zha4 feng1 yun2
+時勢與形勢	斗杓󠇡東指	古代星象，形容春天來臨	斗柄指向東方，預示時令的變化	斗杓東指，時間已經不早了，我們也該回家了。|夜深人靜，斗杓東指，已是子時。	dou3 biao1 dong1 zhi3
+失敗與挫折	紙上談兵	比喻只會空談理論，而無法實踐	在紙上空談作戰，無法實踐	這種計畫看似完美，但如果只是紙上談兵，終究無法落實。|他雖有計劃，但也不過是紙上談兵。	zhi3 shang4 tan2 bing1
+失敗與挫折	自食其果	比喻自己承擔所犯錯誤的後果	自己承受所做事的後果	他當初的貪婪行為最終讓他自食其果，落得一無所有。|他終於自食其果，承受了自己的錯誤決策。	zi4 shi2 qi2 guo3
+失望與絕望	自怨自艾󠇡	指自我責備和懊悔	自己抱怨和懊悔	在失敗後，他沒有選擇自怨自艾，而是重新振作起來。|她經常自怨自艾，對自己感到不滿和悔恨。	zi4 yuan4 zi4 yi4
+變化與轉變	別樹一󠇡幟	比喻另立門戶，自成一家	另立一面旗幟，與眾不同	他在藝術創作上別樹一幟，形成了獨特的風格。|他的作品別樹一幟，自成一家。	bie2 shu4 yi1 zhi4
+狡猾與奸詐	居心叵測	形容心懷不軌，難以猜測	內心難以測度，心懷不軌	他看起來和藹可親，但實際上居心叵測，讓人防不勝防。|這個人總是言行古怪，讓人覺得居心叵測。	ju1 xin1 po3 ce4
+短暫	明日黃花	比喻過時的事物或消息	過時的事物，像黃菊花已經凋謝	這些曾經風靡一時的產品，如今已經成為明日黃花，無人問津。|她對往事的追憶，如今已是明日黃花。	ming2 ri4 huang2 hua1
+明顯	水落石出	比喻事情真相大白	水位下降，石頭顯露，比喻真相大白	隨著調查的深入，真相終於水落石出，所有疑點都被解開了。|事件經過多方調查，終於水落石出。	shui3 luo4 shi2 chu1
+困境	泥牛入海	比喻一去不返，杳無音訊	泥做的牛進入海中，無影無蹤	他去外地工作後，就像泥牛入海一樣，再也沒了消息。|那筆錢借出去後，就像泥牛入海，杳無音訊。	ni2 niu2 ru4 hai3
+憤怒與憎恨	河東獅吼	比喻妻子脾氣暴躁	形容妻子性格強悍，怒吼如獅	他妻子一發火，便如河東獅吼，讓他不敢多說一句話。|他的妻子性格剛烈，時常發出河東獅吼。	he2 dong1 shi1 hou3
+氣勢	炙手可熱	比喻權勢極大，使人不敢接近	手碰到會感到熱，形容權勢極大	這位新晉明星現在炙手可熱，成為了各大媒體爭相報導的對象。|這位明星目前在娛樂圈炙手可熱。	zhi4 shou3 ke3 re4
+言談與表達	直言不󠇡諱	坦率地表達意見，毫不隱瞞	說話直接，不隱瞞	他一向直言不諱，即使在上級面前也毫不掩飾自己的看法。|他性格直率，總是直言不諱，毫不掩飾。	zhi2 yan2 bu4 hui4
+無所作為	煮豆燃萁	比喻兄弟之間相殘	用豆莖作燃料煮豆子，骨肉相殘	兄弟之間的爭鬥如煮豆燃萁，傷害的最終是家人。|兄弟之間不應該煮豆燃萁，相互傷害。	zhu3 dou4 ran2 qi2
+危險	虎尾春冰	比喻處境非常危險	踏在虎尾或走在春天的薄冰上極度危險	處在這種局勢中，如履虎尾春冰，一個不小心就會出事。|當前的局勢如虎尾春冰，稍有不慎就會引發危機。	hu3 wei3 chun1 bing1
+謙遜與低調	信誓旦旦	形容言詞誠懇可信	非常誠懇地發誓	他信誓旦旦地保證，這次一定不會再犯錯誤。|他對未來的計劃信誓旦旦，充滿信心。	xin4 shi4 dan4 dan4
+愛情與婚姻	秦晉之好	比喻兩家聯姻	秦國與晉國的聯姻，比喻兩家聯姻	兩家通過聯姻建立了秦晉之好，關係更加密切。|這兩個家族聯姻，結成秦晉之好。	qin2 jin4 zhi1 hao3
+快樂與幸福	垂涎三尺	比喻十分羨慕，想據為己有	口水流下三尺，形容非常羨慕	看到桌上的美食，他不禁垂涎三尺，迫不及待地想要品嘗。|他看到桌上的美食，早已垂涎三尺。	chui2 xian2 san1 chi3
+才能與天賦	後生可畏	形容年輕人有潛力，值得敬畏	年輕人將來有成就，值得敬畏	這位年輕人的才能真是後生可畏，將來一定大有作為。|這些年輕人的才華讓人驚嘆，真是後生可畏。	hou4 sheng1 ke3 wei4
+友情與交往	春風化雨	比喻良好的教育或影響	像春風化作細雨滋潤萬物	老師的教導如春風化雨，潛移默化地影響著學生們。|老師的教誨如春風化雨，潛移默化影響著學生。	chun1 feng1 hua4 yu3
+友情與交往	相󠇡濡以沫	比喻在困境中互相幫助	困境中互相幫助，用唾沫滋潤對方	他們夫妻多年來相濡以沫，共同度過了許多困難時光。|在困境中，他們相濡以沫，互相支持。	xiang1 ru2 yi3 mo4
+學習與進步	韋編三絕	比喻勤奮讀書	繩子斷了三次，形容讀書勤奮	他為了這次考試，簡直是韋編三絕，日夜苦讀。|他刻苦讀書，學習韋編三絕的精神。	wei2 bian1 san1 jue2
+自然與環境	莊周夢蝶	比喻人生如夢，現實和虛幻難以分辨	莊子夢見自己變成蝴蝶，虛實不分	他常常會思考自己到底是人，還是那夢中的蝴蝶，如同莊周夢蝶一般。|他沉迷於莊周夢蝶的哲思，無法自拔。	zhuang1 zhou1 meng4 die2
+友情與交往	金石之交	形容像金石般堅固的友誼	像金石般堅固的友情	他們之間的友誼堅如金石，堪稱金石之交。|他們之間的友誼堅如金石，稱得上金石之交。	jin1 shi2 zhi1 jiao1
+貧困與艱難	捉襟見肘	形容經濟困難，入不敷出	拉起衣襟便露出手肘，形容窮困	最近公司經營不善，資金已經捉襟見肘，無法再繼續擴展。|面對突如其來的開支，他的財務狀況捉襟見肘。	zhuo1 jin1 jian4 zhou3
+變化與轉變	殊途同歸	比喻不同的方法或途徑，最終達到相同的目標	不同的路卻達到相同的目的	儘管大家的做法不同，但最終的目標卻殊途同歸。|雖然方法不同，但他們殊途同歸。	shu1 tu2 tong2 gui1
+家庭與親情	烏鳥私情	形容子女對父母的孝心	烏鴉反哺，形容孝順父母	儘管工作繁忙，他仍然每天陪伴父母，展現了烏鳥私情的孝心。|他對父母的關愛，就像烏鳥私情，令人感動。	wu1 niao3 si1 qing2
+欺騙與詭計	眾矢之的󠇢	比喻大家一致攻擊的對象	眾人一致攻擊射擊的目標	由於他的言行不當，他成了大家的眾矢之的。|他成為了眾矢之的，備受指責。	zhong4 shi3 zhi1 di4
+謹慎考慮	深謀遠慮	形容計劃周密，考慮長遠	深刻的計劃和遠大的考慮	他是一個深謀遠慮的人，總是能預見到未來的變化。|他深謀遠慮，早已為未來做好了準備。	shen1 mou2 yuan3 lü4
+外貌	人面桃花	形容人與景物相互映襯，美女與春景相得益彰	見到人時如同桃花般美麗	多年後再見，她依然美麗如昔，讓他想起了那句「人面桃花」的詩句。|多年不見，她依然人面桃花，美麗如昔。	ren2 mian4 tao2 hua1
+精確	入木三分	形容見解或描寫深刻	像刻入木頭三分一樣深刻	這篇評論入木三分，深刻地指出了問題的核心。|他的評論直指要害，真是入木三分。	ru4 mu4 san1 fen1
+謀略與計策	嶔崎磊落	形容人正直有骨氣，性格堅強	地勢險峻不平，形容人正直不阿	他性格嶔崎磊落，無論面對多大的困難，都從不低頭。|他雖然境遇不佳，但性格嶔崎磊落，不改初衷。	qin1 qi2 lei3 luo4
+友情與交往	千里鵝毛	比喻禮物雖輕但情意深厚	遠方寄來的微薄禮物	雖然禮物微薄，但這千里鵝毛之情令人感動。|雖然禮物微薄，但千里鵝毛，情意深重。	qian1 li3 e2 mao2
+偏差	三豕涉河	形容文字或言語傳達中出現的錯誤	誤將己亥涉河讀成三豕涉河	由於傳遞錯誤，原本的訊息變成了三豕涉河，完全失去了原意。|這段話因為抄錯一字，造成了三豕涉河的誤會。	san1 shi3 she4 he2
+言談與表達	天馬行空	形容文學作品或言談思想奔放，不受拘束	天馬奔跑在空中，形容想法奔放不拘	他的想法天馬行空，充滿了創意和無限的可能性。|他的構思天馬行空，創意無限。	tian1 ma3 xing2 kong1
+學習與進步	日新月異	形容事物發展迅速，不斷變化	每天更新，每月都有變化	隨著科技的進步，世界日新月異，不斷變化。|科技發展日新月異，令人眼花繚亂。	ri4 xin1 yue4 yi4
+變化與轉變	水漲船高	比喻事物隨著環境的變化而改變	水位上升，船隨之升高	隨著經濟的發展，人們的生活水平也隨之水漲船高。|隨著行業發展，公司也水漲船高，收入倍增。	shui3 zhang3 chuan2 gao1
+無所作為	不求甚解	形容學習或做事不深入，只求懂得大概	不深究細節，只求大概了解	他讀書時不求甚解，導致對知識的掌握不夠深入。|讀書時，他總是囫圇吞棗，不求甚解。	bu4 qiu2 shen4 jie3
+歡樂與喜悅	斬釘截鐵	形容處事果斷，不容猶豫	像斷釘截鐵般堅決果斷	在這個問題上，他的態度十分斬釘截鐵，毫不猶豫。|他斬釘截鐵地說：「這件事我一定要完成！」	zhan3 ding1 jie2 tie3
+差異	大相󠇡逕庭	形容差異很大，截然不同	彼此差距大得像兩條路徑	他們兩人的意見大相逕庭，很難達成共識。|他們兩人的觀點大相逕庭，難以達成共識。	da4 xiang1 jing4 ting2
+言談與表達	程門立雪	形容尊師重道，態度恭敬	站在程頤家門前等候求教	為了向名師請教，他如程門立雪般表現出極大的尊敬。|他為了學習新知識，不辭辛勞地程門立雪，等待名師指點。	cheng2 men2 li4 xue3
+家庭與親情	路不拾遺	形容社會風氣良好，人民品德高尚	路上沒有人撿拾失物，社會風氣良好	這個小鎮民風淳樸，路不拾遺，治安良好。|這個村莊民風淳樸，真是路不拾遺。	lu4 bu4 shi2 yi2
+變化	勢如破竹	比喻行動順利，毫無阻礙	形勢像破竹一樣順利無阻	他們在比賽中勢如破竹，輕鬆地贏得了冠軍。|軍隊攻入敵營，勢如破竹，一路勢如破竹。	shi4 ru2 po4 zhu2
+無所作為	隔靴搔癢	比喻做事不得要領，難以解決問題	隔著靴子抓癢，無法解決問題	他所提出的解決方案對問題的核心毫無幫助，無異於隔靴搔癢。|這種解釋猶如隔靴搔癢，無法切中要害。	ge2 xue1 sao1 yang3
+高超	百步穿楊	形容射箭技術非常高超	百步之外能射中楊樹的葉子	這位射箭高手果然名不虛傳，百步穿楊，無一失手。|他射箭技術高超，能百步穿楊。	bai3 bu4 chuan1 yang2
+成功	攻城略地	形容戰爭中攻下城池，擴展領土	攻擊城池，奪取土地	在戰爭中，他們不斷攻城略地，擴大自己的勢力範圍。|在市場競爭中，他們公司如同攻城略地，不斷擴展版圖。	gong1 cheng2 lve4 di4
+糊塗與愚蠢	味同嚼󠇡蠟	形容無味枯燥	味道像咀嚼蠟一樣無味	這道菜味同嚼蠟，毫無滋味可言。|這本書枯燥無味，看起來真是味同嚼蠟。	wei4 tong2 jiao2 la4
+荒涼	靡靡之音	頹廢、低俗的音樂	頹廢、低靡的音樂	這些靡靡之音在年輕人中間流行，但卻缺乏正能量。|他認為這些靡靡之音會腐蝕青少年的心靈。	mi3 mi3 zhi1 yin1
+機智與聰明	邯鄲學步	比喻模仿他人不成，反而失去自己原有的本領	模仿邯鄲人的走路方式，最後連自己的步伐都忘了	他不斷模仿他人，結果卻邯鄲學步，失去了自我風格。|他不應該邯鄲學步，失去了自己的優勢。	han2 dan1 xue2 bu4
+速度	風馳電掣	形容速度極快	像風和閃電一樣迅速	火車風馳電掣般地駛過，令人感到一陣強烈的震動。|救護車風馳電掣地趕往現場，搶救傷者。	feng1 chi2 dian4 che4
+機智與聰明	拾人牙慧	比喻抄襲別人的言論或主張	拾取別人的話當作自己的見解	他在發言中毫無新意，只是拾人牙慧，重複他人的觀點。|他的言論多是拾人牙慧，沒有自己的見解。	shi2 ren2 ya2 hui4
+糊塗與愚蠢	躊躇滿志	形容對自己現狀或成就感到滿意	得意洋洋，心滿意足	在完成了一項重要任務後，他躊躇滿志，對未來充滿信心。|他完成了目標，正躊躇滿志地準備下一步計劃。	chou2 chu2 man3 zhi4
+繁華	高朋滿座	形容賓客很多，或人才濟濟	賓客滿座，都是尊貴的朋友	他的婚禮上高朋滿座，大家都來祝福這對新人。|今天的派對真是高朋滿座，賓客如雲。	gao1 peng2 man3 zuo4
+學習與進步	掩耳盜鈴	形容自欺欺人，以為掩蓋事實別人就不知道	遮住耳朵偷鈴鐺，以為別人聽不到	他以為掩耳盜鈴就能瞞過所有人，但最終還是被揭穿了。|這種做法無異於掩耳盜鈴，根本解決不了問題。	yan3 er3 dao4 ling2
+困難與挑戰	毫末之利	微小的利益	微小的利益	他只顧追求毫末之利，卻忽視了長遠的發展。|他為了毫末之利，卻失去了更大的機會。	hao2 mo4 zhi1 li4
+勤奮努力	發憤忘食	努力工作或學習，忘記吃飯	努力到忘記吃飯	為了這次考試，他發憤忘食，日夜苦讀。|為了通過考試，他發憤忘食，夜以繼日地學習。	fa1 fen4 wang4 shi2
+無用	視如土芥	比喻極其輕視，不把事情當一回事	看作泥土和草芥般毫無價值	對於那些腐敗官員，他視如土芥，毫不留情地進行打擊。|他對金錢視如土芥，毫不在意。	shi4 ru2 tu3 jie4
+不變	積勞成疾	因長期過度勞累而生病	長期勞累導致生病	長期的過勞工作，最終讓他積勞成疾，不得不休養。|他多年積勞成疾，最終不得不休息療養。	ji1 lao2 cheng2 ji2
+無用	視如敝屣	比喻極其輕視，毫不珍惜	像破舊的鞋子一樣不重視	他對那些不合心意的東西總是視如敝屣，毫不在乎。|他對那些過去的榮譽視如敝屣，不再掛念。	shi4 ru2 bi4 xi3
+失敗與挫折	動輒得咎	形容做事稍有差錯就受到責難	動不動就犯錯或被責罵	在這個嚴厲的環境中，任何小錯都可能讓他動輒得咎。|他在公司裡處境尷尬，常常動輒得咎。	dong4 zhe2 de2 jiu4
+家庭與親情	結草銜環	比喻知恩圖報	以結草或銜環報恩	他一生感恩圖報，對曾幫助過他的人結草銜環，永不忘記。|他對恩人結草銜環，永遠不忘報答。	jie2 cao3 xian2 huan2
+無所作為	閉門造車󠇡	比喻脫離實際，只憑主觀辦事	關起門來自己製作車輛，不管外界	如果只靠閉門造車，而不與他人交流，創新很難成功。|他閉門造車，不聽取任何意見，結果大失所望。	bi4 men2 zao4 che1
+變化與轉變	絡繹不絕	形容行人或車馬來往不斷	車馬人群連綿不斷	節日期間，商場裡顧客絡繹不絕，購物熱潮持續不斷。|節日里，遊客絡繹不絕，街道十分熱鬧。	luo4 yi4 bu4 jue2
+變化	愚公移山	形容堅韌不拔的精神	愚公決心移走大山，形容堅持不懈	他憑藉著愚公移山的精神，終於完成了這項看似不可能的任務。|他愚公移山般的精神，最終感動了所有人。	yu2 gong1 yi2 shan1
+憤怒與憎恨	意興󠇡闌珊	興致已經消退	興致已經衰退	當談話進入重複的話題時，他的意興闌珊，漸漸失去了興趣。|他對這件事的興趣已經意興闌珊，不再熱衷。	yi4 xing4 lan2 shan1
+悲傷與痛苦	晨昏定省󠇡	指子女對父母的孝敬與問候	早晚問候父母的起居	他每天晨昏定省，孝順父母，從不怠慢。|他對父母非常孝順，始終做到晨昏定省。	chen2 hun1 ding4 xing3
+無所作為	燕巢於幕	比喻極其危險的處境	燕子在帷幕上築巢，形容處境不安穩	他們的家境如此困難，真是像燕巢於幕，隨時有崩塌的危險。|他們的公司如燕巢於幕，隨時可能倒閉。	yan4 chao2 yu2 mu4
+悲傷與痛苦	煥然冰釋	像光輝般全部消融	誤會或問題完全消除。	經過解釋，誤會煥然冰釋。|經過溝通後，兩人的誤會終於煥然冰釋。	huan4 ran2 bing1 shi4
+困難與挑戰	簞食󠇡瓢飲	形容生活簡樸	吃簡單的飯，喝粗糙的飲料	儘管他生活簡樸，簞食瓢飲，但依然過得十分充實。|他雖然生活簡樸，卻非常快樂，享受簞食瓢飲的樂趣。	dan1 si4 piao2 yin3
+貧困與艱難	閒雲野鶴	形容生活閒適自得，無拘無束	像閒散的雲與野外的鶴一樣自由	他退休後過著閒雲野鶴的生活，遠離城市的喧囂。|他辭去官職，過著閒雲野鶴的生活。	xian2 yun2 ye3 he4
+從容	好󠇡整以暇	形容在繁忙中能保持鎮定和從容	雖然整頓，但依然從容不迫	儘管外界壓力很大，他仍然能保持好整以暇的態度，冷靜應對。|面對突如其來的挑戰，他依然好整以暇，從容應對。	hao3 zheng3 yi3 xia2
+機智與聰明	以管窺天	比喻見識狹窄，見聞有限	用竹管看天，只見到一部分	他對這個問題的看法過於狹隘，無異於以管窺天，見識有限。|如果只聽片面之詞，就像是以管窺天。	yi3 guan3 kui1 tian1
+混亂	一󠇢哄而散	形容人群突然散開，場面混亂	一陣騷動後就散開	會議結束後，人們一哄而散，迅速離開了會場。|警報響起，人群立刻一哄而散。	yi1 hong4 er2 san4
+言談與表達	口誅筆伐	比喻用言語或文字進行強烈批評	用言語和文章進行攻擊批評	面對這樣的惡行，社會各界紛紛口誅筆伐，表達強烈的譴責。|他因為腐敗行為而遭到社會各界的口誅筆伐。	kou3 zhu1 bi3 fa2
+奢華	山珍海味	形容豐盛的飲食	山中的珍品，海中的美味	在這次宴會上，各種山珍海味應有盡有，讓人垂涎欲滴。|這場宴會準備了各種山珍海味，讓賓客們大飽口福。	shan1 zhen1 hai3 wei4
+相似	一󠇢體兩面	指一件事物的兩個方面	同一件事的兩個方面	這個問題一體兩面，既有利也有弊。|這件事一體兩面，應該全面考量。	yi1 ti3 liang3 mian4
+學習與智慧	切磋琢磨	形容互相研究討論以改進學問或技能	互相研究討論，共同進步	他們經常在一起切磋琢磨，互相學習，共同進步。|他們經常一起切磋琢磨，互相學習。	qie4 cuo1 zhuo2 mo2
+氣勢	風行草偃	比喻上位者的影響力使下位者自然而然地順從	風吹草就倒，形容順勢而行	他的領導風格一旦確立，部下便如草偃般迅速跟隨，毫無懈怠。|他的號召力很強，猶如風行草偃。	feng1 xing2 cao3 yan3
+謀略與計策	抱薪救火	比喻用錯誤的方法解決問題，反而使情況更糟	抱著柴火救火，反而使火勢更大	這種做法無異於抱薪救火，不僅不能解決問題，反而會加劇矛盾。|他的做法無異於抱薪救火，只會讓問題更加嚴重。	bao4 xin1 jiu4 huo3
+時間與歲月	白駒過隙	比喻時間過得很快，人生短暫	時間流逝像白馬飛快地越過窄縫	光陰似箭，猶如白駒過隙，一晃就過去了。|時間如白駒過隙，一轉眼就過去了。	bai2 ju1 guo4 xi4
+友善與善良	不欺暗室	形容在沒有他人看見的情況下，也保持誠實	在無人之處也不做欺騙之事	他秉持不欺暗室的原則，無論在任何情況下都保持正直。|他品行端正，始終做到不欺暗室。	bu4 qi1 an4 shi4
+機會與時機	待價而沽	比喻等待機會，期望賣出好價錢	等待好的價錢再賣出	他這樣的才華，必定會有人高價聘請，現在只是待價而沽。|這位球員一直在待價而沽，尋找最好的合同。	dai4 jia4 er2 gu1
+學習與智慧	十年寒窗	比喻多年刻苦讀書	十年在寒冷的窗下苦讀	經過十年寒窗苦讀，他終於考上了心儀的大學。|經過十年寒窗苦讀，他終於考上了理想的大學。	shi2 nian2 han2 chuang1
+判斷與洞察	明察秋毫	形容洞察一切，極為細緻	能清楚地看見極細微的事物	他明察秋毫，對事情的細節一清二楚，從不放過任何一個蛛絲馬跡。|他對每一個細節都明察秋毫，不放過任何蛛絲馬跡。	ming2 cha2 qiu1 hao2
+巧合	拋磚引玉	比喻以粗淺的東西引出別人的高見	用拋出磚頭來引出別人的美玉	我只是簡單說幾句，拋磚引玉，希望大家提出更好的建議。|我先拋磚引玉，希望大家提出更好的建議。	pao1 zhuan1 yin3 yu4
+無所作為	目不交睫	形容夜間沒有合眼睡覺	眼睛不能閉合，形容夜不能寐	為了完成這個項目，他已經連續幾天目不交睫，日夜奮戰。|他為了完成工作，幾夜目不交睫。	mu4 bu4 jiao1 jie2
+勇氣與決心	如虎添翼	形容強者得到幫助後更加強大	像老虎添了翅膀，比喻更強大	得到這筆資金後，公司如虎添翼，發展得更加迅速。|有了他的加入，我們的團隊如虎添翼。	ru2 hu3 tian1 yi4
+堅固	堅若磐石	形容極為堅固穩定	像磐石一樣堅固	他的信念堅若磐石，無論遭遇什麼困難都不動搖。|他對理想的追求堅若磐石，毫不動搖。	jian1 ruo4 pan2 shi2
+失望與絕望	萬念俱灰	形容極度的失望與絕望	所有的想法都變得灰暗絕望	經歷了這麼多打擊後，他已經萬念俱灰，不再抱有任何希望。|遭遇失敗後，他感到萬念俱灰，失去了生活的希望。	wan4 nian4 ju4 hui1
+持久	觸類旁通	比喻由一事類推到其他相關事物	從一件事推知其他事	他在數學方面的天賦，使他能夠觸類旁通，迅速掌握相關知識。|他學習非常靈活，能夠觸類旁通，舉一反三。	chu4 lei4 pang2 tong1
+機會與時機	奇貨可居	比喻將珍奇的物品囤積起來，以待高價賣出	把罕見的貨物囤積起來等待高價出售	這批貨品數量稀少，因此成了奇貨可居，價格也一路飆升。|他發現了一個難得的商機，視為奇貨可居。	qi2 huo4 ke3 ju1
+友情與交往	肉袒負荊	形容人甘願認錯請求原諒	赤身露體背著荊條請罪	他為了修復關係，主動肉袒負荊，表示歉意。|他決定向朋友肉袒負荊，請求原諒。	rou4 tan3 fu4 jing1
+學習與智慧	含英咀華	形容深入鑽研精華，吸取精妙之處	吸收精華，咀嚼品味	這本書的內容充實，讀者可以從中含英咀華，獲得很多啟發。|讀書要像含英咀華一樣，吸取精華，捨棄糟粕。	han2 ying1 ju3 hua2
+權力與地位	頤指氣使	形容驕傲自大，指揮別人	用下巴指揮，形容態度傲慢	這位主管經常頤指氣使，讓下屬感到非常壓抑。|他喜歡頤指氣使，指揮別人做事。	yi2 zhi3 qi4 shi3
+判斷與洞察	洞燭機先	形容能夠先見機會或危險	洞察事物的關鍵，預見先機	他總是能洞燭機先，及時做出正確的決策，避免了許多潛在的危機。|他總是能洞燭機先，抓住市場機遇。	dong4 zhu2 ji1 xian1
+友情與交往	近悅遠來	形容德政感化人，使人心悅誠服，吸引外來者	近處的人喜悅，遠方的人前來投奔	這家公司的良好聲譽使得近悅遠來，吸引了眾多客戶和合作夥伴。|這家店以優質的服務和產品，做到近悅遠來。	jin4 yue4 yuan3 lai2
+變化與轉變	鶯啼燕語	形容春天的美好景象	美好春天，黃鶯啼鳴，燕子低語	春天來了，花園裡鶯啼燕語，充滿生機。|春天來了，花園裡鶯啼燕語，景色宜人。	ying1 ti2 yan4 yu3
+困難與挑戰	釜底抽薪	比喻從根本上解決問題	從鍋底抽去柴火，從根本上解決問題	為了解決問題的根本，他提出了釜底抽薪的方案。|要解決這個問題，必須釜底抽薪，從根本入手。	fu3 di3 chou1 xin1
+憤怒與憎恨	惴惴不安	形容心中不安，焦慮不安	心中充滿了不安與恐懼	他因未來的不確定性而惴惴不安，夜不能寐。|面對突如其來的變故，他心中惴惴不安。	zhui4 zhui4 bu4 an1
+悲傷與痛苦	椿萱並茂	比喻父母都健在，並且健康	父母都健在，形容家庭幸福	他的父母年事已高，但身體仍然硬朗，真是椿萱並茂，令人羨慕。|他父母健康長壽，真是椿萱並茂。	chun1 xuan1 bing4 mao4
+恐懼與驚慌	風聲鶴唳	形容驚慌失措，疑神疑鬼	風聲和鶴鳴都讓人害怕，形容驚慌不安	在敵人的威脅下，他們陷入風聲鶴唳的恐慌之中。|這些天局勢緊張，讓人感到風聲鶴唳。	feng1 sheng1 he4 li4
+判斷與洞察	畫龍點睛	比喻做事最關鍵的部分加以點明	畫龍時點上眼睛，使之更有神采	這篇文章最後一段的總結真是畫龍點睛，讓整篇文章更加出色。|他的評論如畫龍點睛，使文章更加生動。	hua4 long2 dian3 jing1
+持久	安土重遷	比喻留戀故土，不願輕易搬遷	安於本鄉，不願輕易遷徙	這些村民因為對故鄉有深厚的感情，所以安土重遷，不願搬遷。|老人們因為安土重遷，不願搬離故鄉。	an1 tu3 zhong4 qian1
+憤怒與憎恨	盛󠇡氣凌人	形容態度傲慢，欺壓他人	用強勢的氣勢壓制他人	他在工作中總是盛氣凌人，讓同事們感到壓力山大。|他總是用盛氣凌人的態度對待別人，讓人反感。	sheng4 qi4 ling2 ren2
+困難與挑戰	隨遇而安	形容能適應環境，不論處境如何都能泰然自若	能適應環境，無論何處都能安心	無論環境如何變化，他都能隨遇而安，適應得很好。|他性格隨和，能隨遇而安，不受環境影響。	sui2 yu4 er2 an1
+快樂與幸福	稗官野史	指非正式或民間傳說的歷史記錄	稗官寫的民間雜史	這本書充斥著稗官野史，雖然有趣，但難以辨別真偽。|這部書內容多為稗官野史，不足為信。	bai4 guan1 ye3 shi3
+權力與地位	指鹿為馬	顛倒是非，混淆黑白	指著鹿卻說是馬，混淆是非	他在會議上指鹿為馬，混淆視聽，讓人無從判斷真相。|他明明知道錯誤，卻指鹿為馬，混淆視聽。	zhi3 lu4 wei2 ma3
+變化	滄海桑田	形容世事變幻巨大	大海變成桑田，比喻世事變化巨大	世事變遷，滄海桑田，昔日的繁華早已不復存在。|時過境遷，真是滄海桑田。	cang1 hai3 sang1 tian2
+技藝與能力	拂袖而去	形容不滿或生氣時離去	甩袖子離去，形容不滿或生氣	因為意見不合，他當場拂袖而去，表示強烈的不滿。|他受不了侮辱，憤然拂袖而去。	fu2 xiu4 er2 qu4
+敵對與仇恨	大動干戈	形容興師動眾，大費周章	大規模發動戰爭	為了一點小事，他們居然大動干戈，鬧得不可開交。|為了這點小事就大動干戈，真是不值得。	da4 dong4 gan1 ge1
+驕傲與自負	聲名狼藉󠇡	形容名聲極差，臭名昭著	名聲壞得像狼一般	因為多次失信，他在業界聲名狼藉，無人願與他合作。|他的行為不端，最終變得聲名狼藉。	sheng1 ming2 lang2 ji2
+混亂	草菅人命	形容任意殘害人的性命	把人命看得像野草般輕賤	這位官員草菅人命，毫不在意百姓的生死，終於遭到報應。|他對待下屬非常冷酷，簡直是草菅人命。	cao3 jian1 ren2 ming4
+失望與絕望	新鶯出谷	比喻年輕女子婉轉清脆的歌聲	聲音像黃鶯剛從山谷飛出來清新悅耳	這位年輕歌手的歌聲清脆悅耳，如新鶯出谷，讓人耳目一新。|她的歌聲宛如新鶯出谷，清新悅耳。	xin1 ying1 chu1 gu3
+欺騙與詭計	口蜜腹劍	比喻表面說得很好聽，內心卻非常陰險	嘴上甜言蜜語，心裡卻藏著劍	他表面上對你和藹可親，但實際上卻口蜜腹劍，處處設計陷害。|這個人表面和善，其實是個口蜜腹劍的小人。	kou3 mi4 fu4 jian4
+自負與驕傲	恃才傲物	形容依仗才能，看不起他人	依仗才華而傲慢輕視他人	他雖然才華出眾，但總是恃才傲物，讓人難以親近。|他雖然有才華，卻總是恃才傲物，不受歡迎。	shi4 cai2 ao4 wu4
+堅固	根深蒂固	比喻基礎牢固，不易改變	根基深厚，難以動搖	這個傳統觀念在他心中根深蒂固，很難改變。|他的觀念已經根深蒂固，很難改變。	gen1 shen1 di4 gu4
+無用	付之東流	比喻希望、努力、成果等全部落空	像東水流去一樣消失不再	多年來的努力因為一場意外而付之東流，讓他感到無比失落。|多年努力付之東流，他感到十分失落。	fu4 zhi1 dong1 liu2
+言談與表達	不容置喙	不允許插嘴或發表意見	不允許插嘴或發表意見	在這個議題上，他的權威無可挑戰，不容置喙。|他對這件事非常堅決，不容他人置喙。	bu4 rong2 zhi4 hui4
+危險	危如累󠇡卵	形容處境非常危險	像堆積的蛋一樣危險	這個項目在資金不足的情況下推進，局勢危如累卵。|這座建築在地震中搖搖欲墜，情況危如累卵。	wei1 ru2 lei3 luan3
+權力與地位	吐哺握髮	形容求賢若渴，竭力招納賢才	形容賢明君主急於招賢納士	他為了國家的大事，經常吐哺握髮，不惜犧牲個人的時間和休息。|他忙於招攬賢才，真有吐哺握髮之心。	tu3 bu3 wo4 fa4
+勤奮努力	人一己百	形容別人一次就會的事情，自己要用百倍努力	別人做一次，自己做一百次	他雖然起步晚，但通過人一己百的努力，最終追趕上了其他人。|他努力不懈，以人一己百的精神追趕上對手。	ren2 yi1 ji3 bai3
+時勢與形勢	多事之秋	多災多難的時期	多災多難的時期	在這個多事之秋，企業需要謹慎應對各種挑戰。|在這個多事之秋，他們必須更加謹慎。	duo1 shi4 zhi1 qiu1
+變化與轉變	方興未艾	形容事物正在蓬勃發展	事情正在發展，尚未停止	這個新興行業方興未艾，未來發展潛力無限。|這項新技術正方興未艾，未來前景廣闊。	fang1 xing1 wei4 ai4
+謊言與欺騙	以訛傳訛	形容錯誤的信息不斷被傳播	把錯誤的事情越傳越錯	謠言經過幾次傳播，已經變得完全不同，真是以訛傳訛。|這則新聞被人以訛傳訛，最後變得面目全非。	yi3 e2 chuan2 e2
+無所作為	尸位素餐	比喻只占著職位，卻無所作為	占著位置卻不做事，白吃飯	這位官員長期尸位素餐，毫無作為，終於被免職。|他在這個職位上只是尸位素餐，毫無貢獻。	shi1 wei4 su4 can1
+謊言與欺騙	向聲背實	指只聽從名聲而不考慮實際情況	追求虛名而背離實質	他向聲背實，只追求表面的虛名，而忽略了真正的實際工作。|他們只重表面功夫，向聲背實，忽視實質。	xiang4 sheng1 bei4 shi2
+友情與交往	倒屣相󠇡迎	形容熱情迎接客人	踩著鞋子迎接對方	聽說貴客即將到來，主人立即倒屣相迎，表達熱情。|貴賓到來，他倒屣相迎，表達熱情的歡迎。	dao4 xi3 xiang1 ying2
+友情與交往	設身處地	比喻為他人著想，換位思考	設想自己在他人處境	在處理問題時，他總是設身處地，站在別人的角度考慮。|如果能設身處地為他人著想，事情會更順利。	she4 shen1 chu3 di4
+孤獨與寂寞	春樹暮雲	形容對遠方友人的思念	白天樹木，傍晚雲朵	每當看到夕陽西下，他總會想起遠方的朋友，心中春樹暮雲。|他倆分隔兩地，心中只剩下春樹暮雲的惆悵。	chun1 shu4 mu4 yun2
+偏差	背道而馳	比喻行動或目標與預期相反	朝相反的方向奔馳	他們的意見南轅北轍，完全背道而馳，難以達成共識。|他們的想法完全背道而馳，很難合作。	bei4 dao4 er2 chi2
+美麗	美輪美奐	形容建築或裝飾華美壯觀	精美的樓閣高聳華麗	新落成的建築物，美輪美奐，令人驚嘆不已。|這座宮殿美輪美奐，令人驚嘆不已。	mei3 lun2 mei3 huan4
+憤怒與憎恨	氣沖牛斗	形容怒氣沖天，情緒激動	氣勢直沖牛宿和斗宿	他年少氣盛，做事總是氣沖牛斗，不考慮後果。|他氣得氣沖牛斗，怒不可遏。	qi4 chong1 niu2 dou3
+痛苦與煎熬	迴腸蕩氣	形容文章或音樂感人至深	使腸子迴旋，氣息激盪	這部電影情節感人至深，真是讓人迴腸蕩氣。|這部電影情節迴腸蕩氣，讓人難以忘懷。	hui2 chang2 dang4 qi4
+痛苦與煎熬	趨之若鶩	奔趨而至如同群鴨	大量的人爭相趨附。	新品上市後，顧客趨之若鶩。|商場一開門，顧客們就趨之若鶩地湧入搶購。	qu1 zhi1 ruo4 wu4
+狡猾與奸詐	俯首帖耳	形容順從、聽話的樣子	低頭並順從服從的樣子	他對上司的命令總是俯首帖耳，從不敢反抗。|他對上司總是俯首帖耳，聽從指示。	fu3 shou3 tie1 er3
+時勢與形勢	山雨欲來	比喻重大事件即將發生的徵兆	山間的風雨即將來臨	氣氛越來越緊張，似乎山雨欲來，暴風雨即將到來。|局勢日益緊張，有種山雨欲來的感覺。	shan1 yu3 yu4 lai2
+驕傲與自負	焚琴煮鶴	比喻糟蹋美好的事物	把琴燒掉，煮鶴吃，糟蹋美好的事物	他對藝術的無知行為，就像焚琴煮鶴，讓人感到可惜。|他的行為猶如焚琴煮鶴，暴殄天物。	fen2 qin2 zhu3 he4
+態度與行為	守先待後	形容對傳統的堅持和對未來的期待	先行守護，等候後來的人	他們一直遵循祖訓，守先待後，尊重傳統。|這次商業談判，我們需要守先待後，靜觀其變。	shou3 xian1 dai4 hou4
+忠誠與信義	無人問津	比喻沒有人來過問或關注	沒有人來打聽或過問	這部書籍因為內容枯燥，出版後無人問津，銷量慘淡。|這個地方雖美，卻因為偏僻而無人問津。	wu2 ren2 wen4 jin1
+狡猾與奸詐	殘民以逞	指殘害百姓以滿足自己的私欲	殘害百姓，藉此逞強	這個暴君殘民以逞，給國家帶來了無盡的災難。|這位暴君殘民以逞，百姓苦不堪言。	can2 min2 yi3 cheng3
+沉默與寡言	三緘其口	形容緘默不語	用三道繩子緊緊封住嘴	面對記者的提問，他三緘其口，堅決不透露任何信息。|在會議上，他對敏感話題三緘其口，不做發言。	san1 jian1 qi2 kou3
+悲傷與痛苦	慈烏反哺	比喻子女孝順父母	孝順的烏鴉反哺老烏鴉	他對年邁的父母無微不至，正如慈烏反哺一般報答父母的養育之恩。|他像慈烏反哺一樣，悉心照顧年邁的父母。	ci2 wu1 fan3 bu3
+不變	蕭規曹隨	比喻依循前人所定的規矩辦事	蕭何制定規矩，曹參遵守	新任經理蕭規曹隨，繼續推行前任經理的政策。|新主管上任後依然蕭規曹隨，延續前任的政策。	xiao1 gui1 cao2 sui2
+謙遜與低調	俯仰無愧	形容行事光明磊落，無愧於心	不論低頭抬頭都無愧疚	他一生為人正直，處事公正，能做到俯仰無愧。|他為人正直，行事光明磊落，俯仰無愧。	fu3 yang3 wu2 kui4
+驕傲與自負	數󠇡典忘祖	比喻忘本，忘記根源	數著歷史，卻忘了祖先	他經常對傳統文化不屑一顧，簡直是數典忘祖。|他對自己的文化一無所知，簡直是數典忘祖。	shu3 dian3 wang4 zu3
+言談與表達	書空咄咄	形容一個人無法言說心中的惋惜	在空中寫字，表現焦急	他對於那些無法實現的理想總是書空咄咄，表現出強烈的不滿。|他常常對著空氣書空咄咄，自言自語。	shu1 kong1 duo1 duo1
+變化與轉變	雙管齊下	比喻同時採用兩種方法或措施來進行	兩支筆同時一起寫字	要解決這個問題，我們必須雙管齊下，採取多種措施。|他雙管齊下，同時進行兩項計劃，提升了效率。	shuang1 guan3 qi2 xia4
+恐懼與驚慌	恫󠇡瘝在抱	把他人痛苦抱在懷裡	心繫他人的痛苦。	他對好友的困境恫瘝在抱，盡力幫忙。|領導人應該對人民的疾苦恫瘝在抱，關心人民。	tong1 guan1 zai4 bao4
+外貌	沉魚落雁	形容女子非常美麗	使魚沉水，使雁掉下來	她的美貌真如沉魚落雁，令人驚嘆。|她的美貌真是沉魚落雁，令人驚嘆。	chen2 yu2 luo4 yan4
+恐懼與驚慌	人心惶惶	形容人們因恐懼而不安	人們的心都惶恐不安	連續的自然災害使得當地人心惶惶，無法安寧。|地震後，人們四處逃散，人心惶惶。	ren2 xin1 huang2 huang2
+自負與驕傲	不可一世	形容驕傲自大，目中無人	以為一世之中無可匹敵	他因為一點成就便不可一世，目中無人。|他因一時得志而不可一世，目中無人。	bu4 ke3 yi1 shi4
+不變	木已成舟	比喻事情已經無法挽回	木頭已變成船無法回復	事情已經無法挽回，如今只能接受木已成舟的現實。|事情已經發生，木已成舟，無法改變。	mu4 yi3 cheng2 zhou1
+成功	得其所哉	形容終於達到理想的狀態或位置	得到了他應有的位置	他終於找到了適合自己的工作，真是得其所哉。|經過多年的努力，他終於得其所哉，找到了理想的工作。	de2 qi2 suo3 zai1
+家庭與親情	克紹箕裘	指繼承父輩的事業	繼承父業，延續家業	他繼承父業，克紹箕裘，將家族事業發揚光大。|他克紹箕裘，繼承了父親的事業。	ke4 shao4 ji1 qiu2
+不變	深耕易耨	比喻做事精細、徹底	深入耕作，輕易除草	他在農業技術上深耕易耨，取得了豐碩的成果。|他對於研究一向深耕易耨，力求完美。	shen1 geng1 yi4 nou4
+死亡與結束	日薄西山	形容人或事物即將衰亡	太陽接近西山，將要落下	這家老牌企業如今已經日薄西山，風光不再。|他的身體狀況日薄西山，讓人擔憂。	ri4 bo2 xi1 shan1
+謹慎與小心	如履薄冰	形容行事極為謹慎，害怕犯錯	像踩在薄冰上，危險小心	他在這個新職位上如履薄冰，小心翼翼地處理每一件事。|在這個敏感時刻，他處處如履薄冰，小心翼翼。	ru2 lu:3 bo2 bing1
+自負與驕傲	妄自菲󠇡薄	過分看輕自己	妄自地過分看輕自己	他經常妄自菲薄，低估了自己的能力。|他妄自菲薄，低估了自己的能力。	wang4 zi4 fei3 bo2
+恐懼與驚慌	杞人憂天	比喻不必要的憂慮	杞國的人擔心天會塌下來	他總是為一些不切實際的問題擔心，簡直是杞人憂天。|別杞人憂天，事情沒那麼嚴重。	qi3 ren2 you1 tian1
+成功與成就	被髮左衽	形容異族或外族的風俗，代指異族政權	頭髮披散，衣服左襟朝前	這個國家曾經被異族侵佔，人民被髮左衽，生活苦不堪言。|古時北方民族有被髮左衽的習俗，與中原文化有所不同。	pi1 fa4 zuo3 ren4
+無知與淺薄	問道於盲	向無知的人請教	向盲人請教道路	對於自己不了解的領域，他卻偏偏喜歡問道於盲，結果常常得不到有用的資訊。|他對這方面毫無經驗，如同問道於盲。	wen4 dao4 yu2 mang2
+謀略與計策	曲󠇡突徙薪	比喻事先採取預防措施以免災禍發生	把煙囪改彎，把柴火搬走	他明智地採取了預防措施，這正是曲突徙薪，避免了後來的大禍。|他建議大家採取曲突徙薪的辦法，防患未然。	qu1 tu1 xi3 xin1
+數量	汗牛充棟	形容藏書非常豐富	書多得讓牛累出汗，堆滿房屋	他的藏書汗牛充棟，堪稱是一座小型圖書館。|他家裡的書多得汗牛充棟，擺滿了整個書房。	han4 niu2 chong1 dong4
+危險	奔車朽索	形容危險的處境	駕馭著馬車，用腐朽的繩索	在這種情況下，依賴他就像是奔車朽索，根本靠不住。|依靠這種方法解決問題，無異於奔車朽索，極其危險。	ben1 che1 xiu3 suo3
+困難	杯水車薪	比喻力量不足，無法解決問題	用一杯水來撲滅一車火薪	面對這麼大的問題，他的努力無異於杯水車薪，效果甚微。|他的幫助對於問題來說不過是杯水車薪。	bei1 shui3 che1 xin1
+時勢與形勢	茲事體大	指事情重大，影響深遠	這件事情非常重大	這項改革牽涉範圍廣泛，茲事體大，須謹慎處理。|這件事情關係重大，需要慎重處理。	zi1 shi4 ti3 da4
+言談與表達	三人成虎	比喻謠言多了就會使人信以為真	三個人說有老虎，則信之	這些謠言經過三人成虎，逐漸讓大家信以為真。|這些謠言在三人成虎的情況下被廣泛相信。	san1 ren2 cheng2 hu3
+言談與表達	耳提面命	形容長輩對晚輩悉心教導	直接在耳邊提點，面對面叮囑	老師對他的期望很高，經常耳提面命，提醒他要努力學習。|老師對學生耳提面命，教導得十分細心。	er3 ti2 mian4 ming4
+奢華	金玉滿堂	形容財富或學識非常豐富	金子和玉石堆滿廳堂	他的家中收藏了許多珍貴的古董，真是金玉滿堂。|他的家中收藏甚豐，可謂金玉滿堂。	jin1 yu4 man3 tang2
+謙遜與低調	逢人說項	形容到處為他人說好話	遇到人就為某人說好話	他無論見到誰，都要誇耀自己最近的成就，逢人說項。|為了推廣新產品，他不辭辛勞，四處逢人說項。	feng2 ren2 shuo1 xiang4
+言談與表達	字字珠璣	形容文字精煉優美	每個字都像珍珠一樣珍貴	這篇文章字字珠璣，文辭優美，令人讚嘆。|這篇文章字字珠璣，每句話都充滿智慧。	zi4 zi4 zhu1 ji1
+氣勢	投鞭斷流	形容軍隊強大，勢不可擋	投下鞭子，能夠截斷河流	這支軍隊強大到可以投鞭斷流，無人敢於抵抗。|古時大軍強盛，號稱投鞭斷流，氣勢恢宏。	tou2 bian1 duan4 liu2
+精確	言簡意賅	形容言語簡明扼要，切中要點	言語簡潔，意思完整	他的發言言簡意賅，一語中的，讓大家都點頭稱是。|他的發言言簡意賅，切中要點。	yan2 jian3 yi4 gai1
+敵對與仇恨	一󠇢丘之貉	比喻同樣壞的人或物	同樣都是一個山丘上的貉子	這些官員都是一丘之貉，彼此狼狽為奸，貪汙腐敗。|這兩個人其實是一丘之貉，不值得信任。	yi1 qiu1 zhi1 he2
+困境	病入膏肓	比喻事情已經無法挽救	疾病到了無法醫治的地步	他的病情已經病入膏肓，即使最好的醫生也無力回天。|病入膏肓的經濟狀況讓人擔憂不已。	bing4 ru4 gao1 huang1
+無所作為	洗心革面	比喻徹底悔改	清洗內心，換上新面貌	經過這次挫折，他決定洗心革面，重新做人。|他決心洗心革面，重新開始新生活。	xi3 xin1 ge2 mian4
+差異	不分軒輊	形容實力相當，難分高下	分不出高低、優劣	這兩隊實力相當，戰況激烈，難分軒輊。|他們在比賽中實力相當，不分軒輊。	bu4 fen1 xuan1 zhi4
+孤獨與寂寞	面面相󠇡覷	形容驚訝、無奈或無法解決問題時的樣子	彼此互相對看，無言以對	在這個突發情況下，大家都面面相覷，不知道該如何應對。|聽到這個壞消息，大家面面相覷，不知如何應對。	mian4 mian4 xiang1 qu4
+失望與絕望	鳶飛戾天	比喻有志之士飛黃騰達	鳶鳥飛到天空高處	看到他的成就，就如同鳶飛戾天，令人敬佩不已。|他的志向如鳶飛戾天，一心想要達成目標。	yuan1 fei1 li4 tian1
+困難與挑戰	迎刃而解	比喻問題或困難能夠輕鬆解決	刀刃迎向物體，很容易解決	隨著主要問題的解決，其他困難也就迎刃而解了。|這個難題被專家解釋後，便迎刃而解了。	ying2 ren4 er2 jie3
+廣闊	造福桑梓	為家鄉或本地人民造福	為鄉里鄉親造福	他回鄉創業，致力於造福桑梓，帶動了當地經濟發展。|這位企業家多年來致力於造福桑梓，回饋家鄉。	zao4 fu2 sang1 zi3
+孤獨與寂寞	素昧平生	從未見過或不認識	一直不曾相識	雖然他們素昧平生，但見面後卻一見如故。|雖然他們素昧平生，但相見如故，一見如故。	su4 mei4 ping2 sheng1
+變化與轉變	穠纖合度	形容身材適中，恰到好處	豐滿和纖細的剛好合度	這幅畫中的人物身形穠纖合度，展現了古典美。|她的身材穠纖合度，顯得格外優雅。	nong2 xian1 he2 du4
+欺騙與詭計	為󠇡虎作倀	比喻幫助惡人作惡	幫助老虎作惡的幫兇	他明知對方為惡，卻仍然助紂為虐，成為為虎作倀之徒。|他為了利益選擇了為虎作倀，幫助壞人。	wei4 hu3 zuo4 chang1
+美麗	森羅萬象	形容世界萬物繁多且多樣	森嚴排列，萬物皆有	在這座博物館中，展示了森羅萬象的文物，涵蓋了各個時代和文化。|這本書內容廣博，森羅萬象，無所不包。	sen1 luo2 wan4 xiang4
+憤怒與憎恨	玩歲愒日	玩弄歲月，偷懶過日	虛度時光，浪費時間。	他每天只顧玩樂，玩歲愒日。|他年輕時玩歲愒日，荒廢了許多光陰。	wan2 sui4 kai4 ri4
+憤怒與憎恨	疾首蹙額	形容厭惡或痛恨的樣子	痛苦地皺著眉頭和額頭	聽到這些無理指責，他不禁疾首蹙額，無法掩飾內心的憤怒。|聽到壞消息，他頓時疾首蹙額，神情沮喪。	ji2 shou3 cu4 e2
+痛苦與煎熬	椎心泣血	形容極度的悲痛	敲打自己的心，哭出血來	他失去了至愛的親人，內心椎心泣血，痛不欲生。|她的遭遇讓人椎心泣血，無比同情。	zhui1 xin1 qi4 xue4
+`;
+
+
+
+const dictMap = new Map(dictData.trim().split('\n').map(line => {
+    const [pinyin, chars] = line.split('\t');
+	const charsSplit = Array.from(chars);
+    return [pinyin, charsSplit];
+}));
+
+function getPinyinArray(pinyinString) {
+    return pinyinString.split(/ +/);
+}
+
+function getRandomCharForPinyin(pinyin, excludeChars) {
+    const chars = dictMap.get(pinyin) || [];
+    const availableChars = chars.filter(char => !excludeChars.includes(char));
+    return availableChars[Math.floor(Math.random() * availableChars.length)];
+}
+
+
+function removeBPMCharacters(str) {
+    return str.replace(/[󠇠󠇡󠇢󠇣󠇤󠇥󠇦󠇧󠇨󠇩]/gu, '');
+}
+
+const idioms = idiomsData.trim().split('\n').slice(1).map(line => {
+    const [分類, 成語, 字面意思, 表達意思, 例句, 拼音] = line.split('\t');
+    const idiomNoBPM = removeBPMCharacters(成語);
+    return { 分類, 成語, idiomNoBPM, 字面意思, 表達意思, 例句, 拼音 };
+});
+
+        const categories = [...new Set(idioms.map(idiom => idiom.分類))];
+        const categorySelect = document.getElementById('category-select');
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+        });
+
+let currentIdioms = [];
+let selectedLeft = null;
+let selectedRight = null;
+let matchType = '成語-表達意思';
+// const matchType = document.getElementById('match-type-select').value;
+let currentIndex = 0;
+let orderedIdioms = [];
+let totalRounds = 0;
+let currentRound = 0;
+const idiomsPerRound = 4;
+let startTime;
+let correctPairs = 0;
+let totalPairs = 0;
+let isSoundOn = true;
+let currentCategoryIndex = 0;
+let currentFont = 'BpmfZihiSans-Regular';
+let currentFontState = 'zih';
+let currentFontSize = '1.3em';
+const idiomLocalName = "j01";
+
+const happyEmojis = "🥰😛🤗😄😍🤩😘😚😋😊😆😁😄😃";
+const sadEmojis = "😟😮🥺😧😨😥😢😭😱😖😩😤";
+
+const rightAudio = new Audio('right.mp3');
+const wrongAudio = new Audio('wrong.mp3');
+
+function playAudio(audio) {
+    if (isSoundOn) {
+        audio.currentTime = 0;
+        audio.play();
+    }
+}
+
+// 從 localStorage 讀取錯誤記錄
+function getErrorRecords() {
+    const records = localStorage.getItem(`${idiomLocalName}_errorRecords`);
+    return records ? JSON.parse(records) : {};
+}
+
+// 保存錯誤記錄到 localStorage
+function saveErrorRecords(records) {
+    localStorage.setItem(`${idiomLocalName}_errorRecords`, JSON.stringify(records));
+}
+
+// 更新錯誤記錄
+function updateErrorRecord(idiom) {
+    const records = getErrorRecords();
+    records[idiom] = (records[idiom] || 0) + 1;
+    saveErrorRecords(records);
+}
+
+// 清除錯誤記錄
+function clearErrorRecords() {
+    localStorage.removeItem(`${idiomLocalName}_errorRecords`);
+}
+
+document.getElementById('sound-button').onclick = toggleSound;
+
+function toggleFont() {
+    const fontToggleButton = document.getElementById('font-toggle-button');
+	const ListfontToggleButton = document.getElementById('list-font-toggle-button');
+
+    const leftItems = document.querySelectorAll('.left-item');
+	const idioms = document.querySelectorAll('.idiom');
+
+    switch(currentFontState) {
+        case 'zih':
+            currentFontState = 'box';
+            fontToggleButton.textContent = '框';
+			ListfontToggleButton.textContent = '框';
+			currentFont = 'BpmfZihiBox-R';
+			currentFontSize = '1.4em';
+
+			leftItems.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiBox-R';
+				item.style.fontSize = '1.4em';
+			});
+			idioms.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiBox-R';
+				item.style.fontSize = '1.4em';
+				item.style.minWidth = '160px';
+			});
+            break;
+        case 'box':
+            currentFontState = 'bpmf';
+            fontToggleButton.textContent = '音';
+			ListfontToggleButton.textContent = '音';
+			currentFont = 'BpmfZihiOnly-R';
+			currentFontSize = '2em';
+
+			leftItems.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiOnly-R';
+				item.style.fontSize = '2em';
+			}); 
+			idioms.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiOnly-R';
+				item.style.fontSize = '1.6em';
+				item.style.minWidth = '120px';
+			}); 
+            break;
+        case 'bpmf':
+            currentFontState = 'zih';
+            fontToggleButton.textContent = '字';
+			ListfontToggleButton.textContent = '字';
+			currentFont = 'BpmfZihiSans-Regular';
+			currentFontSize = '1.3em';
+
+			leftItems.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiSans-Regular';
+				item.style.fontSize = '1.3em';
+			}); 
+			idioms.forEach(item => {
+				item.style.fontFamily = 'BpmfZihiSans-Regular';
+				item.style.fontSize = '1em';
+				item.style.minWidth = '120px';
+
+			}); 
+            break;
+    }
+}
+
+function toggleSound() {
+    isSoundOn = !isSoundOn;
+    const soundButton = document.getElementById('sound-button');
+    soundButton.textContent = isSoundOn ? '🔔' : '🔕';
+}
+
+function showEndButton() {
+    const endButton = document.getElementById('end-button');
+    endButton.classList.add('visible');
+}
+
+function hideEndButton() {
+    const endButton = document.getElementById('end-button');
+	endButton.blur();
+    endButton.classList.remove('visible');
+}
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+        function selectItem(item, side) {
+            if (side === 'left') {
+                if (selectedLeft) {
+                    selectedLeft.classList.remove('selected');
+                }
+                selectedLeft = item;
+            } else {
+                if (selectedRight) {
+                    selectedRight.classList.remove('selected');
+                }
+                selectedRight = item;
+            }
+            item.classList.add('selected');
+
+            if (selectedLeft && selectedRight) {
+                checkMatch();
+            }
+        }
+
+	function stringToArray(str) {
+		return Array.from(str.match(/\P{RI}\p{RI}?\p{RI}?/gu) ?? []);
+	}
+
+	function getRandomEmoji(emojiString) {
+		const emojiArray = stringToArray(emojiString);
+		return emojiArray[Math.floor(Math.random() * emojiArray.length)];
+	}
+
+	function changeEmoji(isCorrect) {
+		const character = document.getElementById('character');
+		if (isCorrect) {
+			character.textContent = getRandomEmoji(happyEmojis);
+			character.classList.add('animated');
+
+			/*
+			setTimeout(() => {
+				character.textContent = '🙂';
+				character.classList.remove('animated');
+			}, 2000);
+			*/
+		} else {
+			character.textContent = getRandomEmoji(sadEmojis);
+			character.classList.add('animated');
+		}
+	}
+
+
+
+    function checkMatch() {
+        const leftText = selectedLeft.textContent;
+        const rightText = selectedRight.textContent;
+        const correctPair = currentIdioms.find(pair => pair.left === leftText && pair.right === rightText);
+		const leftItems = document.querySelectorAll('.left-item');
+		const nextButton = document.getElementById('next-button');
+		const endButton = document.getElementById('end-button');
+
+        if (correctPair) {
+			correctPairs++;
+			playAudio(rightAudio);
+            
+            
+			selectedLeft.classList.add('jump');
+			setTimeout(() => {
+				selectedLeft.classList.remove('jump');
+				selectedLeft.style.backgroundColor = '#4CAF50';				
+			}, 500);
+
+			selectedRight.classList.add('jump');
+			setTimeout(() => {
+				selectedRight.classList.remove('jump');
+				selectedRight.style.backgroundColor = '#4CAF50';				
+			}, 500);
+
+            selectedLeft.style.pointerEvents = 'none';
+            selectedRight.style.pointerEvents = 'none';
+			selectedLeft.classList.add('correct');
+			selectedRight.classList.add('correct');
+            selectedLeft = null;
+            selectedRight = null;
+            changeEmoji(true);
+
+            if (document.querySelectorAll('.left-item:not([style*="pointer-events: none"])').length === 0) {
+    			leftItems.forEach(item => {
+					item.style.fontFamily = 'BpmfZihiSans-Regular';
+					item.style.fontSize = '1.3em';
+				});  
+				if(currentRound >= totalRounds){
+					showEndButton();
+					endButton.focus();									
+				} else {
+					showNextButton();
+					showEndButton();
+					nextButton.focus();
+				}
+            }
+        } else {
+			playAudio(wrongAudio);
+			changeEmoji(false);
+			updateErrorRecord(selectedLeft.textContent);
+
+
+
+			selectedLeft.classList.add('shake');
+			selectedLeft.classList.add('selected-wrong');
+			selectedLeft.classList.remove('selected');
+			setTimeout(() => {
+				selectedLeft.classList.remove('shake');	
+				selectedLeft.classList.remove('selected-wrong');
+				selectedLeft = null;
+			}, 500);
+
+			selectedRight.classList.add('shake');
+			selectedRight.classList.add('selected-wrong');
+			selectedRight.classList.remove('selected');
+			setTimeout(() => {
+				selectedRight.classList.remove('shake');	
+				selectedRight.classList.remove('selected-wrong');
+				selectedRight = null;
+			}, 500);
+		}
+		totalPairs++;
+    }
+
+
+
+function showResult() {
+    const endTime = new Date();
+    const timeSpent = Math.round((endTime - startTime) / 1000);
+    const accuracy = Math.round((correctPairs / totalPairs) * 100);
+
+    document.getElementById('accuracy-progress').style.width = `${accuracy}%`;
+
+    document.getElementById('accuracy').textContent = `✨正確：${accuracy}%`;
+    document.getElementById('total-rounds').textContent = `🎡回合：${currentRound}`;
+    document.getElementById('time-spent').textContent = `⏰努力：${timeSpent} 秒`;
+    document.getElementById('selected-category').textContent = `📒分類：${categorySelect.options[categorySelect.selectedIndex].text}`;
+    document.getElementById('match-type-result').textContent = `🪧配對：${document.getElementById('match-type-select').options[document.getElementById('match-type-select').selectedIndex].text}`;
+    
+    const orderSelect = document.getElementById('order-select');
+    const orderText = orderSelect.options[orderSelect.selectedIndex].text;
+    document.getElementById('order-type-result').textContent = `🏷️順序：${orderText}`;
+
+    updateClearRecordsButton();
+
+    document.getElementById('game').style.display = 'none';
+    document.getElementById('result').style.display = 'block';
+}
+
+document.getElementById('end-button').onclick = function() {
+    showResult();
+};
+
+document.getElementById('return-to-setup').onclick = function() {
+    document.getElementById('result').style.display = 'none';
+	initializeCategories();
+	resetGame();	
+};
+
+        function showNextButton() {
+            const nextButton = document.getElementById('next-button');		
+            nextButton.classList.add('visible');
+        }
+
+        function hideNextButton() {
+            const nextButton = document.getElementById('next-button');
+			nextButton.blur();
+            nextButton.classList.remove('visible');
+        }
+
+function getOrderedIdioms() {
+    const selectedCategory = categorySelect.value;
+    let filteredIdioms;
+
+    if (selectedCategory === '常錯挑戰') {
+        const errorRecords = getErrorRecords();
+        filteredIdioms = idioms.filter(idiom => errorRecords.hasOwnProperty(idiom.成語));
+        
+        if (document.getElementById('order-select').value === 'sequential') {
+            filteredIdioms.sort((a, b) => errorRecords[b.成語] - errorRecords[a.成語]);
+        }
+    } else {
+        filteredIdioms = selectedCategory === 'all' ? 
+            idioms.slice() : idioms.filter(idiom => idiom.分類 === selectedCategory);
+    }
+
+    return filteredIdioms;
+}
+
+
+function updateProgress() {
+    const progress = document.getElementById('progress');
+    const roundInfo = document.getElementById('round-info');
+    progress.style.width = `${(currentRound / totalRounds) * 100}%`;
+    roundInfo.textContent = `${currentRound}/${totalRounds}`;
+}
+
+function resetGame() {
+    currentIndex = 0;
+    currentRound = 0;
+    orderedIdioms = [];
+    correctPairs = 0;
+    totalPairs = 0;
+    hideEndButton();
+    hideNextButton();
+    document.getElementById('setup').classList.add('active');
+    document.getElementById('setup').style.display = 'block';
+    document.getElementById('game').classList.remove('active');
+    document.getElementById('game').style.display = 'none';
+	
+}
+
+function getRandomExample(examples) {
+    const exampleArray = examples.split('|');
+    return exampleArray[Math.floor(Math.random() * exampleArray.length)].trim();
+}
+
+// 出題;
+
+function startNewRound() {
+    const selectedCategory = categorySelect.value;
+    const orderType = document.getElementById('order-select').value;
+
+    const nextButton = document.getElementById('next-button');
+    const endButton = document.getElementById('end-button');
+    nextButton.blur();
+    endButton.blur();
+
+    if (currentIndex === 0 || currentIndex >= orderedIdioms.length) {
+        orderedIdioms = getOrderedIdioms();
+        if (orderType === 'random' || (selectedCategory === '常錯挑戰' && orderType === 'sequential')) {
+            shuffleArray(orderedIdioms);
+        }
+        currentIndex = 0;
+        // 根據遊戲模式設置 totalRounds
+        if (matchType === '成語-排序') {
+            totalRounds = orderedIdioms.length;  // 排序模式下，每個成語都是一個回合
+        } else {
+            totalRounds = Math.ceil(orderedIdioms.length / idiomsPerRound);
+        }
+        
+        currentRound = 0;
+    }
+
+    currentRound++;
+    updateProgress();
+
+    if (matchType === '成語-排序') {
+        const idiom = orderedIdioms[currentIndex];
+        setupSortingGame(idiom);
+        currentIndex++;
+    } else {
+        // 顯示左右配對容器，隱藏排序容器
+        document.getElementById('left-right-container').style.display = 'block';
+        document.getElementById('sorting-container').style.display = 'none';
+        currentIdioms = [];
+        for (let i = 0; i < idiomsPerRound && currentIndex < orderedIdioms.length; i++) {
+            const idiom = orderedIdioms[currentIndex];
+            let pair;
+            switch (matchType) {
+                case '成語-表達意思':
+                    pair = { left: idiom.成語, right: idiom.表達意思 };
+                    break;
+                case '成語-字面意思':
+                    pair = { left: idiom.成語, right: idiom.字面意思 };
+                    break;
+                case '成語-例句':
+                    const randomExample = getRandomExample(idiom.例句);
+                    const maskedSentence = randomExample.replace(idiom.idiomNoBPM, '🙈');
+                    pair = { left: idiom.成語, right: maskedSentence };
+                    break;
+            }
+            currentIdioms.push(pair);
+            currentIndex++;
+        }
+
+        const leftContainer = document.getElementById('leftContainer');
+        const rightContainer = document.getElementById('rightContainer');
+
+        leftContainer.innerHTML = '';
+        rightContainer.innerHTML = '';
+
+        // 創建左側選項
+        const leftItems = currentIdioms.map(pair => pair.left);
+
+        leftItems.forEach(item => {
+            const leftElement = document.createElement('div');
+            leftElement.className = 'left-item';
+            leftElement.style.fontFamily = currentFont;
+            leftElement.style.fontSize = currentFontSize;        
+            leftElement.textContent = item;
+            leftElement.onclick = () => selectItem(leftElement, 'left');
+            leftContainer.appendChild(leftElement);
+        });
+
+        // 創建右側選項（始終隨機排序）
+        const rightItems = currentIdioms.map(pair => pair.right);
+        shuffleArray(rightItems);
+        rightItems.forEach(item => {
+            const rightElement = document.createElement('div');
+            rightElement.className = 'right-item';
+            rightElement.textContent = item;
+            rightElement.onclick = () => selectItem(rightElement, 'right');
+            rightContainer.appendChild(rightElement);
+        });
+    }
+
+    if (currentRound === 1) {
+        startTime = new Date();
+    }
+}
+
+
+
+function setupSortingGame(idiom) {
+    const pinyinArray = getPinyinArray(idiom.拼音);
+    const correctChars = Array.from(idiom.idiomNoBPM);
+    const wrongChars = pinyinArray.map(pinyin => 
+        getRandomCharForPinyin(pinyin, correctChars)
+    ).filter(char => char); // 過濾掉可能的 undefined
+
+	//here
+
+    const allChars = [...correctChars, ...wrongChars];
+    shuffleArray(allChars);
+
+    // 隱藏左右配對容器，顯示排序容器
+    document.getElementById('left-right-container').style.display = 'none';
+    document.getElementById('sorting-container').style.display = 'block';
+
+    // 更新成語問題
+    const idiomQuestion = document.getElementById('idiom-question');
+    idiomQuestion.textContent = idiom.成語;
+    idiomQuestion.style.fontFamily = 'BpmfZihiOnly-R';
+    idiomQuestion.style.fontSize = '3em';
+
+    // 清空並填充答案區和選項區
+    const answerArea = document.getElementById('answer-area');
+    const characterOptions = document.getElementById('character-options');
+    answerArea.innerHTML = '';
+    characterOptions.innerHTML = '';
+
+    allChars.forEach(char => {
+        const charElement = document.createElement('div');
+        charElement.className = 'character-option';
+        charElement.textContent = char;
+        characterOptions.appendChild(charElement);
+    });
+
+    setupClickHandlers();
+
+    // 重新綁定確定按鈕的事件
+    const checkButton = document.getElementById('check-answer');
+    checkButton.onclick = () => checkSortingAnswer(idiom);
+    checkButton.disabled = true; // 初始時禁用確定按鈕
+}
+
+function setupClickHandlers() {
+    const answerArea = document.getElementById('answer-area');
+    const characterOptions = document.getElementById('character-options');
+    
+    // 移除舊的事件監聽器
+    characterOptions.removeEventListener('click', handleCharacterOptionClick);
+    answerArea.removeEventListener('click', handleAnswerAreaClick);
+
+    // 使用事件委派
+    characterOptions.addEventListener('click', handleCharacterOptionClick);
+    answerArea.addEventListener('click', handleAnswerAreaClick);
+}
+
+function handleCharacterOptionClick(e) {
+    if (e.target.classList.contains('character-option')) {
+        const charElement = e.target.cloneNode(true);
+        charElement.classList.add('in-answer');
+        document.getElementById('answer-area').appendChild(charElement);
+        e.target.style.display = 'none';
+		updateCheckButtonState();
+    }
+}
+
+function handleAnswerAreaClick(e) {
+    if (e.target.classList.contains('in-answer')) {
+        const char = e.target.textContent;
+        const originalOption = Array.from(document.getElementById('character-options').children)
+            .find(el => el.textContent === char && el.style.display === 'none');
+        if (originalOption) {
+            originalOption.style.display = '';
+        }
+        e.target.remove();
+		updateCheckButtonState();
+    }
+}
+
+function updateCheckButtonState() {
+    const answerArea = document.getElementById('answer-area');
+    const checkButton = document.getElementById('check-answer');
+    const currentIdiom = orderedIdioms[currentIndex - 1];
+    checkButton.disabled = answerArea.children.length !== currentIdiom.idiomNoBPM.length;
+}
+	
+
+function checkSortingAnswer(idiom) {
+    const answerArea = document.getElementById('answer-area');
+    const characterOptions = document.getElementById('character-options');
+    const checkButton = document.getElementById('check-answer');
+    const userAnswer = Array.from(answerArea.children).map(el => el.textContent).join('');
+    const nextButton = document.getElementById('next-button');
+    const endButton = document.getElementById('end-button');
+
+    if (userAnswer === idiom.idiomNoBPM) {
+        // 答案正確
+        answerArea.classList.add('jump');
+        setTimeout(() => {
+            answerArea.classList.remove('jump');
+        }, 500);
+        playAudio(rightAudio);
+        changeEmoji(true);
+        correctPairs++;
+        if (currentRound >= totalRounds) {
+            showEndButton();
+            endButton.focus();                                  
+        } else {
+            showNextButton();
+            showEndButton();
+            nextButton.focus();
+        }
+        checkButton.disabled = true; // 禁用確定按鈕，防止重複點擊
+    } else {
+        // 答案錯誤
+        playAudio(wrongAudio);
+        changeEmoji(false);
+        updateErrorRecord(idiom.成語);
+		answerArea.classList.add('shake');
+
+		setTimeout(() => {
+			answerArea.classList.remove('shake');
+			// 將答案區的元素依序移回選項區
+			const answerElements = Array.from(answerArea.children);
+			answerElements.forEach(char => {
+				// 找到對應的原始選項
+				const originalOption = Array.from(characterOptions.children)
+					.find(el => el.textContent === char.textContent && el.style.display === 'none');
+				
+				if (originalOption) {
+					// 如果找到原始選項，則恢復其顯示
+					originalOption.style.display = '';
+				} else {
+					// 如果沒找到原始選項（不應該發生），則創建一個新的
+					const newOption = char.cloneNode(true);
+					newOption.classList.remove('in-answer');
+					newOption.classList.add('character-option');
+					characterOptions.appendChild(newOption);
+				}
+				
+				// 移除答案區的元素
+				char.remove();
+			});
+		}, 1000);
+        
+        checkButton.disabled = true; // 重置後禁用確定按鈕
+    }
+    totalPairs++;
+}
+
+        document.getElementById('next-button').onclick = function() {
+            hideNextButton();
+			hideEndButton();
+            startNewRound();
+        };
+
+document.getElementById('start-button').onclick = function() {
+    matchType = document.getElementById('match-type-select').value;
+    document.getElementById('setup').classList.remove('active');
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('game').classList.add('active');
+    document.getElementById('game').style.display = 'block';
+
+    currentIndex = 0;
+    currentRound = 0;
+    orderedIdioms = [];
+    startNewRound();
+};
+
+document.getElementById('close-button').onclick = function() {
+    resetGame();	
+};
+
+
+
+document.getElementById('view-idioms-button').onclick = function() {
+	currentFont = 'BpmfZihiSans-Regular';
+	currentFontState = 'zih';
+	currentFontSize = '1.3em';
+    const fontToggleButton = document.getElementById('font-toggle-button');
+	const ListfontToggleButton = document.getElementById('list-font-toggle-button');
+	fontToggleButton.textContent = '字';
+	ListfontToggleButton.textContent = '字';
+    document.getElementById('setup').style.display = 'none';
+    document.getElementById('idiom-list').style.display = 'block';
+    renderIdiomList(); 
+};
+
+document.getElementById('close-idiom-list').onclick = function() {
+    document.getElementById('idiom-list').style.display = 'none';
+    document.getElementById('setup').style.display = 'block';
+};
+
+
+
+function replaceIdiomWithUnderscore(sentence, idiom) {
+    return sentence.replace(new RegExp(idiom, 'g'), '🙈');
+}
+
+function renderIdiomList() {
+    const selectedCategory = document.getElementById('category-select').value;
+    const table = document.getElementById('idiom-table');
+    const tbody = table.querySelector('tbody');
+    tbody.innerHTML = '';
+
+    // 篩選成語
+    let filteredIdioms;
+    if (selectedCategory === '常錯挑戰') {
+        const errorRecords = getErrorRecords();
+        filteredIdioms = idioms.filter(idiom => errorRecords.hasOwnProperty(idiom.成語));
+        filteredIdioms.sort((a, b) => errorRecords[b.成語] - errorRecords[a.成語]);
+    } else {
+        filteredIdioms = selectedCategory === 'all' 
+            ? idioms 
+            : idioms.filter(idiom => idiom.分類 === selectedCategory);
+    }
+
+    filteredIdioms.forEach((idiom, index) => {
+        const randomExample = getRandomExample(idiom.例句);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="category"><small>${idiom.分類}</small></td>
+            <td><small class="small-number">${index + 1} </small><span class="idiom">${idiom.成語}</span></td>
+            <td class="literal">${idiom.字面意思}</td>
+            <td class="figurative">${idiom.表達意思}</td>
+            <td class="example">${replaceIdiomWithUnderscore(randomExample, idiom.idiomNoBPM)}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+	const idiomList = document.querySelectorAll('.idiom');
+    idiomList.forEach(item => {
+		item.style.fontFamily = currentFont;
+    });
+
+    updateVisibility();
+    updateCategoryNavigation();
+}
+
+function updateVisibility() {
+    const showCategory = document.getElementById('show-category').checked;
+    const showIdiom = document.getElementById('show-idiom').checked;
+    const showLiteral = document.getElementById('show-literal').checked;
+    const showFigurative = document.getElementById('show-figurative').checked;
+    const showExample = document.getElementById('show-example').checked;
+
+    document.querySelectorAll('#idiom-table .category').forEach(el => el.style.display = showCategory ? '' : 'none');
+    document.querySelectorAll('#idiom-table .idiom').forEach(el => el.style.display = showIdiom ? '' : 'none');
+    document.querySelectorAll('#idiom-table .literal').forEach(el => el.style.display = showLiteral ? '' : 'none');
+    document.querySelectorAll('#idiom-table .figurative').forEach(el => el.style.display = showFigurative ? '' : 'none');
+    document.querySelectorAll('#idiom-table .example').forEach(el => el.style.display = showExample ? '' : 'none');
+}
+
+document.querySelectorAll('.idiom-controls input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', updateVisibility);
+});
+
+document.getElementById('category-select').addEventListener('change', function() {
+    renderIdiomList();
+    updateCategoryNavigation();
+});
+
+function updateCategoryNavigation() {
+    const categorySelect = document.getElementById('category-select');
+    const prevButton = document.getElementById('prev-category');
+    const nextButton = document.getElementById('next-category');
+    const categories = Array.from(categorySelect.options).map(option => option.value);
+    currentCategoryIndex = categories.indexOf(categorySelect.value);
+
+    prevButton.disabled = currentCategoryIndex <= 1;  // 禁用"全部"的上一個
+    nextButton.disabled = currentCategoryIndex >= categories.length - 1;
+
+    if (currentCategoryIndex > 0) {
+        prevButton.textContent = "< "  + categories[currentCategoryIndex - 1];
+    }
+    if (currentCategoryIndex < categories.length - 1) {
+        nextButton.textContent = categories[currentCategoryIndex + 1] + " >";
+    }
+}
+
+function changeCategory(direction) {
+    const categorySelect = document.getElementById('category-select');
+    const categories = Array.from(categorySelect.options).map(option => option.value);
+    
+    currentCategoryIndex += direction;
+    if (currentCategoryIndex < 1) currentCategoryIndex = 1;  // 不要選到"全部"
+    if (currentCategoryIndex >= categories.length) currentCategoryIndex = categories.length - 1;
+
+    categorySelect.value = categories[currentCategoryIndex];
+    renderIdiomList();
+    updateCategoryNavigation();
+}
+
+document.getElementById('prev-category').onclick = () => changeCategory(-1);
+document.getElementById('next-category').onclick = () => changeCategory(1);
+
+updateCategoryNavigation();
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('font-toggle-button').addEventListener('click', toggleFont);
+	document.getElementById('list-font-toggle-button').addEventListener('click', toggleFont);	
+});
+
+document.getElementById('clear-records').onclick = function() {
+    if (confirm('確定要清除所有錯誤記錄嗎？')) {
+        clearErrorRecords();
+        alert('錯誤記錄已清除');        
+        // 清除記錄後，需要更新類別列表，移除「常錯挑戰」選項
+        initializeCategories();
+        
+        // 如果當前在「常錯挑戰」類別，則切換到「所有分類」
+        if (categorySelect.value === '常錯挑戰') {
+            categorySelect.value = 'all';
+        }        
+        // 更新類別導航按鈕
+        updateCategoryNavigation();
+        // 更新清除紀錄按鈕狀態
+        updateClearRecordsButton();
+    }
+};
+
+function initializeCategories() {
+    const categories = ['all', ...new Set(idioms.map(idiom => idiom.分類))];
+    const categorySelect = document.getElementById('category-select');
+    categorySelect.innerHTML = '';
+
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category === 'all' ? 'all' : category;
+        option.textContent = category === 'all' ? '所有分類' : category;
+        categorySelect.appendChild(option);
+    });
+
+    const errorRecords = getErrorRecords();
+    if (Object.keys(errorRecords).length > 0) {
+        const errorOption = document.createElement('option');
+        errorOption.value = '常錯挑戰';
+        errorOption.textContent = '常錯挑戰';
+        categorySelect.appendChild(errorOption);
+    }
+}
+
+function updateClearRecordsButton() {
+    const clearRecordsButton = document.getElementById('clear-records');
+    const errorRecords = getErrorRecords();
+    const hasErrors = Object.keys(errorRecords).length > 0;
+    
+    clearRecordsButton.disabled = !hasErrors;
+    clearRecordsButton.style.opacity = hasErrors ? '1' : '0.5';
+    clearRecordsButton.style.cursor = hasErrors ? 'pointer' : 'not-allowed';
+}
+
+// 在頁面載入時調用此函數
+document.addEventListener('DOMContentLoaded', initializeCategories);
+
+    </script>
+<script src="https://y.yay.boo/y.js"></script>
+</body>
+</html>
