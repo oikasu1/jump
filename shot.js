@@ -1715,7 +1715,8 @@ document.getElementById("returnButton").addEventListener("click", () => {
 function returnToSettings() {
   handleReturnToSettings() //退出全螢幕
   document.getElementById("gameContainer").style.display = "none"
-  document.getElementById("settingsPage").style.display = "block"
+	// 顯示設定頁面
+    document.getElementById('settingsPage').style.display = 'flex';
   stopCurrentAudio()
 
   // 重置遊戲相關狀態

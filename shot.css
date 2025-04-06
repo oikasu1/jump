@@ -12,8 +12,12 @@ body {
   font-size: 20px;
 }
 
-
-
+#gameHeader {
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 0;
+}
 
 
 
@@ -104,39 +108,56 @@ body {
 
 /* Settings Page */
 #settingsPage {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-height: min(400px, 90vh); /* 新增：設定最大高度的上限 */
-  min-height: min-content; /* 新增：允許內容決定最小高度 */
-  overflow-y: auto;
-  margin: 40px 0px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    max-width: 95%;
+    width: 350px;
+    margin: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
 #settingsPage h2 {
-  text-align: center;
-  color: #333;
+    text-align: center;
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
 }
 
 #settingsPage div {
-  margin-bottom: 0px;
+    margin-bottom: 0.5rem;
 }
 
 #settingsPage label {
-  display: inline-block;
-  width: 80px;
-  text-align: right;
+    display: inline-block;
+    width: 60px;
+    color: #4a5568;
+    font-weight: 500;
 }
 
-#settingsPage select,
-#settingsPage button {
-  width: 200px;
-  padding: 5px;
+#settingsPage select {
+    width: 200px;
+    min-width: 150px;
+    max-width: calc(100% - 80px);
+    padding: 5px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.2s ease;
 }
 
+#settingsPage select:focus {
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
 
 .button-container {
     display: flex;

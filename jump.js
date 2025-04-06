@@ -1499,7 +1499,8 @@ document.getElementById("closeButton").addEventListener("click", returnToSetting
 
 function returnToSettings() {
   document.getElementById("gameContainer").style.display = "none"
-  document.getElementById("settingsPage").style.display = "block"
+	// 顯示設定頁面
+    document.getElementById('settingsPage').style.display = 'flex';
   stopCurrentAudio()
 
   // 停止計時器
