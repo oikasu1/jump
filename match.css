@@ -3,10 +3,10 @@ body {
     margin: 0;
     padding: 0;
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
     justify-content: center;
     align-items: center;
-    background-color: #87CEEB;
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
     user-select: none;
     overflow-x: hidden;
 }
@@ -14,68 +14,95 @@ body {
 #gameHeader {
     top: 0;
     width: 100%;
-    background-color: rgba(135, 206, 235, 0.9); /* 半透明的背景色 */
     z-index: 1000;
     padding: 10px 0;
 }
 
 /* 2. 設定頁樣式 */
 #settingsPage {
-    background-color: white;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-height: 90vh; 
-    overflow-y: auto;
-    margin: 40px 0px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    max-width: 95%;
+    width: 350px;
+    margin: 20px;
     scrollbar-width: thin;
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
+
 #settingsPage h2 {
     text-align: center;
-    color: #333;
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
 }
+
 #settingsPage div {
-    margin-bottom: 15px;
+    margin-bottom: 0.5rem;
 }
+
 #settingsPage label {
     display: inline-block;
-    width: 80px;
-    text-align: right;
+    width: 60px;
+    color: #4a5568;
+    font-weight: 500;
 }
-#settingsPage select, 
-#settingsPage button {
+
+#settingsPage select {
     width: 200px;
-    padding: 5px;
+    min-width: 150px;
+    max-width: calc(100% - 80px);
+    padding: 5px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+#settingsPage select:focus {
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.button-container {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    /* 讓按鈕之間有間距，可依需求調整 */
+}
+
+.button-container button {
+    width: 50%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+#startButton:hover,
+#viewButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(120, 120, 120, 0.2);
+}
+
+#viewButton {
+    background-color: #007bff;
 }
 
 #startButton {
-    display: block;
-    margin: 20px auto;
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-@media (orientation: landscape) {
-    #settingsPage {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    #settingsPage > div {
-        width: 100%;
-        max-width: 300px;
-    }
+    background-color: #28a745;
 }
 
 
-/* 3. 按鈕樣式 */
 #closeButton {
     position: absolute;
     top: 15px;
@@ -96,239 +123,241 @@ body {
     align-items: center;
     font-family: Arial, sans-serif;
 }
+
 #closeButton:hover {
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
 }
+
 #closeButton:active {
     transform: scale(0.95);
 }
 
+
 /* Modal buttons */
 .modal-buttons {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
 }
 #returnButton {
-    background-color: #f44336;
-    color: white;
+  background-color: #f44336;
+  color: white;
 }
 #continueButton {
-    background-color: #4CAF50;
-    color: white;
+  background-color: #4caf50;
+  color: white;
 }
 .modal-buttons:focus {
-    outline: 3px solid #007bff;
+  outline: 3px solid #007bff;
 }
-
 
 /* 4. 模態框樣式 */
 .modal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 .modal-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 90%;
-    max-width: 250px;
-    border-radius: 10px;
-    text-align: center;
-    position: relative;
-    transform: translate(-50%, -50%);
-    top: 50%;
-    left: 50%; 
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 250px;
+  border-radius: 10px;
+  text-align: center;
+  position: relative;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
 }
-
-
 
 /* 5. 遊戲卡片樣式 */
 #gameContainer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    max-width: 800px;
+    width: 90%;
+    min-height: 95vh;
+    margin: 0px auto;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    overflow-y: auto;
-    overflow-x: hidden;
-    /* 滾動條樣式 */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    position: relative;
+    padding: 0 20px;
+  /* 滾動條樣式 */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 /* 新增：Webkit 瀏覽器的滾動條樣式 */
 #gameContainer::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 #gameContainer::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 #gameContainer::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
 }
 
 .card {
-    width: 100%;
-    max-width: 180px;
-    height: 100px;
-    margin: 0 auto;
-    perspective: 1000px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-	font-size: 22px;
+  width: 100%;
+  max-width: 180px;
+  height: 100px;
+  margin: 0 auto;
+  perspective: 1000px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  font-size: 22px;
 }
 .card-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    transition: transform 0.8s;
-    transform-style: preserve-3d;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s;
+  transform-style: preserve-3d;
 }
 .card.flipped .card-inner {
-    transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
-.card-front, .card-back {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    text-align: center;
-    /* 添加文字換行控制 */
-    word-break: keep-all;
-    overflow-wrap: anywhere;
-    white-space: pre-wrap;
-    font-size: 20px;
-    line-height: 1.4;
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  /* 添加文字換行控制 */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  font-size: 20px;
+  line-height: 1.4;
 }
 .card-front {
-    background-color: #2196F3;
-    color: white;
+  background-color: #2196f3;
+  color: white;
 }
 .card-back {
-    background-color: white;
-    transform: rotateY(180deg);
-    border: 2px solid #2196F3;
+  background-color: white;
+  transform: rotateY(180deg);
+  border: 2px solid #2196f3;
 }
 .card.matched {
-    animation: matchedAnimation 0.5s ease-out;
-    opacity: 0.7;
+  animation: matchedAnimation 0.5s ease-out;
+  opacity: 0.7;
 }
 .card.selected .card-back {
-    border: 3px solid #ffd700;
-	 box-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+  border: 3px solid #ffd700;
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
 }
 
 @keyframes matchedAnimation {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
-
 
 /* 6. 格子布局樣式 */
 #cardGrid {
-    display: grid;
-    gap: 15px;
-    padding: 15px;
-    width: calc(100% - 30px); /* 修改：確保寬度計算包含 padding */
-    max-width: 1000px;
-    margin: auto;
-    min-height: 70vh;
-    align-content: center;
-    justify-content: center;
+  display: grid;
+  gap: 15px;
+  padding: 15px;
+  width: calc(100% - 30px); /* 修改：確保寬度計算包含 padding */
+  max-width: 1000px;
+  margin: auto;
+  min-height: 70vh;
+  align-content: center;
+  justify-content: center;
 }
 #cardGrid[data-card-count="4"],
 #cardGrid[data-card-count="3"],
 #cardGrid[data-card-count="2"] {
-    grid-template-columns: repeat(2, minmax(150px, 180px));
-    max-width: 400px;
+  grid-template-columns: repeat(2, minmax(150px, 180px));
+  max-width: 400px;
 }
 #cardGrid[data-card-count="8"],
 #cardGrid[data-card-count="7"],
 #cardGrid[data-card-count="6"],
 #cardGrid[data-card-count="5"] {
-    grid-template-columns: repeat(2, minmax(150px, 180px));
-    max-width: 600px;
+  grid-template-columns: repeat(2, minmax(150px, 180px));
+  max-width: 600px;
 }
 #cardGrid[data-card-count="9"] {
-    grid-template-columns: repeat(4, minmax(150px, 180px));
-    max-width: 800px;
+  grid-template-columns: repeat(4, minmax(150px, 180px));
+  max-width: 800px;
 }
-
 
 /* 7. 響應式設計 */
 @media screen and (max-width: 768px) {
-    .card {
-        width: 150px;
-        height: 100px;
-    }
-    #cardGrid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 8px;
-        padding: 10px;
-    }
+  .card {
+    width: 150px;
+    height: 100px;
+  }
+  #cardGrid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 8px;
+    padding: 10px;
+  }
 }
 
 /* 大螢幕設備 (>= 1024px) */
 @media screen and (min-width: 1024px) {
-    #cardGrid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 1000px;
-    }
+  #cardGrid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1000px;
+  }
 }
 
 /* 平板設備 (768px - 1023px) */
 @media screen and (min-width: 768px) and (max-width: 1023px) {
-    #cardGrid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 800px;
-    }
+  #cardGrid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 800px;
+  }
 
-    .card {
-        max-width: 150px;
-        height: 100px;
-    }
+  .card {
+    max-width: 150px;
+    height: 100px;
+  }
 }
 
 /* 大手機設備 (550px - 767px) 
 @media screen and (min-width: 700px) and (max-width: 767px) {*/
 @media screen and (max-width: 767px) {
-    #cardGrid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        padding: 10px;
-    }
+  #cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
 
-    .card {
-        max-width: 150px;
-        height: 95px;
-    }
+  .card {
+    max-width: 150px;
+    height: 95px;
+  }
 }
 
 /* 手機設備 (<= 480px) 
@@ -351,30 +380,73 @@ body {
 */
 }
 
-
-/* 8. 遊戲統計資訊樣式 */
+/* 修改 gameStats 樣式，使其靠右對齊 */
 #gameStats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end; /* 修改：從 center 改為 flex-end */
+  margin: 0 15px 0 0; /* 新增：右側邊距 */
 }
 
-#gameStats span {
-    white-space: nowrap;
+/* 確保時間顯示在右側 */
+#timeDisplay {
+  white-space: nowrap;
+  margin-right: 15px; /* 新增：右側邊距 */
 }
-
 
 /* 9. 動畫效果 */
 .time-warning {
-    color: red;
-    animation: blink 1s infinite;
+  color: red;
+  animation: blink 1s infinite;
 }
 
 @keyframes blink {
-    50% { opacity: 0.3; }
+  50% {
+    opacity: 0.3;
+  }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

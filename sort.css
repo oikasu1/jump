@@ -71,21 +71,37 @@ body {
   box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
 }
 
-#startButton {
-  background: linear-gradient(45deg, #4CAF50, #45a049);
-  color: white;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  font-size: 1.1rem;
-  font-weight: 600;
-  transition: transform 0.2s ease;
-  width: 70%;
+
+.button-container {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    /* 讓按鈕之間有間距，可依需求調整 */
 }
 
-#startButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+.button-container button {
+    margin-top: 1em;
+    width: 50%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+#startButton:hover,
+#viewButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(120, 120, 120, 0.2);
+}
+
+#viewButton {
+    background-color: #007bff;
+}
+
+#startButton {
+    background-color: #28a745;
 }
 
 /* 6. 響應式設計補充 */
@@ -105,7 +121,7 @@ body {
 	}
   .word, .selected-word {
     padding: 8px 16px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
   }  
   #gameStats {
     font-size: 0.9rem;
@@ -224,9 +240,9 @@ body {
 }
 
 .word {
-  font-size: 1.2em;
+  font-size: 1.4em;
   background: linear-gradient(145deg, #f3f4f6, #ffffff);
-  padding: 10px 15px;
+  padding: 10px 10px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
@@ -254,7 +270,7 @@ body {
 }
 
 .selected-word {
-  font-size: 1.2em;
+  font-size: 1.4em;
   background: linear-gradient(145deg, #5b93d9, #3b82f6);
   color: white;
   padding: 5px 10px;

@@ -1,13 +1,13 @@
 /* 1. 全局樣式 */
 body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  min-height: 100vh;
-  justify-content: center;
-  align-items: center;
-  background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-  user-select: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    user-select: none;
     overflow-x: hidden;
 }
 
@@ -35,21 +35,21 @@ body {
 }
 
 #settingsPage h2 {
-  text-align: center;
-  color: #2d3748;
-  font-size: 1.8rem;
-  margin-bottom: 1.2rem;
+    text-align: center;
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
 }
 
 #settingsPage div {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 
 #settingsPage label {
-  display: inline-block;
-  width: 60px;
-  color: #4a5568;
-  font-weight: 500;
+    display: inline-block;
+    width: 60px;
+    color: #4a5568;
+    font-weight: 500;
 }
 
 #settingsPage select {
@@ -66,15 +66,16 @@ body {
 }
 
 #settingsPage select:focus {
-  border-color: #4299e1;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
 }
 
 .button-container {
     display: flex;
     width: 100%;
-    gap: 10px; /* 讓按鈕之間有間距，可依需求調整 */
+    gap: 10px;
+    /* 讓按鈕之間有間距，可依需求調整 */
 }
 
 .button-container button {
@@ -84,12 +85,13 @@ body {
     border-radius: 8px;
     border: none;
     color: white;
-	transition: transform 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
-#startButton:hover, #viewButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(120, 120, 120, 0.2);
+#startButton:hover,
+#viewButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(120, 120, 120, 0.2);
 }
 
 #viewButton {
@@ -99,48 +101,59 @@ body {
 #startButton {
     background-color: #28a745;
 }
+
 /* 6. 響應式設計補充 */
 @media (max-width: 767px) {
-  #settingsPage {
-    padding: 1rem 1.5rem;
-  }
-  #gameContainer {
-    width: 100%;
-	 padding: 1rem;
-  }
-	#sentenceArea {
-		padding: 0px
-	}
-	#sentence-text{
-	margin-left: -10px;
-	}
-  .word, .selected-word {
-    padding: 8px 16px;
-    font-size: 1.2rem;
-  }  
-  #gameStats {
-    font-size: 0.9rem;
-  }
+    #settingsPage {
+        padding: 1rem 1.5rem;
+    }
+
+    #gameContainer {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    #sentenceArea {
+        padding: 0px
+    }
+
+    #sentence-text {
+        margin-left: -10px;
+    }
+
+    .word,
+    .selected-word {
+        padding: 8px 16px;
+        font-size: 1.2rem;
+    }
+
+    #gameStats {
+        font-size: 0.9rem;
+    }
 
 }
 
 @media (min-width: 768px) {
-  #gameContainer {
-    padding: 1rem;
-  }  
-  #wordBank {
-    gap: 10px;
-  }
-#sentenceArea {
-    padding: 20px
+    #gameContainer {
+        padding: 1rem;
+    }
+
+    #wordBank {
+        gap: 10px;
+    }
+
+    #sentenceArea {
+        padding: 20px
+    }
 }
-}
+
 @media (orientation: landscape) {
     #settingsPage {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
+
     #settingsPage>div {
         width: 100%;
         max-width: 300px;
@@ -169,11 +182,13 @@ body {
     align-items: center;
     font-family: Arial, sans-serif;
 }
+
 #closeButton:hover {
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transform: scale(1.1);
 }
+
 #closeButton:active {
     transform: scale(0.95);
 }
@@ -182,50 +197,51 @@ body {
 
 /* 5. 遊戲卡片樣式 */
 .game-main-content {
-  flex: 1;
-  position: relative;
+    flex: 1;
+    position: relative;
 }
 
 .progress-bar {
-  width: 10px;
-  height: 100%;
-  background: orange;
-  position: absolute;
-  top: 0;
+    width: 10px;
+    height: 100%;
+    background: orange;
+    position: absolute;
+    top: 0;
 }
 
 .progress-bar::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #4CAF50;
-  transition: height 0.1s linear;
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #4CAF50;
+    transition: height 0.1s linear;
 }
 
 .progress-bar.left {
-  left: 0;
+    left: 0;
 }
 
 .progress-bar.right {
-  right: 0;
+    right: 0;
 }
+
 /* 當時間少於 3 秒時的警告效果 */
 .progress-bar.warning::after {
-  background: #ff4444;
+    background: #ff4444;
 }
 
 #gameContainer {
-  background-color: rgba(255, 255, 255, 0.6);
-  border-radius: 10px;
-  max-width: 600px;
-  width: 90%;
-  min-height: 95vh;
-  margin: 0px auto;
-  display: flex;
-  position: relative;
-  padding: 0 20px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+    min-height: 95vh;
+    margin: 0px auto;
+    display: flex;
+    position: relative;
+    padding: 0 20px;
 }
 
 
@@ -233,13 +249,13 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-	text-align: center;
+    text-align: center;
 }
 
 #targetSentence {
     font-size: 1.5em;
     padding: 15px 15px 15px 20px;
-	background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.4);
     border-radius: 8px;
     position: relative;
     display: flex;
@@ -252,85 +268,97 @@ body {
     line-height: 1;
     display: block;
 }
+
 #emoji:hover {
-	transform: scale(1.1);
-	cursor: pointer;
+    transform: scale(1.1);
+    cursor: pointer;
 }
+
 .bounce-emoji {
     animation: bounce 0.5s ease 2;
 }
+
 @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
 }
 
 
 #wordBank {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 20px 0;
-  justify-content: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+    justify-content: center;
 }
 
 .word {
-  font-size: 1.2em;
-  background: linear-gradient(145deg, #f3f4f6, #ffffff);
-  padding: 10px 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+    font-size: 1.2em;
+    background: linear-gradient(145deg, #f3f4f6, #ffffff);
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
+
 .word:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
+
 .word.selected {
-  opacity: 0.3;
+    opacity: 0.3;
 }
 
 
 #answerArea {
-  min-height: 40px;
-  border: 2px dashed #90cdf4;
-  border-radius: 8px;
-  padding: 10px;
-  margin: 20px 0;
+    min-height: 40px;
+    border: 2px dashed #90cdf4;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 20px 0;
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
-	  justify-content: center;
-  background-color: rgba(235, 248, 255, 0.5);
+    justify-content: center;
+    background-color: rgba(235, 248, 255, 0.5);
 }
 
 .selected-word {
-  font-size: 1.2em;
-  background: linear-gradient(145deg, #5b93d9, #3b82f6);
-  color: white;
-  padding: 5px 10px;
-  border-radius: 8px;
-  margin: 0px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1.2em;
+    background: linear-gradient(145deg, #5b93d9, #3b82f6);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 8px;
+    margin: 0px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#checkButton{
-  background: linear-gradient(145deg, #5b93d9, #3b82f6);
-  color: white;
-  padding: 12px 24px;
-  border-radius: 10px;
-  border: none;
-  font-size: 1rem;
-  font-weight: 500;
-  width: 50%;
+#checkButton {
+    background: linear-gradient(145deg, #5b93d9, #3b82f6);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    width: 50%;
     margin: 10px auto;
     transition: all 0.2s ease;
     display: block;
 }
-#checkButton:disabled {
-  background: linear-gradient(45deg, #d1d5db, #a1a1aa);
-  cursor: not-allowed;
-}
 
+#checkButton:disabled {
+    background: linear-gradient(45deg, #d1d5db, #a1a1aa);
+    cursor: not-allowed;
+}
 
 
 
@@ -343,19 +371,23 @@ body {
     width: 100%;
     padding: 0 15px;
 }
+
 #timeDisplay,
 #scoreDisplay {
-	color: #888;
-	font-size: 0.9 em;
+    color: #888;
+    font-size: 0.9 em;
     margin-right: auto;
 }
+
 #heartsDisplay {
     margin-left: auto;
-	margin-right: 15px;
+    margin-right: 15px;
 }
+
 #timeDisplay {
     margin-right: 15px;
 }
+
 #gameStats span {
     white-space: nowrap;
 }
@@ -375,6 +407,7 @@ body {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.4);
 }
+
 .modal-content {
     background-color: #fefefe;
     padding: 20px;
@@ -382,24 +415,27 @@ body {
     width: 90%;
     max-width: 280px;
     border-radius: 10px;
-	font-size: 1.2em;
+    font-size: 1.2em;
     text-align: center;
     position: relative;
     transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
 }
-.modal-buttons button{
+
+.modal-buttons button {
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 1.1em;
 }
+
 #returnButton {
     background-color: #f44336;
     color: white;
 }
+
 #continueButton {
     background-color: #4CAF50;
     color: white;
@@ -408,6 +444,7 @@ body {
 .modal-buttons button:focus {
     outline: 3px solid #007bff;
 }
+
 .end-emoji {
     font-size: 3em;
     display: block;
@@ -422,158 +459,302 @@ body {
     color: red;
     animation: blink 1s infinite;
 }
+
 @keyframes blink {
     50% {
         opacity: 0.3;
     }
 }
+
 @keyframes matchedAnimation {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.1);
     }
+
     100% {
         transform: scale(1);
     }
 }
+
 @keyframes jumpAnimation {
+
     0%,
     100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-5px);
     }
 }
+
 @keyframes shakeAnimation {
+
     0%,
     100% {
         transform: translateX(0);
     }
+
     25% {
         transform: translateX(-3px);
     }
+
     75% {
         transform: translateX(3px);
     }
 }
+
 .jump {
     animation: jumpAnimation 0.3s ease;
 }
+
 .shake {
     animation: shakeAnimation 0.3s ease;
 }
+
 @keyframes popIn {
     0% {
         transform: scale(0);
     }
+
     70% {
         transform: scale(1.2);
     }
+
     100% {
         transform: scale(1);
     }
 }
+
 .choice-button {
-font-size: 1.2rem;
-  padding: 10px 20px;
-  margin: 5px;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  background-color: white;
-  cursor: pointer;
-  transition: all 0.3s ease;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    margin: 5px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
+
 .choice-button.selected {
-  background-color: #3b82f6 !important;  /* 使用 Tailwind 的 blue-500 */
-  color: white !important;
-  animation: highlight 0.5s ease-out;
+    background-color: #3b82f6 !important;
+    /* 使用 Tailwind 的 blue-500 */
+    color: white !important;
+    animation: highlight 0.5s ease-out;
 }
+
 .choice-button.correct {
-  background-color: #4CAF50 !important;  /* 正確答案顯示綠色 */
-  color: white !important;
-  animation: highlight 0.5s ease-out;
+    background-color: #4CAF50 !important;
+    /* 正確答案顯示綠色 */
+    color: white !important;
+    animation: highlight 0.5s ease-out;
 }
 
 .choice-button.wrong {
-  background-color: #ff4444 !important;  /* 錯誤答案顯示紅色 */
-  color: white !important;
-  animation: shake 0.5s ease-in-out;
+    background-color: #ff4444 !important;
+    /* 錯誤答案顯示紅色 */
+    color: white !important;
+    animation: shake 0.5s ease-in-out;
 }
 
 @keyframes highlight {
-  from { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  to { transform: scale(1); }
+    from {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    to {
+        transform: scale(1);
+    }
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
 }
 
 @keyframes slideUp {
-    0% { transform: translateY(100%); opacity: 0; }
-    60% { transform: translateY(-20%); opacity: 1; }
-    80% { transform: translateY(10%); }
-    100% { transform: translateY(0); }
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    60% {
+        transform: translateY(-20%);
+        opacity: 1;
+    }
+
+    80% {
+        transform: translateY(10%);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
 }
 
 @keyframes rotate {
-    0% { transform: rotate(0deg) scale(0.3); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: rotate(360deg) scale(1); opacity: 1; }
+    0% {
+        transform: rotate(0deg) scale(0.3);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(360deg) scale(1);
+        opacity: 1;
+    }
 }
 
 @keyframes bounce2 {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(-30px); }
-    100% { transform: translateY(0); }
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-30px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
 }
 
 @keyframes fadeInScale {
-    0% { transform: scale(0.3); opacity: 0; }
-    50% { transform: scale(1.2); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 @keyframes flip {
-    0% { transform: perspective(400px) rotateY(0); }
-    100% { transform: perspective(400px) rotateY(360deg); }
+    0% {
+        transform: perspective(400px) rotateY(0);
+    }
+
+    100% {
+        transform: perspective(400px) rotateY(360deg);
+    }
 }
 
 @keyframes heartBeat {
-    0% { transform: scale(1); }
-    14% { transform: scale(1.3); }
-    28% { transform: scale(1); }
-    42% { transform: scale(1.3); }
-    70% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    14% {
+        transform: scale(1.3);
+    }
+
+    28% {
+        transform: scale(1);
+    }
+
+    42% {
+        transform: scale(1.3);
+    }
+
+    70% {
+        transform: scale(1);
+    }
 }
 
 @keyframes swing {
-    20% { transform: rotate(15deg); }
-    40% { transform: rotate(-10deg); }
-    60% { transform: rotate(5deg); }
-    80% { transform: rotate(-5deg); }
-    100% { transform: rotate(0deg); }
+    20% {
+        transform: rotate(15deg);
+    }
+
+    40% {
+        transform: rotate(-10deg);
+    }
+
+    60% {
+        transform: rotate(5deg);
+    }
+
+    80% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
 @keyframes rubberBand {
-    0% { transform: scale(1); }
-    30% { transform: scaleX(1.25) scaleY(0.75); }
-    40% { transform: scaleX(0.75) scaleY(1.25); }
-    50% { transform: scaleX(1.15) scaleY(0.85); }
-    65% { transform: scaleX(0.95) scaleY(1.05); }
-    75% { transform: scaleX(1.05) scaleY(0.95); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scaleX(1.25) scaleY(0.75);
+    }
+
+    40% {
+        transform: scaleX(0.75) scaleY(1.25);
+    }
+
+    50% {
+        transform: scaleX(1.15) scaleY(0.85);
+    }
+
+    65% {
+        transform: scaleX(0.95) scaleY(1.05);
+    }
+
+    75% {
+        transform: scaleX(1.05) scaleY(0.95);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes sparkle {
-    0%, 100% { transform: scale(1); filter: brightness(100%); }
-    50% { transform: scale(1.1); filter: brightness(150%); }
+
+    0%,
+    100% {
+        transform: scale(1);
+        filter: brightness(100%);
+    }
+
+    50% {
+        transform: scale(1.1);
+        filter: brightness(150%);
+    }
 }
 
 .emoji-animate {
@@ -582,20 +763,55 @@ font-size: 1.2rem;
     animation-fill-mode: both;
 }
 
-.slideUp { animation-name: slideUp; }
-.rotate { animation-name: rotate; }
-.bounce2 { animation-name: bounce2; animation-iteration-count: 2; }
-.fadeInScale { animation-name: fadeInScale; }
-.flip { animation-name: flip; }
-.heartBeat { animation-name: heartBeat; }
-.swing { animation-name: swing; }
-.rubberBand { animation-name: rubberBand; }
-.sparkle { animation-name: sparkle; animation-iteration-count: 2; }
+.slideUp {
+    animation-name: slideUp;
+}
+
+.rotate {
+    animation-name: rotate;
+}
+
+.bounce2 {
+    animation-name: bounce2;
+    animation-iteration-count: 2;
+}
+
+.fadeInScale {
+    animation-name: fadeInScale;
+}
+
+.flip {
+    animation-name: flip;
+}
+
+.heartBeat {
+    animation-name: heartBeat;
+}
+
+.swing {
+    animation-name: swing;
+}
+
+.rubberBand {
+    animation-name: rubberBand;
+}
+
+.sparkle {
+    animation-name: sparkle;
+    animation-iteration-count: 2;
+}
 
 /* 添加發光效果 */
 .glow {
     filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
 }
+
+
+
+
+
+
+
 
 
 
@@ -614,7 +830,7 @@ font-size: 1.2rem;
     margin-bottom: 30px;
     background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
 
@@ -624,7 +840,7 @@ font-size: 1.2rem;
     color: #333;
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
-	scroll-margin-top: 25px;
+    scroll-margin-top: 25px;
 }
 
 .items-container {
@@ -652,19 +868,19 @@ font-size: 1.2rem;
     flex: 1;
     min-width: 250px;
     padding: 5px;
-	font-size: 1.3rem;
+    font-size: 1.3rem;
 }
 
 @media (max-width: 768px) {
     .item {
         flex-direction: column;
     }
-    
+
     .item-number {
         width: 100%;
         margin-bottom: 5px;
     }
-    
+
     .item-question,
     .item-answer {
         width: 100%;
@@ -690,41 +906,42 @@ font-size: 1.2rem;
 
 
 
-    .clickable {
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
-    
-    .clickable:hover {
-		color: blue;
-    }
-    
-   
-    .item-question, .item-answer {
-        padding: 8px;
-        border-radius: 4px;
-    }
+.clickable {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.clickable:hover {
+    color: blue;
+}
+
+
+.item-question,
+.item-answer {
+    padding: 8px;
+    border-radius: 4px;
+}
 
 
 
 
 .nav-buttons-container {
-  position: fixed;
-  bottom: 10px;
-  left: 20px;
-  display: flex;
-  gap: 0.5rem;
-  z-index: 1000;
-  background-color: rgba(230, 230, 230, 0.7);
-  padding: 0.3rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 10px;
+    left: 20px;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 1000;
+    background-color: rgba(230, 230, 230, 0.7);
+    padding: 0.3rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .nav-button {
     background-color: white;
     color: #666;
-    border: 1px solid #e2e8f0; 
+    border: 1px solid #e2e8f0;
     padding: 8px 10px;
     border-radius: 25px;
     cursor: pointer;
@@ -736,46 +953,50 @@ font-size: 1.2rem;
     justify-content: center;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
 .nav-button:hover {
-  background-color: #f7fafc;
-  color: #4299e1;
-  transform: translateY(-1px);
-  border-color: #4299e1;
+    background-color: #f7fafc;
+    color: #4299e1;
+    transform: translateY(-1px);
+    border-color: #4299e1;
 }
+
 .nav-button.active {
-  background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 
 .mode-switch-container,
 .back-button {
-  display: none;
+    display: none;
 }
+
 .mode-switch {
-  background-color: rgba(0, 0, 0, 0.6);
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
 }
+
 .mode-switch:hover {
-  background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.8);
 }
 
 .single-view-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 0;
-  margin: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 .single-card {
@@ -791,15 +1012,17 @@ font-size: 1.2rem;
     position: relative;
     padding: 20px;
 }
+
 .single-card .item {
-  background: none;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  position: relative;
+    background: none;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
 }
+
 .single-card .item-question,
 .single-card .item-answer {
     font-size: clamp(2.5rem, 6vw, 4rem);
@@ -810,14 +1033,16 @@ font-size: 1.2rem;
     width: auto;
     background: none;
 }
+
 .single-card .item-number {
-  position: absolute;
-  bottom: -40px;
-  right: 20px;
-  font-size: 1.2rem;
-  width: auto;
-  color: #aaa;
+    position: absolute;
+    bottom: -40px;
+    right: 20px;
+    font-size: 1.2rem;
+    width: auto;
+    color: #aaa;
 }
+
 .content-wrapper {
     flex: 1;
     display: flex;
@@ -828,22 +1053,23 @@ font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {
-  .single-card {
-    width: 95%;
-    height: 80vh;
-    padding: 20px;
-  }
+    .single-card {
+        width: 95%;
+        height: 80vh;
+        padding: 20px;
+    }
 
-  .nav-buttons-container {
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-	.single-card .item-number {
-	  bottom: -20px;
-	  right: 10px;
-	  font-size: 1rem;
-	}
+    .nav-buttons-container {
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .single-card .item-number {
+        bottom: -20px;
+        right: 10px;
+        font-size: 1rem;
+    }
 }
 
 .slider-container {
@@ -862,6 +1088,7 @@ font-size: 1.2rem;
     border-radius: 3px;
     cursor: pointer;
 }
+
 .progress-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
@@ -873,10 +1100,12 @@ font-size: 1.2rem;
     transition: all 0.2s ease;
     box-shadow: 0 2px 6px rgba(66, 153, 225, 0.3);
 }
+
 .progress-slider::-webkit-slider-thumb:hover {
     background: #3182ce;
     transform: scale(1.1);
 }
+
 .progress-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
@@ -904,8 +1133,9 @@ font-size: 1.2rem;
         width: 95%;
         height: 60vh;
     }
-    
+
     .slider-container {
         padding: 10px 15px 15px 15px;
     }
 }
+

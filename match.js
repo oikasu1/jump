@@ -1,6 +1,6 @@
 let link = document.createElement('link');
 link.rel = 'stylesheet';
-link.href = 'match.css';
+link.href = 'https://oikasu1.github.io/kasuexam/kasu/fonts/twhei.css';
 document.head.appendChild(link);
 
 const style = document.createElement('style');
@@ -8,7 +8,6 @@ style.textContent = `
 
 `;
 document.head.appendChild(style);
-
 
 
 
@@ -61,7 +60,7 @@ let htmlSettingsPage = `
 	<div id="timeConditionDiv" style="display: none;">
 	<label for="timeConditionSelect">限時：</label>
 	<select id="timeConditionSelect">
-	  <option value="20">20秒</option>
+	  <option value="10">10秒</option>
 	  <option value="60" selected>60秒</option>
 	  <option value="90">90秒</option>
 	  <option value="100">100秒</option>
@@ -91,12 +90,15 @@ let htmlSettingsPage = `
             <option value="1" selected>1</option>
         </select>
     </div>
-    <button id="startButton">開始配對</button>
-</div>
+	<div class="button-container">
+		<button id="viewButton">檢視</button>
+		<button id="startButton">開始</button>
+	</div>
 
+</div>
+<button id="closeButton">✕</button>
 <div id="gameContainer" style="display: none;">
     <div id="gameHeader">
-        <button id="closeButton">X</button>
         <div id="gameStats">
             <span id="timeDisplay">時間: 0秒</span>
         </div>
@@ -125,7 +127,7 @@ const myData = `
 一、問好 00百句	ˆ ˋ	謝謝	勞力	looˆ ladˋ	k016.k100
 一、問好 00百句	 ˆ ˆ 	不必客氣	毋使細義	m suˆ seˆ ngi	k021.k100
 一、問好 00百句	ˇ ˇ ˆ ˆ	老師再見	先生再見	sienˇ senˇ zaiˆ gienˆ	k022.k100
-一、問好 00百句	ˆ ˋ 	再見	正來尞	zhangˆ loiˋ leeu	k023.k100
+一、問好 00百句	ˆ ˋ 	再見	正來尞	zhangˆ loiˋ leeu	k023.k100
 二、紹介 00百句	ˋ ˆ ˆ ˊ ˆ ˋ	你叫什麼名字	你喊做麼个名	henˋ heemˆ zooˆ bbooˊ gaiˆ miangˋ	k027.k100
 二、紹介 00百句	ˋ ˆ ˆ ˆ ˇ ˇ	我叫做李東興	𠊎喊做李東興	ngaiˋ heemˆ zooˆ liˆ dungˇ hinˇ	k028.k100
 二、紹介 00百句	ˋ ˆ ˇ ˆ	你幾歲	你幾多歲	henˋ giˆ dooˇ seˆ	k036.k100
@@ -224,6 +226,10 @@ function playCurrentAudio(audioFileInfo, times = 1) {
             playAudioMultipleTimes(audioUrl, times, playbackSpeed)
                 .catch(error => console.error('播放音頻時發生錯誤:', error));
         }
+}
+
+function playCurrentAudioData(audioFileInfo, times = 1) {
+    return playCurrentAudio(audioFileInfo, times);
 }
 
 // 取得路徑;
@@ -864,21 +870,6 @@ function endGame(reason) {
 }
 
 
-// 修改關閉按鈕事件處理
-document.getElementById('closeButton').addEventListener('click', () => {
-    // 停止遊戲
-    gameState.isPlaying = false;
-    clearInterval(timerInterval);
-	timerInterval = null;
-    
-    // 隱藏遊戲容器，顯示設定頁面
-    document.getElementById('gameContainer').style.display = 'none';
-    document.getElementById('settingsPage').style.display = 'block';
-    
-    // 重置遊戲狀態
-    resetGameState();
-	updateTimeDisplay();
-});
 
 // 修改遊戲結束對話框按鈕事件
 document.getElementById('returnButton').addEventListener('click', () => {
@@ -1040,6 +1031,12 @@ function resetGameState() {
 	timerInterval = null;
 }
 
+
+document.addEventListener('DOMContentLoaded', function() {
+    const viewButton = document.getElementById('viewButton');
+    viewButton.addEventListener('click', showViewList);
+});
+
 // 初始化時根據預設選項顯示對應的條件選項
 document.addEventListener('DOMContentLoaded', function() {
     const winCondition = document.getElementById('winConditionSelect').value;
@@ -1054,77 +1051,161 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (winCondition === 'pairs') {
         pairsConditionDiv.style.display = 'block';
     }
+    
+    // 初始化設定儲存功能
+    loadSettings();
+    addSettingsSaveListeners();
 });
 
 
-// emoji-detector.js
-class EmojiDetector {
-    constructor() {
-        this.hasEmojiSupport = this.checkEmojiSupport();
-        this.needsWebfont = this.checkOSSupport().needsWebfont;
-    }
+// 定義所有設定元素的映射關係
+const settingsConfig = [
+  { key: 'category', element: () => lessonSelect },
+  { key: 'questionType', element: () => questionSelect },
+  { key: 'answerType', element: () => answerSelect },
+  { key: 'count', element: () => countSelect },
+  { key: 'cardMode', element: () => cardModeSelect },
+  { key: 'winCondition', element: () => winConditionSelect, triggerChange: true },
+  { key: 'timeCondition', element: () => timeConditionSelect },
+  { key: 'pairsCondition', element: () => pairsConditionSelect },
+  { key: 'playbackTimes', element: () => playbackTimesSelect }
+];
 
-    // 檢測是否支援新版emoji
-    checkEmojiSupport() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const testEmoji = '🦾';
-        
-        ctx.fillStyle = '#000000';
-        ctx.textBaseline = 'top';
-        ctx.font = '32px Arial';
-        ctx.fillText(testEmoji, 0, 0);
-        
-        const emojiData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        return !emojiData.data.every(pixel => pixel === 0);
-    }
+// 儲存設定到 localStorage
+function saveSettings() {
+  const titleElement = document.querySelector("#settingsPage h2");
+  if (!titleElement) return;
 
-    // 檢測作業系統版本
-    checkOSSupport() {
-        const ua = navigator.userAgent;
-        const osVersion = {
-            iOS: parseInt((ua.match(/OS (\d+)_/i) || [])[1], 10),
-            Android: parseInt((ua.match(/Android (\d+)/i) || [])[1], 10),
-            Windows: parseInt((ua.match(/Windows NT (\d+\.\d+)/i) || [])[1], 10)
-        };
-        
-        return {
-            needsWebfont: (
-                (osVersion.iOS && osVersion.iOS < 14) ||
-                (osVersion.Android && osVersion.Android < 11) ||
-                (osVersion.Windows && osVersion.Windows < 10)
-            )
-        };
+  const storageKey = `gameSettings_${titleElement.textContent}`;
+  
+  // 收集所有設定值
+  const settings = {};
+  settingsConfig.forEach(config => {
+    const element = config.element();
+    if (element) {
+      settings[config.key] = element.value;
     }
+  });
 
-    // 載入 Emoji 字型
-    loadEmojiFont() {
-        if (!this.hasEmojiSupport || this.needsWebfont) {
-            const style = document.createElement('style');
-            style.textContent = `
-                @font-face {
-                    font-family: 'EmojiFont';
-                    src: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/fonts/twemoji-mozilla.woff2') format('woff2');
-                    font-display: swap;
-                }
-                
-                body {
-                    font-family: 'EmojiFont', system-ui, -apple-system, sans-serif;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-
-    // 初始化
-    init() {
-        this.loadEmojiFont();
-    }
+  localStorage.setItem(storageKey, JSON.stringify(settings));
 }
 
-// 建立全域實例
-window.emojiDetector = new EmojiDetector();
+// 從 localStorage 載入設定
+function loadSettings() {
+  const titleElement = document.querySelector("#settingsPage h2");
+  if (!titleElement) return;
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.emojiDetector.init();
-});
+  const storageKey = `gameSettings_${titleElement.textContent}`;
+  const savedSettings = localStorage.getItem(storageKey);
+  if (!savedSettings) return;
+
+  try {
+    const settings = JSON.parse(savedSettings);
+    
+    // 套用所有設定
+    settingsConfig.forEach(({ key, element, triggerChange }) => {
+      const selectElement = element();
+      if (settings[key] && selectElement) {
+        setSelectValue(selectElement, settings[key]);
+        if (triggerChange) selectElement.dispatchEvent(new Event("change"));
+      }
+    });
+
+    // 更新問題類型對應的答案選項
+    updateAnswerSelect(headers.filter(header => !["分類", "音檔"].includes(header)));
+  } catch (error) {
+    console.error("載入設定時發生錯誤:", error);
+  }
+}
+
+// 設定下拉選單值的輔助函數
+function setSelectValue(selectElement, value) {
+  const optionIndex = Array.from(selectElement.options).findIndex(option => option.value === value);
+  if (optionIndex >= 0) selectElement.selectedIndex = optionIndex;
+}
+
+// 為所有設定元素添加變更事件監聽器
+function addSettingsSaveListeners() {
+  // 為每個元素添加事件監聽器
+  settingsConfig.forEach(config => {
+    const element = config.element();
+    if (element) {
+      element.addEventListener("change", saveSettings);
+    }
+  });
+}
+
+
+// 關閉按鈕事件處理
+document.getElementById('closeButton').addEventListener('click', returnToSettings);
+
+function returnToSettings() {
+    // 停止遊戲
+    gameState.isPlaying = false;
+    clearInterval(timerInterval);
+	timerInterval = null;
+
+    const viewContainer = document.getElementById('viewContainer');
+    if (viewContainer) {
+        viewContainer.remove();
+    }
+
+    // 隱藏遊戲容器，顯示設定頁面
+    document.getElementById('gameContainer').style.display = 'none';
+    document.getElementById('settingsPage').style.display = 'block';
+	// 顯示設定頁面
+    document.getElementById('settingsPage').style.display = 'flex';
+    
+    // 重置遊戲狀態
+    resetGameState();
+	updateTimeDisplay();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

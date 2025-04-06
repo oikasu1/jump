@@ -1,17 +1,7 @@
 let link = document.createElement('link');
 link.rel = 'stylesheet';
-link.href = 'sort.css';
+link.href = 'https://oikasu1.github.io/kasuexam/kasu/fonts/twhei.css';
 document.head.appendChild(link);
-
-const style = document.createElement('style');
-style.textContent = `
-
-`;
-document.head.appendChild(style);
-
-
-
-
 
 let htmlSettingsPage = `
 <div id="settingsPage">
@@ -75,7 +65,10 @@ let htmlSettingsPage = `
             </select>
         </div>
     </div>
-	<button id="startButton">開始排排排</button>
+	<div class="button-container">
+		<button id="viewButton">檢視</button>
+		<button id="startButton">開始</button>
+	</div>
 </div>
 
 <div id="gameContainer" style="display: none;">
@@ -151,6 +144,13 @@ categories.forEach(category => {
 
 // 在頁面加載時初始化語言選項
 document.addEventListener('DOMContentLoaded', initializeLanguageSelects);
+
+document.addEventListener("DOMContentLoaded", () => {
+    // 修改：為檢視按鈕添加事件監聽器
+    const viewButton = document.getElementById('viewButton');
+    viewButton.addEventListener('click', showViewList);
+})
+
 
 // 修改資料準備和遊戲啟動邏輯
 let gameData = []; // 儲存當前遊戲的題目資料
@@ -228,6 +228,164 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+
+// Function to save settings to localStorage
+function saveSettings() {
+  // Get the title from h2 element to use as a unique key
+  const titleElement = document.querySelector("#settingsPage h2")
+  if (!titleElement) return
+
+  const storageKey = `gameSettings_${titleElement.textContent}`
+
+  // Collect current settings
+  const settings = {
+    category: lessonSelect.value,
+    questionType: questionSelect.value,
+    answerType: answerSelect.value,
+    orderType: orderSelect.value,
+    winCondition: winConditionSelect.value,
+    timeCondition: timeConditionSelect.value,
+    sentencesCondition: sentencesConditionSelect.value,
+    playbackTimes: playbackTimesSelect.value,
+  }
+
+  // Save to localStorage
+  localStorage.setItem(storageKey, JSON.stringify(settings))
+}
+
+// Function to load settings from localStorage
+function loadSettings() {
+  // Get the title from h2 element to use as a unique key
+  const titleElement = document.querySelector("#settingsPage h2")
+  if (!titleElement) return
+
+  const storageKey = `gameSettings_${titleElement.textContent}`
+
+  // Try to get saved settings
+  const savedSettings = localStorage.getItem(storageKey)
+  if (!savedSettings) return
+
+  try {
+    const settings = JSON.parse(savedSettings)
+
+    // Apply saved settings
+    if (settings.category) {
+      Array.from(lessonSelect.options).forEach((option, index) => {
+        if (option.value === settings.category) {
+          lessonSelect.selectedIndex = index
+        }
+      })
+    }
+
+    if (settings.questionType) {
+      Array.from(questionSelect.options).forEach((option, index) => {
+        if (option.value === settings.questionType) {
+          questionSelect.selectedIndex = index
+        }
+      })
+    }
+
+    // Update answer select based on question type
+    updateAnswerSelect(headers.filter((header) => !["分類", "音檔"].includes(header)))
+
+    if (settings.answerType) {
+      Array.from(answerSelect.options).forEach((option, index) => {
+        if (option.value === settings.answerType) {
+          answerSelect.selectedIndex = index
+        }
+      })
+    }
+
+    if (settings.orderType) {
+      Array.from(orderSelect.options).forEach((option, index) => {
+        if (option.value === settings.orderType) {
+          orderSelect.selectedIndex = index
+        }
+      })
+    }
+
+    if (settings.winCondition) {
+      Array.from(winConditionSelect.options).forEach((option, index) => {
+        if (option.value === settings.winCondition) {
+          winConditionSelect.selectedIndex = index
+          // Trigger change event to show/hide relevant condition divs
+          winConditionSelect.dispatchEvent(new Event("change"))
+        }
+      })
+    }
+
+    if (settings.timeCondition) {
+      Array.from(timeConditionSelect.options).forEach((option, index) => {
+        if (option.value === settings.timeCondition) {
+          timeConditionSelect.selectedIndex = index
+        }
+      })
+    }
+
+    if (settings.sentencesCondition) {
+      Array.from(sentencesConditionSelect.options).forEach((option, index) => {
+        if (option.value === settings.sentencesCondition) {
+          sentencesConditionSelect.selectedIndex = index
+        }
+      })
+    }
+
+    if (settings.playbackTimes) {
+      Array.from(playbackTimesSelect.options).forEach((option, index) => {
+        if (option.value === settings.playbackTimes) {
+          playbackTimesSelect.selectedIndex = index
+        }
+      })
+    }
+  } catch (error) {
+    console.error("Error loading settings:", error)
+  }
+}
+
+// Add event listeners to save settings when they change
+function addSettingsSaveListeners() {
+  const settingsElements = [
+    lessonSelect,
+    questionSelect,
+    answerSelect,
+    orderSelect,
+    winConditionSelect,
+    timeConditionSelect,
+    sentencesConditionSelect,
+    playbackTimesSelect,
+  ]
+
+  settingsElements.forEach((element) => {
+    element.addEventListener("change", saveSettings)
+  })
+}
+
+// Modify the DOMContentLoaded event listener to load settings
+document.addEventListener("DOMContentLoaded", () => {
+  // Initialize language options
+  initializeLanguageSelects()
+
+  // Get menu elements
+  const winConditionSelect = document.getElementById("winConditionSelect")
+  const timeConditionDiv = document.getElementById("timeConditionDiv")
+  const sentencesConditionDiv = document.getElementById("sentencesConditionDiv")
+
+  // Show condition options based on default value
+  const selectedCondition = winConditionSelect.value
+  timeConditionDiv.style.display = selectedCondition === "time" ? "block" : "none"
+  sentencesConditionDiv.style.display = selectedCondition === "sentences" ? "block" : "none"
+  gameState.winCondition = selectedCondition
+
+  // Load saved settings
+  loadSettings()
+
+  // Add listeners to save settings when changed
+  addSettingsSaveListeners()
+})
+
+
+
+
 // 修改開始按鈕事件處理
 startButton.addEventListener('click', () => {
     // 準備遊戲資料
@@ -283,6 +441,10 @@ const gameState = {
 
 // 關閉按鈕事件處理
 document.getElementById('closeButton').addEventListener('click', () => {
+	returnToSettings();	
+});
+
+function returnToSettings() {
     // 停止遊戲
     gameState.isPlaying = false;
     clearInterval(timerInterval);
@@ -293,7 +455,9 @@ document.getElementById('closeButton').addEventListener('click', () => {
     // 重置遊戲狀態
     resetGameState();
     updateTimeDisplay();
-});
+	viewContainerRemove();
+}
+
 
 // 遊戲結束對話框按鈕事件
 document.getElementById('returnButton').addEventListener('click', () => {
@@ -1221,6 +1385,11 @@ function playCurrentAudio(audioFileInfo, times = 1) {
         }
 }
 
+function playCurrentAudioData(audioFileInfo, times = 1) {
+    return playCurrentAudio(audioFileInfo, times);
+}
+
+
 // 播放分割單詞音檔
 function playSingleAudio(audioFileInfo) {
 	    const playbackSpeed = audioFileInfo.toLowerCase().endsWith('.k100') ? 1.4 : 1;
@@ -1747,74 +1916,9 @@ const zhuyinMiniPinyin = `
 //-- 音檔處理相關 (30-34)
 
 
-// emoji-detector.js
-class EmojiDetector {
-    constructor() {
-        this.hasEmojiSupport = this.checkEmojiSupport();
-        this.needsWebfont = this.checkOSSupport().needsWebfont;
-    }
-
-    // 檢測是否支援新版emoji
-    checkEmojiSupport() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const testEmoji = '🦾';
-        
-        ctx.fillStyle = '#000000';
-        ctx.textBaseline = 'top';
-        ctx.font = '32px Arial';
-        ctx.fillText(testEmoji, 0, 0);
-        
-        const emojiData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        return !emojiData.data.every(pixel => pixel === 0);
-    }
-
-    // 檢測作業系統版本
-    checkOSSupport() {
-        const ua = navigator.userAgent;
-        const osVersion = {
-            iOS: parseInt((ua.match(/OS (\d+)_/i) || [])[1], 10),
-            Android: parseInt((ua.match(/Android (\d+)/i) || [])[1], 10),
-            Windows: parseInt((ua.match(/Windows NT (\d+\.\d+)/i) || [])[1], 10)
-        };
-        
-        return {
-            needsWebfont: (
-                (osVersion.iOS && osVersion.iOS < 14) ||
-                (osVersion.Android && osVersion.Android < 11) ||
-                (osVersion.Windows && osVersion.Windows < 10)
-            )
-        };
-    }
-
-    // 載入 Emoji 字型
-    loadEmojiFont() {
-        if (!this.hasEmojiSupport || this.needsWebfont) {
-            const style = document.createElement('style');
-            style.textContent = `
-                @font-face {
-                    font-family: 'EmojiFont';
-                    src: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/fonts/twemoji-mozilla.woff2') format('woff2');
-                    font-display: swap;
-                }
-                
-                body {
-                    font-family: 'EmojiFont', system-ui, -apple-system, sans-serif;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-
-    // 初始化
-    init() {
-        this.loadEmojiFont();
+function viewContainerRemove() {
+    const viewContainer = document.getElementById('viewContainer');
+    if (viewContainer) {
+        viewContainer.remove();
     }
 }
-
-// 建立全域實例
-window.emojiDetector = new EmojiDetector();
-
-document.addEventListener('DOMContentLoaded', () => {
-    window.emojiDetector.init();
-});

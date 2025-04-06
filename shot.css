@@ -1,0 +1,361 @@
+/* Body styles */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+  background-color: #888;
+  user-select: none;
+  overflow-x: hidden;
+  font-size: 20px;
+}
+
+
+
+
+
+
+/* Game Canvas */
+#gameCanvas {
+  border: 2px solid #888;
+  max-width: 100%;
+  max-height: 100vh;
+  display: none;
+}
+
+/* Controls */
+#controls {
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+.control-group-right {
+  display: grid;
+  grid-template-areas:
+    ". up ."
+    "left down right";
+  gap: 5px;
+}
+@media (orientation: portrait) {
+  .control-group-right {
+    grid-template-areas:
+      "up . ."
+      "down left right";
+  }
+}
+
+.control-group-left {
+  display: flex;
+  align-items: flex-end;
+}
+
+.control-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 2px solid white;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: none;
+  user-select: none;
+}
+
+#upBtn {
+  grid-area: up;
+}
+#leftBtn {
+  grid-area: left;
+}
+#downBtn {
+  grid-area: down;
+}
+#rightBtn {
+  grid-area: right;
+}
+
+#shootBtn {
+  background: rgba(255, 0, 0, 0.3);
+  width: 50px;
+  height: 50px;
+  border-radius: 25px;
+  font-size: 20px;
+}
+
+@media (max-width: 1024px) {
+  #controls {
+    bottom: 20px; /* 稍微提高按鈕位置 */
+  }
+
+  .control-btn {
+    padding: 20px 25px; /* 增大按鈕尺寸 */
+    font-size: 28px; /* 增大字體大小 */
+  }
+}
+
+/* Settings Page */
+#settingsPage {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-height: min(400px, 90vh); /* 新增：設定最大高度的上限 */
+  min-height: min-content; /* 新增：允許內容決定最小高度 */
+  overflow-y: auto;
+  margin: 40px 0px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+#settingsPage h2 {
+  text-align: center;
+  color: #333;
+}
+
+#settingsPage div {
+  margin-bottom: 0px;
+}
+
+#settingsPage label {
+  display: inline-block;
+  width: 80px;
+  text-align: right;
+}
+
+#settingsPage select,
+#settingsPage button {
+  width: 200px;
+  padding: 5px;
+}
+
+
+.button-container {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    /* 讓按鈕之間有間距，可依需求調整 */
+}
+
+.button-container button {
+    margin-top: 1em;
+    width: 50%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+#startButton:hover,
+#viewButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(120, 120, 120, 0.2);
+}
+
+#viewButton {
+    background-color: #007bff;
+}
+
+#startButton {
+    background-color: #28a745;
+}
+
+
+
+@media (orientation: landscape) {
+  #settingsPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #settingsPage > div {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Question Display */
+#questionDisplay {
+  position: absolute;
+  z-index: 10;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 10px;
+  box-sizing: border-box; /* 確保內邊距不會增加元素的總寬度 */
+}
+
+/* Responsive adjustments for question display */
+@media (max-width: 600px) {
+  #questionDisplay {
+    font-size: 24px;
+  }
+}
+
+/* Word Labels */
+#wordLabels {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.word-label {
+  position: fixed;
+  font-size: 22px;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* 修改 meteor-label 樣式，根據螢幕方向調整文字溢出處理 */
+.meteor-label {
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  user-select: none;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2px 5px;
+  border-radius: 3px;
+}
+
+/* 直式視窗時的文字溢出處理 */
+@media (orientation: portrait) {
+  .meteor-label {
+    max-width: 240px; /* 提供足夠空間容納約11個中文字 */
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 針對較小螢幕的直式視窗調整 */
+  @media (max-width: 600px) {
+    .meteor-label {
+      font-size: 18px !important;
+      max-width: 160px;
+    }
+  }
+}
+
+/* 橫式視窗不處理文字溢出 */
+@media (orientation: landscape) {
+  .meteor-label {
+    max-width: none;
+    overflow: visible;
+  }
+}
+
+/* 確保在不同螢幕尺寸下的適應性 */
+@media (max-width: 600px) {
+  .meteor-label {
+    font-size: 18px !important;
+    max-width: 100px;
+  }
+}
+
+/* Controls hidden on larger screens */
+@media (min-width: 1024px) {
+  #controls {
+    display: none;
+  }
+}
+
+/* Close Button */
+#closeButton {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+#closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+#closeButton:active {
+  transform: scale(0.95);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 250px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.return-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.continue-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-button:focus {
+  outline: 3px solid #007bff;
+}
+
