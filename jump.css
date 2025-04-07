@@ -1,0 +1,436 @@
+/* Body styles */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: #87ceeb;
+    user-select: none;
+    overflow-x: hidden;
+}
+
+
+#gameHeader {
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+#settingsPage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    max-width: 95%;
+    width: 350px;
+    margin: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+#settingsPage {
+    height: auto !important;
+    overflow-y: visible !important;
+}
+#settingsPage h2 {
+    text-align: center;
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+}
+
+#settingsPage div {
+    margin-bottom: 0.5rem;
+}
+
+#settingsPage label {
+    display: inline-block;
+    width: 60px;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+#settingsPage select {
+    width: 200px;
+    min-width: 150px;
+    max-width: calc(100% - 80px);
+    padding: 5px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    color: #2d3748;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+#settingsPage select:focus {
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.button-container {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    /* 讓按鈕之間有間距，可依需求調整 */
+}
+
+.button-container button {
+    margin-top: 1rem;
+    width: 50%;
+    padding: 12px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    transition: transform 0.2s ease;
+}
+
+#startButton:hover,
+#viewButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(120, 120, 120, 0.2);
+}
+
+#viewButton {
+    background-color: #007bff;
+}
+
+#startButton {
+    background-color: #28a745;
+}
+
+
+
+
+
+
+/* Game Canvas */
+#gameCanvas {
+  border: 2px solid #87ceeb;
+  max-width: 100%;
+  max-height: 100vh;
+  display: none;
+}
+
+/* 控制按鈕的基本樣式 */
+#controls {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* 預設在所有裝置上隱藏控制按鈕 */
+#controls {
+  display: none;
+}
+/* 在行動裝置上顯示控制按鈕 */
+@media (max-width: 1023px) {
+  #controls {
+    display: flex;
+  }
+}
+/* 在電腦版上明確隱藏控制按鈕 */
+@media (min-width: 1024px) {
+  #controls {
+    display: none !important; /* 使用 !important 確保優先級 */
+  }
+}
+
+/* 針對觸控裝置的優化 */
+@media (pointer: coarse) {
+  #controls {
+    display: flex;
+  }
+}
+
+/* 針對非觸控裝置的優化 */
+@media (pointer: fine) {
+  #controls {
+    display: none;
+  }
+}
+
+.control-group {
+  display: flex;
+  pointer-events: auto;
+}
+
+.control-btn {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 15px 20px;
+  border-radius: 50%;
+  font-size: 24px;
+  margin: 5px;
+  color: #888;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#jumpBtn {
+  margin-left: auto;
+}
+
+@media (max-width: 1024px) {
+  .control-btn {
+    padding: 20px 25px; /* 增大按鈕尺寸 */
+    font-size: 28px; /* 增大字體大小 */
+  }
+}
+
+/* 直式畫面時的特殊處理 */
+@media (orientation: portrait) {
+  #gameContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100vh;
+    position: relative;
+  }
+
+  #gameCanvas {
+    margin-top: 50px; /* 讓畫布靠上顯示 */
+  }
+
+  #wordLabels {
+    position: fixed;
+    top: auto;
+    bottom: 120px; /* 讓wordLabels在controls上方 */
+    width: 100%;
+    z-index: 900;
+  }
+
+  #controls {
+    position: fixed;
+    bottom: 20px; /* 確保控制按鈕靠下 */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 400px;
+    z-index: 1000; /* 確保controls在最上層 */
+  }
+
+  #questionDisplay {
+    position: absolute;
+    bottom: 180px; /* 調整題目顯示位置，避免與wordLabels和controls重疊 */
+    z-index: 950;
+  }
+}
+
+/* 橫式畫面時的特殊處理 */
+@media (orientation: landscape) {
+  #gameContainer {
+    position: relative;
+    height: 100vh;
+  }
+
+  #gameCanvas {
+    margin-top: 10px;
+  }
+
+  #wordLabels {
+    position: fixed;
+    bottom: 50px; /* 與controls位置接近，允許重疊 */
+    width: 100%;
+    z-index: 900;
+  }
+
+  #controls {
+    position: fixed;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 500px;
+    z-index: 1000; /* 確保controls在最上層 */
+  }
+
+  #questionDisplay {
+    position: absolute;
+    bottom: 10px;
+    z-index: 950;
+  }
+}
+
+
+
+
+
+@media (orientation: landscape) {
+    #settingsPage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #settingsPage>div {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+/* Question Display */
+#questionDisplay {
+  position: absolute;
+  z-index: 10;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 0 10px;
+  box-sizing: border-box; /* 確保內邊距不會增加元素的總寬度 */
+  cursor: pointer; /* 添加手型游標，提示可點擊 */
+  transition: transform 0.2s; /* 添加過渡效果 */
+}
+
+/* 添加懸停效果，提示可點擊 */
+#questionDisplay:hover {
+  transform: translateX(-50%) scale(1.05);
+}
+
+/* 添加點擊效果 */
+#questionDisplay:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+/* Responsive adjustments for question display */
+@media (max-width: 600px) {
+  #questionDisplay {
+    font-size: 24px;
+  }
+}
+
+/* Word Labels */
+#wordLabels {
+  position: fixed;
+  pointer-events: none;
+}
+
+.word-label {
+  position: fixed;
+  font-size: 22px;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Close Button */
+#closeButton {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 1000;
+  width: 30px;
+  height: 30px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  color: #888;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+#closeButton:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transform: scale(1.1);
+}
+
+#closeButton:active {
+  transform: scale(0.95);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 90%;
+  max-width: 250px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.modal-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.return-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.continue-button {
+  background-color: #4caf50;
+  color: white;
+}
+
+.modal-button:focus {
+  outline: 3px solid #007bff;
+}
+
+/* 遊戲狀態顯示 */
+#gameStats {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-align: right;
+  color: white;
+  text-shadow: 1px 1px 2px black;
+  font-size: 18px;
+  z-index: 100;
+}
+
+/* 時間警告樣式 */
+.time-warning {
+  color: red;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+

@@ -6,225 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>🥷烏衣行(貪食蛇-學校客事100句)</title>
     <link href="https://oikasu1.github.io/kasuexam/kasu/fonts/twhei.css" rel="stylesheet">
+    <link href="snake.css" rel="stylesheet">
 	<script src="data.js"></script>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f5f5f5;
-            color: #333;
-			user-select: none;
-        }
-
-        #gameSettings {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 30px;
-            max-width: 400px;
-            width: 100%;			          
-        }
-
-        #gameSettings h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            color: #2c3e50;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        #gameSettings div {
-            margin-bottom: 0px;
-        }
-
-        #gameSettings p {
-            margin-left: 40px;
-
-        }
-
-        #gameSettings label {
-            display: inline-block;
-            width: 80px;
-            text-align: right;
-            margin-left: 10px;
-            font-weight: bold;
-        }
-
-        #gameSettings select {
-            width: 250px;
-            padding: 5px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #fff;
-            font-size: 16px;
-        }
-
-        button {
-            padding: 8px 8px;
-            margin: 5px 5px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        @media (max-width: 480px) {
-
-            #gameSettings,
-            #speedSelection {
-                padding: 20px;
-            }
-
-            #gameSettings select {
-                width: 150px;
-            }
-
-            button {
-                padding: 8px 8px;
-                margin: 5px 5px;
-            }
-        }
-
-        #gameCanvas {
-            border: 2px solid #bbb;
-            background-color: #fcfcfc;
-            display: none;
-        }
-
-        #container {
-            display: none;
-            position: relative;
-            text-align: center;
-			margin: 0;
-			transition: transform 0.3s ease;
-        }
-
-        #header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 10px;
-            position: relative;
-        }
-
-        #scoreDisplay,
-        #wordDisplay,
-        #timeDisplay {
-            font-size: 14px;
-            color: #555;
-        }
-
-        #wordDisplay {
-            font-size: 18px;
-            border: 1px solid #bbb;
-            padding: 5px 10px;
-            border-radius: 50px;
-            color: #555;
-            background-color: #fcfcfc;
-        }
-
-        .food-label {
-            position: absolute;
-            font-size: 18px;
-        }
-
-        select {
-            margin: 5px 10px;
-            padding: 5px;
-        }
-
-        #startButton {
-            display: block;
-            margin: 10px auto;
-            padding: 10px 20px;
-            font-size: 18px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        #startButton:hover {
-            background-color: #45a049;
-        }
-
-
-		.modal {
-		  display: none;
-		  position: fixed;
-		  z-index: 1000;
-		  left: 0;
-		  top: 0;
-		  width: 100%;
-		  height: 100%;
-		  background-color: rgba(0,0,0,0.4);
-		}
-
-		.modal-content {
-		  background-color: #fefefe;
-		  margin: 15% auto;
-		  padding: 20px;
-		  border: 1px solid #888;
-		  width: 80%;
-		  max-width: 300px;
-		  border-radius: 10px;
-		  text-align: center;
-		  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-		}
-
-		#modalTitle {
-		  color: #333;
-		  margin-top: 0;
-		}
-
-		#modalMessage {
-		  color: #666;
-		  margin-bottom: 20px;
-		}
-
-		#starRating {
-		  font-size: 24px;
-		  color: #FFD700;
-		  margin-bottom: 20px;
-		  display: flex;
-		  flex-wrap: wrap;
-		  justify-content: center;
-		  gap: 5px;
-		}
-
-		.star {
-		  display: inline-block;
-		}
-		#modalClose {
-		  background-color: #4CAF50;
-		  color: white;
-		  padding: 10px 20px;
-		  border: none;
-		  border-radius: 5px;
-		  cursor: pointer;
-		  font-size: 16px;
-		  transition: background-color 0.3s;
-		}
-
-		#modalClose:hover {
-		  background-color: #45a049;
-		}
-    </style>
 </head>
 
 <body>
@@ -658,7 +441,7 @@ const myData = `
 				let secondWrongTranslation;
 				do {
 					secondWrongTranslation = wrongTranslations[Math.floor(Math.random() * wrongTranslations.length)];
-				} while (secondWrongTranslation === currentWrongTranslation);
+				} while (secondWrongTranslation === currentCorrectTranslation);
 				setFoodLabelPosition(document.getElementById('wrongFoodLabel2'), wrongFood2, secondWrongTranslation);
 				document.getElementById('wrongFoodLabel2').style.display = 'block';
 			} else {
@@ -669,7 +452,7 @@ const myData = `
 				let thirdWrongTranslation;
 				do {
 					thirdWrongTranslation = wrongTranslations[Math.floor(Math.random() * wrongTranslations.length)];
-				} while (thirdWrongTranslation === currentWrongTranslation || 
+				} while (thirdWrongTranslation === currentCorrectTranslation || 
 						 thirdWrongTranslation === document.getElementById('wrongFoodLabel2').textContent);
 				setFoodLabelPosition(document.getElementById('wrongFoodLabel3'), wrongFood3, thirdWrongTranslation);
 				document.getElementById('wrongFoodLabel3').style.display = 'block';
@@ -696,7 +479,7 @@ function getAudioUrl(audioFileInfo) {
         let langCode, text;
         
         // 新增的 TTS 處理邏輯
-        const ttsMatch = audioFileInfo.match(/^tts\s*[:=]?\s*\(?\s*(\w+)\s*\)?$/i);
+        const ttsMatch = audioFileInfo.match(/^tts\s*[:=]?\s*(\w+)\s*\)?$/i);
         if (ttsMatch) {
             langCode = ttsMatch[1].toLowerCase();
             text = gameData[currentQuestionIndex][headers.indexOf(langCode)];
@@ -1196,93 +979,90 @@ function getAudioUrl(audioFileInfo) {
 		  }
 		}
 
+// Define settings configuration for easy mapping
+const settingsConfig = [
+    { key: 'lesson', element: () => document.getElementById('lessonSelect') },
+    { key: 'question', element: () => document.getElementById('questionSelect') },
+    { key: 'answer', element: () => document.getElementById('answerSelect') },
+    { key: 'blockCount', element: () => document.getElementById('blockCountSelect') },
+    { key: 'speed', element: () => document.getElementById('speedSelect') }
+];
 
+// Save settings to localStorage
+function saveSettings() {
+    const titleElement = document.querySelector("#gameSettings h2");
+    if (!titleElement) return;
 
-let script = document.createElement('script');
-script.src = 'wesingmark.js';
-script.type = 'text/javascript';
-document.head.appendChild(script);
+    const storageKey = `gameSettings_${titleElement.textContent}`;
+    
+    // Collect all settings values
+    const settings = {};
+    settingsConfig.forEach(config => {
+        settings[config.key] = config.element().value;
+    });
 
+    localStorage.setItem(storageKey, JSON.stringify(settings));
+}
 
+// Load settings from localStorage
+function loadSettings() {
+    const titleElement = document.querySelector("#gameSettings h2");
+    if (!titleElement) return;
 
+    const storageKey = `gameSettings_${titleElement.textContent}`;
+    const savedSettings = localStorage.getItem(storageKey);
+    if (!savedSettings) return;
 
-
-
-
-
-// emoji-detector.js
-class EmojiDetector {
-    constructor() {
-        this.hasEmojiSupport = this.checkEmojiSupport();
-        this.needsWebfont = this.checkOSSupport().needsWebfont;
-    }
-
-    // 檢測是否支援新版emoji
-    checkEmojiSupport() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const testEmoji = '🦾';
+    try {
+        const settings = JSON.parse(savedSettings);
         
-        ctx.fillStyle = '#000000';
-        ctx.textBaseline = 'top';
-        ctx.font = '32px Arial';
-        ctx.fillText(testEmoji, 0, 0);
+        // Apply all settings
+        settingsConfig.forEach(({ key, element }) => {
+            if (settings[key]) {
+                const selectElement = element();
+                const optionIndex = Array.from(selectElement.options).findIndex(option => option.value === settings[key]);
+                if (optionIndex >= 0) selectElement.selectedIndex = optionIndex;
+            }
+        });
         
-        const emojiData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        return !emojiData.data.every(pixel => pixel === 0);
-    }
-
-    // 檢測作業系統版本
-    checkOSSupport() {
-        const ua = navigator.userAgent;
-        const osVersion = {
-            iOS: parseInt((ua.match(/OS (\d+)_/i) || [])[1], 10),
-            Android: parseInt((ua.match(/Android (\d+)/i) || [])[1], 10),
-            Windows: parseInt((ua.match(/Windows NT (\d+\.\d+)/i) || [])[1], 10)
-        };
-        
-        return {
-            needsWebfont: (
-                (osVersion.iOS && osVersion.iOS < 14) ||
-                (osVersion.Android && osVersion.Android < 11) ||
-                (osVersion.Windows && osVersion.Windows < 10)
-            )
-        };
-    }
-
-    // 載入 Emoji 字型
-    loadEmojiFont() {
-        if (!this.hasEmojiSupport || this.needsWebfont) {
-            const style = document.createElement('style');
-            style.textContent = `
-                @font-face {
-                    font-family: 'EmojiFont';
-                    src: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/fonts/twemoji-mozilla.woff2') format('woff2');
-                    font-display: swap;
-                }
-                
-                body {
-                    font-family: 'EmojiFont', system-ui, -apple-system, sans-serif;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-    }
-
-    // 初始化
-    init() {
-        this.loadEmojiFont();
+        // Update answer select options based on question selection
+        updateAnswerSelect();
+    } catch (error) {
+        console.error("Error loading settings:", error);
     }
 }
 
-// 建立全域實例
-window.emojiDetector = new EmojiDetector();
+// Add event listeners to all settings elements
+function addSettingsSaveListeners() {
+    settingsConfig.forEach(config => {
+        config.element().addEventListener("change", saveSettings);
+    });
+}
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.emojiDetector.init();
-});
+// Modify the window.onload function to include loading settings
+window.onload = function() {
+    processMyData();
+    populateSelects();
+    
+    // Load saved settings
+    loadSettings();
+    
+    // Add event listeners for saving settings
+    addSettingsSaveListeners();
+
+    // For start game button
+    document.getElementById('startButton').addEventListener('click', function() {
+        const speed = document.getElementById('speedSelect').value;                
+        startGame(speed);
+        document.addEventListener('click', playTwice);
+    });
+};
+
+
+
+
     </script>
-
 </body>
 
 </html>
+

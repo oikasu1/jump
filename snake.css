@@ -1,0 +1,216 @@
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+            color: #333;
+			user-select: none;
+        }
+
+        #gameSettings {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            max-width: 400px;
+            width: 100%;			          
+        }
+
+        #gameSettings h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 24px;
+            text-align: center;
+        }
+
+        #gameSettings div {
+            margin-bottom: 0px;
+        }
+
+        #gameSettings p {
+            margin-left: 40px;
+
+        }
+
+        #gameSettings label {
+            display: inline-block;
+            width: 80px;
+            text-align: right;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #gameSettings select {
+            width: 250px;
+            padding: 5px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 8px;
+            margin: 5px 5px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 480px) {
+
+            #gameSettings,
+            #speedSelection {
+                padding: 20px;
+            }
+
+            #gameSettings select {
+                width: 150px;
+            }
+
+            button {
+                padding: 8px 8px;
+                margin: 5px 5px;
+            }
+        }
+
+        #gameCanvas {
+            border: 2px solid #bbb;
+            background-color: #fcfcfc;
+            display: none;
+        }
+
+        #container {
+            display: none;
+            position: relative;
+            text-align: center;
+			margin: 0;
+			transition: transform 0.3s ease;
+        }
+
+        #header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        #scoreDisplay,
+        #wordDisplay,
+        #timeDisplay {
+            font-size: 14px;
+            color: #555;
+        }
+
+        #wordDisplay {
+            font-size: 18px;
+            border: 1px solid #bbb;
+            padding: 5px 10px;
+            border-radius: 50px;
+            color: #555;
+            background-color: #fcfcfc;
+        }
+
+        .food-label {
+            position: absolute;
+            font-size: 18px;
+        }
+
+        select {
+            margin: 5px 10px;
+            padding: 5px;
+        }
+
+        #startButton {
+            display: block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #startButton:hover {
+            background-color: #45a049;
+        }
+
+
+		.modal {
+		  display: none;
+		  position: fixed;
+		  z-index: 1000;
+		  left: 0;
+		  top: 0;
+		  width: 100%;
+		  height: 100%;
+		  background-color: rgba(0,0,0,0.4);
+		}
+
+		.modal-content {
+		  background-color: #fefefe;
+		  margin: 15% auto;
+		  padding: 20px;
+		  border: 1px solid #888;
+		  width: 80%;
+		  max-width: 300px;
+		  border-radius: 10px;
+		  text-align: center;
+		  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+		}
+
+		#modalTitle {
+		  color: #333;
+		  margin-top: 0;
+		}
+
+		#modalMessage {
+		  color: #666;
+		  margin-bottom: 20px;
+		}
+
+		#starRating {
+		  font-size: 24px;
+		  color: #FFD700;
+		  margin-bottom: 20px;
+		  display: flex;
+		  flex-wrap: wrap;
+		  justify-content: center;
+		  gap: 5px;
+		}
+
+		.star {
+		  display: inline-block;
+		}
+		#modalClose {
+		  background-color: #4CAF50;
+		  color: white;
+		  padding: 10px 20px;
+		  border: none;
+		  border-radius: 5px;
+		  cursor: pointer;
+		  font-size: 16px;
+		  transition: background-color 0.3s;
+		}
+
+		#modalClose:hover {
+		  background-color: #45a049;
+		}
